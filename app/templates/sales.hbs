@@ -1,0 +1,60 @@
+<h3 class="text-center">Sales</h3>
+<div style="margin:20px">
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th style="width:5%">S.No</th>
+        <th style="width:15%">SKU</th>
+        <th style="width:15%">Name</th>
+        <th style="width:14%">Qty</th>
+        <th style="width:14%">Rate</th>
+        <th style="width:14%">Discount</th>
+        <th style="width:14%">Total</th>
+        <th style="width:9%"></th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each model.line_items as |lineItem index|}}
+        <tr>
+          <td>{{get-index index}}</td>
+          <td>{{lineItem.sku}}</td>
+          <td>{{lineItem.name}}</td>
+          <td>{{input class="form-control" value=lineItem.quantity}}</td>
+          <td>{{lineItem.rate}}</td>
+          <td>{{lineItem.discount}}</td>
+          <td>{{lineItem.total}}</td>
+          <td {{action "removeLineItem" lineItem}}><button type="button" class="btn btn-danger pull-right">Delete</button></td>
+        </tr>
+      {{/each}}
+      {{#line-item as |lineItemComponent|}}
+        <td></td>
+        <td>{{input class="form-control" value=lineItemComponent.id autofocus=true enter="itemChanged" targetObject=lineItemComponent}}</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      {{/line-item}}
+    </tbody>
+    <tfoot>
+      <tr>
+        <td colspan="6" class="text-right">Subtotal</td>
+        <td>{{model.subtotal}}</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td colspan="6" class="text-right">Discount</td>
+        <td>{{model.discount}}</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td colspan="6" class="text-right">Total</td>
+        <td>{{model.total}}</td>
+        <td></td>
+      </tr>
+    </tfoot>
+  </table>
+  <div class="btn-toolbar pull-right">
+    <div class="btn-group"><button type="button" {{action "saveAndPrint"}} class="btn btn-primary">Save & Print</button></div>
+  </div>
+</div>
