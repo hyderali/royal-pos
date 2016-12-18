@@ -49,11 +49,21 @@ export default Ember.Route.extend({
       body.line_items = serializedItems;
       this.get('store').ajax('/invoices', {method: 'POST', body}).then((json) => {
         if(json.message === 'success') {
-          let pdfUrl = `https://books.zoho.com/api/v3/invoices/${json.invoice_id}?print=true&accept=pdf&organization_id=${this.get('session.organization_id')}&authtoken=${this.get('session.user.authtoken')}`;
-          window.open(pdfUrl);
-          //this.refresh();
+          this.set('session.invoice_id', json.invoice_id);
+          Ember.run.later(this, function() {
+            this.send('printReceipt');
+            this.send('newSale');
+          }, 2000);
         }
       });
+    },
+    printReceipt() {
+      let pdfUrl = `https://books.zoho.com/api/v3/invoices/${this.get('session.invoice_id')}?print=true&accept=pdf&organization_id=${this.get('session.organization_id')}&authtoken=${this.get('session.user.authtoken')}`;
+      window.open(pdfUrl);
+    },
+    newSale() {
+      this.set('session.invoice_id', '');
+      this.refresh();
     }
   }
 });

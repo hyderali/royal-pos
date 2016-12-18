@@ -11,8 +11,9 @@
   "repository": "",
   "scripts": {
     "build": "ember build",
-    "start": "ember server",
-    "test": "ember test"
+    "start": "npm run fetchItems && ember server",
+    "test": "ember test",
+    "fetchItems": "node lib/fetch-items.js"
   },
   "devDependencies": {
     "broccoli-asset-rev": "^2.4.5",

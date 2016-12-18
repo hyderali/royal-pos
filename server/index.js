@@ -3,7 +3,9 @@ var bodyParser = require('body-parser');
 var fs = require('fs');
 var request = require('request');
 var Converter = require("csvtojson").Converter;
-var converter = new Converter({checkType: false});
+var converter = new Converter({
+  checkType: false
+});
 
 // To use it create some files under `mocks/`
 // e.g. `server/mocks/ember-hamsters.js`
@@ -17,7 +19,7 @@ module.exports = function(app) {
     var parsedData = JSON.parse(data);
     app.parsedData = parsedData;
   });
-  converter.fromFile("./server/Item.csv", function(err, result) {
+  converter.fromFile("./server/item.csv", function(err, result) {
     app.itemslist = result;
   });
   app.all('/api/itemslist', function(req, res) {
@@ -54,8 +56,13 @@ module.exports = function(app) {
   app.all('/api/invoices', function(req, res) {
     var body = JSON.parse(req.body);
     console.log(req.query.authtoken);
-    var url = 'https://books.zoho.com/api/v3/invoices?authtoken='+req.query.authtoken+'&organization_id='+app.parsedData.organization_id;
-    request.post({url:url, form: {JSONString: req.body}}, function(err,httpResponse,response){
+    var url = 'https://books.zoho.com/api/v3/invoices?authtoken=' + req.query.authtoken + '&organization_id=' + app.parsedData.organization_id;
+    request.post({
+      url: url,
+      form: {
+        JSONString: req.body
+      }
+    }, function(err, httpResponse, response) {
       let parsedResponse = JSON.parse(response);
       if (parsedResponse.code === 0) {
         res.json({

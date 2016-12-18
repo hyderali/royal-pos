@@ -56,5 +56,9 @@
   </table>
   <div class="btn-toolbar pull-right">
     <div class="btn-group"><button type="button" {{action "saveAndPrint"}} class="btn btn-primary">Save & Print</button></div>
+    {{#if session.invoice_id}}
+      <div class="btn-group"><button type="button" {{action "printReceipt"}} class="btn btn-default">Print</button></div>
+    {{/if}}
+    <div class="btn-group"><button type="button" {{action "newSale"}} class="btn btn-default">New Sale</button></div>
   </div>
 </div>
