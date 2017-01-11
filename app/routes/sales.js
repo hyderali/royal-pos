@@ -1,4 +1,5 @@
 import Ember from 'ember';
+import todayDate from '../utils/today-date';
 import LineItem from '../models/lineitem';
 import Invoice from '../models/invoice';
 const { inject: { service } } = Ember;
@@ -39,9 +40,8 @@ export default Ember.Route.extend({
     saveAndPrint() {
       let model = this.get('controller.model');
       let customer_id = this.get('session.customer_id');
-      let todayDate = new Date();
-      let date = `${todayDate.getFullYear()}-${todayDate.getMonth()+1}-${todayDate.getDate()}`;
-      let body = { customer_id: `${customer_id}`, date, discount: `${model.get('discountPercent')}%`,discount_type:'entity_level', is_discount_before_tax: false, adjustment: model.get('adjustment') };
+      let date = todayDate();
+      let body = { customer_id: `${customer_id}`, date, discount: `${model.get('discountPercent')}%`,discount_type:'entity_level', is_discount_before_tax: false, adjustment: model.get('adjustment'), custom_fields: [ {label: 'Discount CF', value: model.get('discount')} ] };
       let lineItems = model.get('line_items');
       let serializedItems = lineItems.map((item) => {
         return {item_id: item.get('item_id'), rate: item.get('rate'), quantity: item.get('quantity'), item_custom_fields: item.get('item_custom_fields')};
@@ -50,10 +50,8 @@ export default Ember.Route.extend({
       this.get('store').ajax('/invoices', {method: 'POST', body}).then((json) => {
         if(json.message === 'success') {
           this.set('session.invoice_id', json.invoice_id);
-          Ember.run.later(this, function() {
-            this.send('printReceipt');
-            this.send('newSale');
-          }, 2000);
+          this.send('printReceipt');
+          this.send('newSale');
         }
       });
     },

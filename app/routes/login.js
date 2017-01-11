@@ -18,6 +18,10 @@ export default Ember.Route.extend({
           this.set('session.user', json.user);
           this.set('session.organization_id', json.organization_id);
           this.set('session.customer_id', json.customer_id);
+          if (json.user.is_cash) {
+            this.transitionTo('payment');
+            return;
+          }
           this.transitionTo('sales');
         } else {
           model.set('error', json.message);

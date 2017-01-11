@@ -55,7 +55,6 @@ module.exports = function(app) {
   });
   app.all('/api/invoices', function(req, res) {
     var body = JSON.parse(req.body);
-    console.log(req.query.authtoken);
     var url = 'https://books.zoho.com/api/v3/invoices?authtoken=' + req.query.authtoken + '&organization_id=' + app.parsedData.organization_id;
     request.post({
       url: url,
@@ -77,4 +76,45 @@ module.exports = function(app) {
       });
     });
   });
+  app.all('/api/invoiceslist', function(req, res) {
+    //var url = 'https://books.zoho.com/api/v3/invoices?authtoken=' + req.query.authtoken + '&organization_id=' + app.parsedData.organization_id+ '&customer_id='+app.parsedData.customer_id;
+    var url = 'https://books.zoho.com/api/v3/invoices?authtoken=96f06677eaad4b848d6509e4acd981ed&status=draft&organization_id=' + app.parsedData.organization_id+ '&customer_id='+app.parsedData.customer_id;
+    request.get({
+      url: url
+    }, function(err, httpResponse, response) {
+      let parsedResponse = JSON.parse(response);
+      if (parsedResponse.code === 0) {
+        res.json(parsedResponse);
+        return;
+      }
+      res.json({
+        message: 'failure',
+        error: parsedResponse.message
+      });
+    })
+  });
+  app.all('/api/payments', function(req, res) {
+    var body = JSON.parse(req.body);
+    var url = 'https://books.zoho.com/api/v3/customerpayments?authtoken=' + req.query.authtoken + '&organization_id=' + app.parsedData.organization_id;
+    request.post({
+      url: url,
+      form: {
+        JSONString: req.body
+      }
+    }, function(err, httpResponse, response) {
+      let parsedResponse = JSON.parse(response);
+      if (parsedResponse.code === 0) {
+        res.json({
+          message: 'success',
+          payment_id: parsedResponse.payment.payment_id
+        });
+        return;
+      }
+      res.json({
+        message: 'failure',
+        error: parsedResponse.message
+      });
+    });
+  });
+
 };

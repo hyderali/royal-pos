@@ -1,0 +1,28 @@
+<div class="row" style="position:relative;top:30px">
+  <div class="col-md-4" style="border-right: 1px solid #EDEDED">
+    <div class="btn-toolbar pull-right">
+      <button class="btn btn-primary" type="button" {{action "reload"}}>Reload</button>
+    </div>
+    <br><br><br>
+    <table class="table">
+      <tbody>
+        {{#each model as |invoice|}}
+          <tr style="cursor:pointer">
+            <td>
+              {{input type="checkbox" checked=invoice.selected}}
+            </td>
+            <td {{action "recordPayment" invoice.invoice_id}}>
+              {{invoice.invoice_number}}
+            </td>
+            <td {{action "recordPayment" invoice.invoice_id}}>
+              {{invoice.balance}}
+            </td>
+          </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </div>
+  <div class="col-md-8">
+    {{outlet}}
+  </div>
+</div>
