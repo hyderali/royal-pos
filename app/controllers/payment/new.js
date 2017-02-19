@@ -1,5 +1,5 @@
 import Ember from 'ember';
-const { computed, get } = Ember;
+const { computed } = Ember;
 export default Ember.Controller.extend({
   queryParams: ['invoiceids'],
   total: computed('model.@each.balance', function() {

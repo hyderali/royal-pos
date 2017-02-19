@@ -12,6 +12,9 @@ Router.map(function() {
   this.route('payment', function() {
     this.route('new');
   });
+  this.route('adjustitem');
+  this.route('barcode');
+  this.route('purchase');
 });
 
 export default Router;

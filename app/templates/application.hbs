@@ -1,8 +1,15 @@
-<h4 style="
-    position: fixed;
-    top: 0;
-    left: 20px;
-">Royal Cotton Land</h4>
-<div style="position:relative;top:20px">
-{{outlet}}
+<div style="position: fixed;top: 0;left: 20px;width: 80%;" class="hidden-print">
+  <h4>Royal Cotton Land</h4>
+  {{#if session.isAdmin}}
+  <div>
+    {{link-to "sales" "sales"}}
+    {{link-to "payment" "payment"}}
+    {{link-to "adjustitem" "barcode"}}
+    {{link-to "barcode" "barcode"}}
+    {{link-to "purchase" "purchase"}}
+  </div>
+  {{/if}}
+</div>
+<div style="position:relative;top:60px" class="show-print">
+    {{outlet}}
 </div>
