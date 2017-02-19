@@ -1,0 +1,32 @@
+@import "ember-modal-dialog/ember-modal-structure";
+@import "ember-modal-dialog/ember-modal-appearance";
+@media print {
+  .hidden-print {
+    display: none;
+  }
+
+  .show-print {
+    display: flex !important;
+    margin: 0 !important;
+    top: 0 !important;
+    width: 4.5in !important;
+    flex-direction: row !important;
+  }
+}
+@page {
+  size: auto;
+  /* auto is the initial value */
+  margin: 0;
+  /* this affects the margin in the printer settings */
+}
+.item-sticker {
+  width: 3.5cm;
+  max-width: 3.5cm;
+  height:2.5cm;
+  flex:auto
+}
+.new-item {
+  width: 900px;
+}
+
+@import "ember-power-select";

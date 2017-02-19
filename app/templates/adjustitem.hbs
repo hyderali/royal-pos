@@ -1,0 +1,61 @@
+<div class="btn btn-toolbar hidden-print" style="margin-top:30px">
+  <button {{action 'print'}} class="btn btn-primary">Print</button>
+</div>
+<table class="table hidden-print">
+  <thead>
+    <tr>
+      <th> Item Code </th>
+      <th> Item Name </th>
+      <th> Old Price </th>
+      <th> New Price </th>
+      <th> Quantity </th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each items as |item|}}
+      <tr>
+        <td>{{item.SKU}}</td>
+        <td>{{item.Description}}</td>
+        <td>{{item.Rate}}</td>
+        <td>{{input value=item.printRate class="form-control" autofocus=true}}</td>
+        <td>{{input value=item.qty class="form-control"}}</td>
+      </tr>
+    {{/each}}
+    <tr>
+      <td> {{input class="form-control" autofocus=true enter="addNewItem"}}</td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>
+<div style="display:flex;flex-wrap: wrap;flex-direction: row;width:4.5in;margin-left:20px" class="show-print">
+  {{#each printitems as |item|}}
+    {{item-sticker item=item}}
+  {{/each}}
+</div>
+{{#if isShowingModal}}
+  {{#modal-dialog close='toggleTranslucent' translucentOverlay=true}}
+    <div class="hidden-print">
+      <h1>Prices Not Updated</h1>
+      <p>The following's items prices are not updated</p>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>SKU </th>
+            <th>Reason</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each failedItems as |item|}}
+            <tr>
+              <th>{{item.error.sku}} </th>
+              <th>{{item.error.message}}</th>
+            </tr>
+          {{/each}}
+        </tbody>
+      </table>
+      <button {{action 'toggleTranslucent'}} class="btn btn-primary">Close</button>
+    </div>
+  {{/modal-dialog}}
+{{/if}}

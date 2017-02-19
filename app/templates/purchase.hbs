@@ -1,0 +1,122 @@
+<div class="form-horizontal" style="margin:20px">
+  <div class="form-group">
+    <div class="col-md-3">Supplier</div>
+    <div class="col-md-9">
+      {{#power-select selected=model.vendor options=session.vendors onchange=(action "selectVendor") as |vendor|}}
+        {{vendor.contact_name}}
+      {{/power-select}}
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="col-md-3">Bill Number</div>
+    <div class="col-md-9">
+      {{input class="form-control" value=model.bill_number}}
+    </div>
+  </div>
+  <table class="table">
+    <thead>
+      <tr>
+        <th> S.No </th>
+        <th> SKU </th>
+        <th> Name </th>
+        <th> Purchase Rate </th>
+        <th> Sales Rate </th>
+        <th> Discount </th>
+        <th> Brand </th>
+        <th> Design </th>
+        <th> Size </th>
+        <th> Quantity </th>
+        <th> Sticker </th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each model.line_items as |lineItem index|}}
+        <tr>
+          <td> {{get-index index}} </td>
+          <td> {{lineItem.SKU}} </td>
+          <td> {{lineItem.Description}} </td>
+          <td> {{lineItem.PurchaseRate}} </td>
+          <td> {{lineItem.Rate}} </td>
+          <td> {{lineItem.CF.Discount}} </td>
+          <td> {{lineItem.CF.Brand}} </td>
+          <td> {{lineItem.CF.Design}} </td>
+          <td> {{lineItem.CF.Size}} </td>
+          <td> {{input class="form-control" value=lineItem.quantity autofocus=true}} </td>
+          <td> {{input class="form-control" value=lineItem.sticker}} </td>
+          <td> <button type="button" class="btn btn-danger pull-right" {{action "removeLineItem" lineItem}}>Delete</button> </td>
+        </tr>
+      {{/each}}
+      <tr>
+        <td></td>
+        <td>
+          {{input class="form-control" autofocus=true enter="addNewItem"}}
+          <a href="#" {{action "addItem"}}>Add Item</a>
+        </td>
+        <td colspan="10"></td>
+      </tr>
+      <tr>
+        <td></td>
+        <td> Total </td>
+        <td></td>
+        <td> {{purchaseTotal}} </td>
+        <td> {{salesTotal}} </td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td>{{qtyTotal}}</td>
+        <td>{{stickerTotal}}</td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="btn btn-toolbar">
+    <button {{action "save"}} class="btn btn-primary">Save</button>
+  </div>
+</div>
+{{#if isShowingModal}}
+  {{#modal-dialog container-class="new-item" close='closeModal' translucentOverlay=true}}
+    <div class="hidden-print">
+      <div class="form-horizontal">
+        <div class="form-group">
+          <div class="col-md-2">SKU</div>
+          <div class="col-md-4">{{input class="form-control" value = newItemModel.sku}}</div>
+          <div class="col-md-2">Name</div>
+          <div class="col-md-4">{{input class="form-control" value = newItemModel.description autofocus=true}}</div>
+        </div>
+        <div class="form-group">
+          <div class="col-md-2">Group</div>
+          <div class="col-md-4">{{input class="form-control" value = newItemModel.group}}</div>
+        </div>
+        <div class="form-group">
+          <div class="col-md-2">Purchase Rate</div>
+          <div class="col-md-4">{{input class="form-control" value = newItemModel.purchase_rate}}</div>
+          <div class="col-md-2">Profit</div>
+          <div class="col-md-4">{{input class="form-control" value = newItemModel.profit}}</div>
+        </div>
+        <div class="form-group">
+          <div class="col-md-2">Sales Rate</div>
+          <div class="col-md-4">{{input class="form-control" value = newItemModel.rate}}</div>
+          <div class="col-md-2">Discount</div>
+          <div class="col-md-4">{{input class="form-control" value = newItemModel.discount}}</div>
+        </div>
+        <div class="form-group">
+          <div class="col-md-2">Size</div>
+          <div class="col-md-4">{{input class="form-control" value = newItemModel.size}}</div>
+          <div class="col-md-2">Design</div>
+          <div class="col-md-4">{{input class="form-control" value = newItemModel.design}}</div>
+        </div>
+        <div class="form-group">
+          <div class="col-md-2">Brand</div>
+          <div class="col-md-4">{{input class="form-control" value = newItemModel.brand}}</div>
+          <div class="col-md-2">Colour</div>
+          <div class="col-md-4">{{input class="form-control" value = newItemModel.colour}}</div>
+        </div>
+        <div class="btn btn-toolbar">
+          <button {{action 'saveItem'}} disabled={{newItemModel.isSaving}} class="btn btn-primary">Save</button>
+          <button {{action 'closeModal'}} class="btn btn-default">Close</button>
+        </div>
+      </div>
+    </div>
+  {{/modal-dialog}}
+{{/if}}
