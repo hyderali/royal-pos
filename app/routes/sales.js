@@ -51,6 +51,7 @@ export default Ember.Route.extend({
         if(json.message === 'success') {
           this.set('session.invoice_id', json.invoice_id);
           this.send('printReceipt');
+          this.send('printReceipt');
           this.send('newSale');
         }
       });
