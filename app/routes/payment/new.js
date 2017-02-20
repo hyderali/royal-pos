@@ -76,7 +76,7 @@ export default Ember.Route.extend({
       openedWindow.onload = () => {
         Ember.run.later(this, () => {
           openedWindow.close();
-        }, 1000);
+        }, 2000);
       };
     },
     goToList() {
