@@ -12,5 +12,11 @@ export default Ember.Route.extend({
   },
   model() {
     return Ember.Object.create({line_items: []});
+  },
+  actions: {
+    reload() {
+      this.set('printItems', []);
+      this.refresh();
+    }
   }
 });

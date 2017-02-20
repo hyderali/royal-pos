@@ -38,5 +38,5 @@
   </tfoot>
 </table>
 <button class="btn btn-default pull-right" {{action "goToList"}} type="button">Cancel</button>
-<button class="btn btn-primary pull-right" {{action "saveAndRecordPayment"}}>Record</button>
+<button class="btn btn-primary pull-right" disabled={{isSaving}} {{action "saveAndRecordPayment"}}>Record</button>
 </form>

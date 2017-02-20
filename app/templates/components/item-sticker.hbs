@@ -3,8 +3,8 @@
 <div class="text-center">{{bar-code sku=item.SKU}}</div>
 <div style="font-size:8px;margin-top:-5px">{{item.CF.Design}}</div>
 <div style="font-size:8px;margin-top:-2px;display:flex;flex-direction: row;">
-  <div style="flex:auto">{{item.CF.Vendor}}</div>
+  <div style="flex:auto">{{item.CF.Brand}}</div>
   <div style="flex:auto">{{item.CF.Size}}</div>
   <div style="flex:auto">{{item.Description}}</div>
 </div>
-<div style="font-size:17px;font-weight:bold">Rs. {{item.printRate}}</div>
+<div style="font-size:17px;font-weight:bold">{{#if item.printRate}} Rs. {{item.printRate}}{{/if}}</div>

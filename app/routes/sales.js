@@ -47,18 +47,25 @@ export default Ember.Route.extend({
         return {item_id: item.get('item_id'), rate: item.get('rate'), quantity: item.get('quantity'), item_custom_fields: item.get('item_custom_fields')};
       });
       body.line_items = serializedItems;
+      model.set('isSaving', true);
       this.get('store').ajax('/invoices', {method: 'POST', body}).then((json) => {
         if(json.message === 'success') {
           this.set('session.invoice_id', json.invoice_id);
           this.send('printReceipt');
           this.send('printReceipt');
           this.send('newSale');
+          model.set('isSaving', false);
         }
       });
     },
     printReceipt() {
-      let pdfUrl = `https://books.zoho.com/api/v3/invoices/${this.get('session.invoice_id')}?print=true&accept=pdf&organization_id=${this.get('session.organization_id')}&authtoken=${this.get('session.user.authtoken')}`;
-      window.open(pdfUrl);
+      let pdfUrl = `/api/invoicepdf?invoice_id=${this.get('session.invoice_id')}&authtoken=${this.get('session.user.authtoken')}`;
+      let openedWindow = window.open(pdfUrl);
+      openedWindow.onload = () => {
+        Ember.run.later(this, () => {
+          openedWindow.close();
+        }, 1000);
+      };
     },
     newSale() {
       this.set('session.invoice_id', '');

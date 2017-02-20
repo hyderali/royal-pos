@@ -27,8 +27,4 @@
     </tr>
   </tbody>
 </table>
-<div style="display:flex;flex-wrap: wrap;flex-direction: row;width:4.5in;margin-left:20px" class="show-print">
-  {{#each printitems as |item|}}
-    {{item-sticker item=item}}
-  {{/each}}
-</div>
+{{barcode-list items=printitems}}

@@ -55,7 +55,7 @@
     </tfoot>
   </table>
   <div class="btn-toolbar pull-right">
-    <div class="btn-group"><button type="button" {{action "saveAndPrint"}} class="btn btn-primary">Save & Print</button></div>
+    <div class="btn-group"><button type="button" disabled={{model.isSaving}} {{action "saveAndPrint"}} class="btn btn-primary">Save & Print</button></div>
     {{#if session.invoice_id}}
       <div class="btn-group"><button type="button" {{action "printReceipt"}} class="btn btn-default">Print</button></div>
     {{/if}}

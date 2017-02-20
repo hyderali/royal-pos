@@ -11,6 +11,7 @@ export default Ember.Controller.extend({
   session: service(),
   store: service(),
   newItemModel: null,
+  printItems: null,
   nextNumber: '',
   purchaseTotal: computed('model.line_items.@each.{PurchaseRate,quantity}', function() {
     let lineItems = this.get('model.line_items') || [];
@@ -119,9 +120,10 @@ export default Ember.Controller.extend({
     save() {
       let model = this.get('model');
       let body = {};
+      let lineItems = model.get('line_items');
       body.vendor_id = model.get('vendor.contact_id');
       body.bill_number = model.get('bill_number');
-      body.line_items = model.get('line_items').map(lineItem => {
+      body.line_items = lineItems.map(lineItem => {
         return {
           item_id: lineItem.item_id,
           quantity: lineItem.quantity,
@@ -130,9 +132,21 @@ export default Ember.Controller.extend({
           account_id: this.get('session.inventory_account_id')
         };
       });
+      let printItems = [];
+      lineItems.forEach(lineItem => {
+        for(let i =0; i<Number(lineItem.sticker);i++) {
+          printItems.pushObject(lineItem);
+        }
+      });
+      model.set('isSaving', true);
       this.get('store').ajax('/newbill', {method: 'POST', body}).then((json) => {
         if(json.message === 'success') {
-
+          this.set('printItems', printItems);
+          Ember.run.next(this, () => {
+            Ember.run.schedule('afterRender', this, () => {
+              window.print();
+            });
+          });
         }
       });
     },
