@@ -11,7 +11,7 @@
   "repository": "",
   "scripts": {
     "build": "ember build",
-    "start": "rmdir /Q /S pdf/ && mkdir pdf && npm run fetchItems && ember server",
+    "start": "npm run fetchItems && ember server",
     "test": "ember test",
     "fetchItems": "node lib/fetch-items.js"
   },
