@@ -64,7 +64,7 @@ export default Ember.Route.extend({
       openedWindow.onload = () => {
         Ember.run.later(this, () => {
           openedWindow.close();
-        }, 2000);
+        }, 3000);
       };
     },
     newSale() {
