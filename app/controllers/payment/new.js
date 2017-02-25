@@ -16,6 +16,11 @@ export default Ember.Controller.extend({
     }, 0);
     return total;
   }),
+  totalPayable: computed('total', 'discount', function() {
+    let total = this.get('total');
+    let discount = Number(this.get('discount')||0);
+    return (total - discount).toFixed(2);
+  }),
   balance: computed('total', 'received', 'discount', function() {
     let total = this.get('total');
     let received = Number(this.get('received')||0);

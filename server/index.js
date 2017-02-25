@@ -67,7 +67,7 @@ app.all('/api/invoices', function(req, res) {
     if (parsedResponse.code === 0) {
       res.json({
         message: 'success',
-        invoice_id: parsedResponse.invoice.invoice_id
+        invoice_number: parsedResponse.invoice.invoice_number
       });
       return;
     }

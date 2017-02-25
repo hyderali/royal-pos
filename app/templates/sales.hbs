@@ -1,5 +1,5 @@
-<h3 class="text-center">Sales</h3>
-<div style="margin:20px">
+<h3 class="text-center hidden-print">Sales</h3>
+<div style="margin:20px" class="hidden-print">
   <table class="table table-bordered">
     <thead>
       <tr>
@@ -38,7 +38,8 @@
     </tbody>
     <tfoot>
       <tr>
-        <td colspan="6" class="text-right">Subtotal</td>
+        <td colspan="3" class="text-right">Subtotal</td>
+        <td colspan="3" class="text-right">{{model.qtyTotal}}</td>
         <td>{{model.subtotal}}</td>
         <td></td>
       </tr>
@@ -55,10 +56,68 @@
     </tfoot>
   </table>
   <div class="btn-toolbar pull-right">
-    <div class="btn-group"><button type="button" disabled={{model.isSaving}} {{action "saveAndPrint"}} class="btn btn-primary">Save & Print</button></div>
+    <div class="btn-group"><button type="button" disabled= {{model.isSaving}} {{action "saveAndPrint"}} class="btn btn-primary">Save & Print</button></div>
     {{#if session.invoice_id}}
       <div class="btn-group"><button type="button" {{action "printReceipt"}} class="btn btn-default">Print</button></div>
     {{/if}}
     <div class="btn-group"><button type="button" {{action "newSale"}} class="btn btn-default">New Sale</button></div>
   </div>
 </div>
+{{#if model.canShowPrint}}
+<div class="receipt-print">
+  <div style="border: 1px solid #333;">
+    <div style="border-bottom: 1px solid #333;">
+      <div style="text-align: center;"><b><font size="6">Royal Cotton Land</font></b></div>
+      <div style="text-align: center;">6A, Mahal Street</div>
+      <div style="text-align: center;">Madurai<br><br></div>
+    </div>
+    <table style="width:100%">
+      <tbody>
+        <tr style="border-bottom: 1px solid #333;">
+          <td>Bill No:</td>
+          <td style="border-left: 1px solid #333;padding-left:5px">{{model.invoice_number}}</td>
+        </tr>
+        <tr>
+          <td>Date: </td>
+          <td style="border-left: 1px solid #333;padding-left:5px">{{model.date}} {{model.time}}</td>
+        </tr>
+      </tbody>
+    </table>
+    <table class="pcs-itemtable" style="border-collapse: collapse;">
+      <thead>
+        <tr style="height:32px;">
+          <td style="font-size: 10pt;word-wrap: break-word;width: 5%;">S.No&nbsp;</td>
+          <td style="font-size: 10pt;word-wrap: break-word;width: 45%;">Item&nbsp;</td>
+          <td style="font-size: 10pt;word-wrap: break-word;width: 14%;" align="right">Rate</td>
+          <td style="font-size: 10pt;word-wrap: break-word;width: 11%;" align="right">Qty</td>
+          <td style="font-size: 10pt;word-wrap: break-word;width: 25%;" align="right">Amount</td>
+        </tr>
+      </thead>
+      <tbody id="lineitem">
+        {{#each model.line_items as |lineItem index|}}
+          <tr>
+            <td style="font-size: 9pt;" valign="top">{{get-index index}}</td>
+            <td style="font-size: 9pt;" valign="top"> <span style="word-wrap: break-word;" id="tmp_item_name">{{lineItem.name}}</span></td>
+            <td style="font-size: 9pt;text-align:right;word-wrap: break-word;" valign="top"> <span id="tmp_item_rate">{{lineItem.rate}}</span> <br> </td>
+            <td style="font-size: 9pt;text-align:right;word-wrap: break-word;" valign="top"> <span id="tmp_item_qty">{{lineItem.quantity}}</span> <br> </td>
+            <td style="font-size: 9pt;text-align:right;word-wrap: break-word;" valign="top">{{lineItem.total}} <br> </td>
+          </tr>
+        {{/each}}
+      </tbody>
+      <tfoot>
+        <tr style="height:32px;">
+          <td colspan="3" style="font-size: 10pt;word-wrap: break-word;width: 5%;">Sub Total</td>
+          <td style="font-size: 10pt;word-wrap: break-word;width: 11%;" align="right">{{model.qtyTotal}}</td>
+          <td style="font-size: 10pt;word-wrap: break-word;width: 25%;" align="right">{{model.subtotal}}</td>
+        </tr>
+        <tr style="height:32px;">
+          <td colspan="4" style="font-size: 10pt;word-wrap: break-word;width: 5%;">Discount</td>
+          <td style="font-size: 10pt;word-wrap: break-word;width: 25%;" align="right"> Rs. {{model.discount}}</td>
+        </tr>
+      </tfoot>
+    </table>
+    <div style="text-align: right;"><b><font size="5">Total</font></b> <b><font size="5">Rs. {{model.total}}</font></b> <br> </div>
+  </div>
+  <p class="text-center">Thank You. Visit Again</p>
+</div>
+{{/if}}

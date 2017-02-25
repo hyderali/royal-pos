@@ -63,25 +63,22 @@ export default Ember.Route.extend({
         body
       }).then((json) => {
         if (json.message === 'success') {
-          this.set('session.payment_id', json.payment_id);
           this.set('controller.isSaving', false);
-          this.send('printReceipt');
-          this.send('goToList');
+          this.set('controller.canShowPrint', true);
+          Ember.run.schedule('afterRender', this, ()=> {
+            this.send('printReceipt');
+            this.send('goToList');
+          });
         }
       });
     },
     printReceipt() {
-      let pdfUrl = `/api/paymentpdf?payment_id=${this.get('session.payment_id')}&authtoken=${this.get('session.user.authtoken')}`;
-      let openedWindow = window.open(pdfUrl);
-      openedWindow.onload = () => {
-        Ember.run.later(this, () => {
-          openedWindow.close();
-        }, 3000);
-      };
+      window.print();
     },
     goToList() {
       this.transitionTo('payment');
       this.send('reload');
+      this.set('controller.canShowPrint', false);
     }
   }
 });

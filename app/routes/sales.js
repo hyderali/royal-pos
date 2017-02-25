@@ -50,25 +50,23 @@ export default Ember.Route.extend({
       model.set('isSaving', true);
       this.get('store').ajax('/invoices', {method: 'POST', body}).then((json) => {
         if(json.message === 'success') {
-          this.set('session.invoice_id', json.invoice_id);
-          this.send('printReceipt');
-          this.send('printReceipt');
-          this.send('newSale');
-          model.set('isSaving', false);
+          model.setProperties({
+            invoice_number: json.invoice_number,
+            canShowPrint: true,
+            isSaving: false
+          });
+          Ember.run.schedule('afterRender', this, () => {
+            this.send('printReceipt');
+            this.send('printReceipt');
+            this.send('newSale');
+          });
         }
       });
     },
     printReceipt() {
-      let pdfUrl = `/api/invoicepdf?invoice_id=${this.get('session.invoice_id')}&authtoken=${this.get('session.user.authtoken')}`;
-      let openedWindow = window.open(pdfUrl);
-      openedWindow.onload = () => {
-        Ember.run.later(this, () => {
-          openedWindow.close();
-        }, 3000);
-      };
+      window.print();
     },
     newSale() {
-      this.set('session.invoice_id', '');
       this.refresh();
     }
   }

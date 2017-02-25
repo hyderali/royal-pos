@@ -9,8 +9,8 @@ export default Ember.Component.extend({
     this._super();
     Ember.run.schedule('afterRender', this, () => {
       this.$().JsBarcode(sku, {
-        width: 0.75,
-        height: 15,
+        width: 1,
+        height: 22.5,
         fontSize: 8,
         margin: 0
       });

@@ -19,14 +19,32 @@
   margin: 0;
   /* this affects the margin in the printer settings */
 }
-.item-sticker {
-  width: 3.59cm;
-  max-width: 3.59cm;
-  height:2.5cm;
-  flex:auto
+.receipt-print {
+  width: 3in;
+  margin: 20px;
 }
+.item-sticker {
+  width: 3.5cm;
+  max-width: 3.5cm;
+  height: 2.2cm;
+  flex: auto;
+}
+
 .new-item {
   width: 900px;
 }
 
+.pcs-itemtable {
+  tr td {
+    border-left: 1px solid #333;
+    border-bottom: 1px solid #333;
+    padding: 5px;
+    &:first-child {
+      border-left: none;
+    }
+  }
+  thead tr td {
+    border-top: 1px solid #333;
+  }
+}
 @import "ember-power-select";

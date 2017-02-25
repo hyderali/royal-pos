@@ -1,42 +1,76 @@
-<form style="margin: 20px">
-<table class="table table-bordered">
-  <thead>
-    <tr>
-      <th>S.No</th>
-      <th>Invoice No</th>
-      <th>Discount</th>
-      <th>Amount</th>
-    </tr>
-  </thead>
-  <tbody>
-    {{#each model as |invoice index|}}
-    <tr>
-      <td>{{get-index index}}</td>
-      <td>{{invoice.invoice_number}}</td>
-      <td>{{input type="text" class="form-control" value=invoice.discount autofocus=invoice.autofocus}}</td>
-      <td>{{invoice.balance}}</td>
-    </tr>
-    {{/each}}
-  </tbody>
-  <tfoot>
-    <tr>
-      <td colspan="2" class="text-right">Total</td>
-      <td>{{total}}</td>
-    </tr>
-    <tr>
-      <td colspan="2" class="text-right">Discount</td>
-      <td>{{discount}}</td>
-    </tr>
-    <tr>
-      <td colspan="2" class="text-right">Received</td>
-      <td>{{input class="form-control" value=received}}</td>
-    </tr>
-    <tr>
-      <td colspan="2" class="text-right">Balance</td>
-      <td>{{balance}}</td>
-    </tr>
-  </tfoot>
-</table>
-<button class="btn btn-default pull-right" {{action "goToList"}} type="button">Cancel</button>
-<button class="btn btn-primary pull-right" disabled={{isSaving}} {{action "saveAndRecordPayment"}}>Record</button>
+<form style="margin: 20px" class="hidden-print">
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>S.No</th>
+        <th>Invoice No</th>
+        <th>Discount</th>
+        <th>Amount</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each model as |invoice index|}}
+        <tr>
+          <td>{{get-index index}}</td>
+          <td>{{invoice.invoice_number}}</td>
+          <td>{{input type="text" class="form-control" value=invoice.discount autofocus=invoice.autofocus}}</td>
+          <td>{{invoice.balance}}</td>
+        </tr>
+      {{/each}}
+    </tbody>
+    <tfoot>
+      <tr>
+        <td colspan="2" class="text-right">Total</td>
+        <td>{{total}}</td>
+      </tr>
+      <tr>
+        <td colspan="2" class="text-right">Discount</td>
+        <td>{{discount}}</td>
+      </tr>
+      <tr>
+        <td colspan="2" class="text-right">Received</td>
+        <td>{{input class="form-control" value=received}}</td>
+      </tr>
+      <tr>
+        <td colspan="2" class="text-right">Balance</td>
+        <td>{{balance}}</td>
+      </tr>
+    </tfoot>
+  </table>
+  <button class="btn btn-default pull-right" {{action "goToList"}} type="button">Cancel</button>
+  <button class="btn btn-primary pull-right" disabled= {{isSaving}} {{action "saveAndRecordPayment"}}>Record</button>
 </form>
+{{#if canShowPrint}}
+<div class="receipt-print">
+  <div style="border: 1px solid #333;">
+    <table class="pcs-itemtable" style="border-collapse: collapse;">
+      <thead>
+        <tr style="height:32px;">
+          <td style="width:5%">S.No</td>
+          <td style="font-size: 10pt;word-wrap: break-word;width: 35%;"><b>Bill no&nbsp;</b></td>
+          <td style="font-size: 10pt;word-wrap: break-word;width:30%;" align="right"><b>Total Amount</b></td>
+          <td style="font-size: 10pt;word-wrap: break-word;width:30%;" align="right"><b>Paid Amount</b></td>
+        </tr>
+      </thead>
+      <tbody id="lineitem">
+        {{#each model as |invoice index|}}
+          <tr>
+            <td style="font-size: 9pt;" valign="top"><span style="font-size: 9pt;white-space: pre-wrap;word-wrap: break-word;" >{{get-index index}}</span></td>
+            <td style="font-size: 9pt" valign="top"><span style="font-size: 9pt;white-space: pre-wrap;word-wrap: break-word;" >{{invoice.invoice_number}}</span></td>
+            <td style="font-size: 9pt;text-align:right;" valign="top"><span style="font-size: 9pt;white-space: pre-wrap;word-wrap: break-word;" >{{invoice.balance}}</span></td>
+            <td style="font-size: 9pt;text-align:right;" valign="top"><span style="font-size: 9pt;white-space: pre-wrap;word-wrap: break-word;" >{{difference invoice.balance invoice.discount}}</span></td>
+          </tr>
+        {{/each}}
+      </tbody>
+      <tfoot>
+        <tr style="height:32px;">
+          <td colspan="2" style="font-size: 10pt;word-wrap: break-word;width: 60%;text-align: center;"><b>Total</b></td>
+          <td style="font-size: 10pt;word-wrap: break-word;width: 40%;" align="right"><b>{{total}}</b></td>
+          <td style="font-size: 10pt;word-wrap: break-word;width: 40%;" align="right"><b>{{totalPayable}}</b></td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+  <div style="text-align: center;">&nbsp;Thank You Visit Again. <br> </div>
+</div>
+{{/if}}
