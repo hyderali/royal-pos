@@ -12,6 +12,10 @@
     width: 4.5in !important;
     flex-direction: row !important;
   }
+  .receipt-print {
+    width: 356px!important;
+    margin: 0 10px 0 30px!important;
+  }
 }
 @page {
   size: auto;
@@ -20,8 +24,8 @@
   /* this affects the margin in the printer settings */
 }
 .receipt-print {
-  width: 3in;
-  margin: 20px;
+  width: 356px;
+  margin: 0 10px 0 30px;
 }
 .item-sticker {
   width: 3.5cm;
@@ -38,7 +42,7 @@
   tr td {
     border-left: 1px solid #333;
     border-bottom: 1px solid #333;
-    padding: 5px;
+    padding:10px 5px;
     &:first-child {
       border-left: none;
     }

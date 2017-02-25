@@ -29,7 +29,15 @@ export default Ember.Route.extend({
       }
       let newItem = itemslist.findBy('SKU', itemName);
       if (newItem) {
-        let newLineItem = LineItem.create({discount: newItem.CF.Discount,item_custom_fields: [{label: 'Discount', value: newItem.CF.Discount}], rate: Number(newItem.Rate.split(' ')[1]), quantity: 1, name: newItem['Item Code'], sku: newItem.SKU, item_id: newItem['Item ID']});
+        let newLineItem = LineItem.create({
+          discount: newItem.CF.Discount,
+          item_custom_fields: [{label: 'Discount', value: newItem.CF.Discount}], rate: Number(newItem.Rate.split(' ')[1]),
+          quantity: 1,
+          name: newItem['Item Code'],
+          sku: newItem.SKU,
+          item_id: newItem['Item ID'],
+          description: newItem.Description
+        });
         lineItems.pushObject(newLineItem);
       }
     },

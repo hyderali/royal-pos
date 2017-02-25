@@ -67,8 +67,8 @@
 <div class="receipt-print">
   <div style="border: 1px solid #333;">
     <div style="border-bottom: 1px solid #333;">
-      <div style="text-align: center;"><b><font size="6">Royal Cotton Land</font></b></div>
-      <div style="text-align: center;">6A, Mahal Street</div>
+      <div style="text-align: center;"><b><font size="6">ROYAL COTTON LAND</font></b></div>
+      <div style="text-align: center;">6A, Mahal 1st Street</div>
       <div style="text-align: center;">Madurai<br><br></div>
     </div>
     <table style="width:100%">
@@ -79,44 +79,46 @@
         </tr>
         <tr>
           <td>Date: </td>
-          <td style="border-left: 1px solid #333;padding-left:5px">{{model.date}} {{model.time}}</td>
+          <td style="border-left: 1px solid #333;padding-left:5px">{{model.date}} <span class="pull-right" style="margin-right: 10px">{{model.time}}</span></td>
         </tr>
       </tbody>
     </table>
     <table class="pcs-itemtable" style="border-collapse: collapse;">
       <thead>
         <tr style="height:32px;">
-          <td style="font-size: 10pt;word-wrap: break-word;width: 5%;">S.No&nbsp;</td>
-          <td style="font-size: 10pt;word-wrap: break-word;width: 45%;">Item&nbsp;</td>
-          <td style="font-size: 10pt;word-wrap: break-word;width: 14%;" align="right">Rate</td>
-          <td style="font-size: 10pt;word-wrap: break-word;width: 11%;" align="right">Qty</td>
-          <td style="font-size: 10pt;word-wrap: break-word;width: 25%;" align="right">Amount</td>
+          <td style="word-wrap: break-word;width: 5%;">S.No&nbsp;</td>
+          <td style="word-wrap: break-word;width: 45%;">Item&nbsp;</td>
+          <td style="word-wrap: break-word;width: 14%;" align="right">Rate</td>
+          <td style="word-wrap: break-word;width: 11%;" align="right">Qty</td>
+          <td style="word-wrap: break-word;width: 25%;" align="right">Amount</td>
         </tr>
       </thead>
-      <tbody id="lineitem">
+      <tbody style="font-weight: bold">
         {{#each model.line_items as |lineItem index|}}
           <tr>
-            <td style="font-size: 9pt;" valign="top">{{get-index index}}</td>
-            <td style="font-size: 9pt;" valign="top"> <span style="word-wrap: break-word;" id="tmp_item_name">{{lineItem.name}}</span></td>
-            <td style="font-size: 9pt;text-align:right;word-wrap: break-word;" valign="top"> <span id="tmp_item_rate">{{lineItem.rate}}</span> <br> </td>
-            <td style="font-size: 9pt;text-align:right;word-wrap: break-word;" valign="top"> <span id="tmp_item_qty">{{lineItem.quantity}}</span> <br> </td>
-            <td style="font-size: 9pt;text-align:right;word-wrap: break-word;" valign="top">{{lineItem.total}} <br> </td>
+            <td valign="top">{{get-index index}}</td>
+            <td valign="top"> <span style="word-wrap: break-word;" id="tmp_item_name">{{lineItem.description}}</span></td>
+            <td style="text-align:right;word-wrap: break-word;" valign="top"> <span id="tmp_item_rate">{{lineItem.rate}}</span> <br> </td>
+            <td style="text-align:right;word-wrap: break-word;" valign="top"> <span id="tmp_item_qty">{{lineItem.quantity}}</span> <br> </td>
+            <td style="text-align:right;word-wrap: break-word;" valign="top">{{lineItem.total}} <br> </td>
           </tr>
         {{/each}}
       </tbody>
       <tfoot>
         <tr style="height:32px;">
-          <td colspan="3" style="font-size: 10pt;word-wrap: break-word;width: 5%;">Sub Total</td>
-          <td style="font-size: 10pt;word-wrap: break-word;width: 11%;" align="right">{{model.qtyTotal}}</td>
-          <td style="font-size: 10pt;word-wrap: break-word;width: 25%;" align="right">{{model.subtotal}}</td>
+          <td colspan="3" style="word-wrap: break-word;width: 5%;">Sub Total</td>
+          <td style="word-wrap: break-word;width: 11%;" align="right">{{model.qtyTotal}}</td>
+          <td style="word-wrap: break-word;width: 25%;" align="right">{{model.subtotal}}</td>
         </tr>
-        <tr style="height:32px;">
-          <td colspan="4" style="font-size: 10pt;word-wrap: break-word;width: 5%;">Discount</td>
-          <td style="font-size: 10pt;word-wrap: break-word;width: 25%;" align="right"> {{model.discount}}</td>
+        {{#if model.discount}}
+        <tr style="height:32px;font-size:18px">
+          <td colspan="4" style="word-wrap: break-word;width: 5%;">Discount</td>
+          <td style="word-wrap: break-word;width: 25%;" align="right"><b> {{model.discount}}</b></td>
         </tr>
+        {{/if}}
       </tfoot>
     </table>
-    <div style="text-align: right;"><b><font size="5">Total</font></b> <b><font size="5">₹ {{model.total}}</font></b> <br> </div>
+    <div style="text-align: right;"><b><font size="5">Rs. {{model.total}}</font></b> <br> </div>
   </div>
   <p class="text-center">Thank You. Visit Again</p>
 </div>
