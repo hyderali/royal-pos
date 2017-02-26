@@ -104,7 +104,7 @@ export default Ember.Controller.extend({
       this.get('store').ajax('/newitem', {method: 'POST', body}).then((json) => {
         if(json.message === 'success') {
           this.set('newItemModel', null);
-          let newLineItem = {SKU: sku, Description: description, PurchaseRate: `INR ${purchase_rate}`, Rate: `INR ${rate}`, CF: {Discount: discount, Brand: brand, Design: design, Size: size}};
+          let newLineItem = {'Item Code':json.item.name ,item_id: json.item.item_id, SKU: sku, Description: description, PurchaseRate: `INR ${purchase_rate}`, Rate: `INR ${rate}`, CF: {Discount: discount, Brand: brand, Design: design, Size: size}};
           this.get('model.line_items').pushObject(newLineItem);
           this.set('isShowingModal', false);
           let newNextNumber = `${(Number(sku) + 1)}`;
@@ -155,6 +155,18 @@ export default Ember.Controller.extend({
     },
     removeLineItem(lineItem) {
       this.get('model.line_items').removeObject(lineItem);
-    }
+    },
+    purchaseRateChanged(rate) {
+      let profit = Number(this.get('newItemModel.profit')) || 1;
+      rate = Number(rate);
+      let salesRate = rate + ((rate*profit)/100);
+      this.set('newItemModel.rate', salesRate);
+    },
+    profitChanged(profit) {
+      let rate = Number(this.get('newItemModel.purchase_rate')) || 1;
+      profit = Number(profit);
+      let salesRate = rate + ((rate*profit)/100);
+      this.set('newItemModel.rate', salesRate);
+    },
   }
 });
