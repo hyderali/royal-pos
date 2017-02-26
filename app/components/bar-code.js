@@ -11,7 +11,7 @@ export default Ember.Component.extend({
       this.$().JsBarcode(sku, {
         width: 1,
         height: 22.5,
-        fontSize: 8,
+        fontSize: 13,
         margin: 0
       });
     });

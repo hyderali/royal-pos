@@ -91,7 +91,7 @@ app.all('/api/invoicepdf', function(req, res) {
   });
 });
 app.all('/api/invoiceslist', function(req, res) {
-  var url = 'https://books.zoho.com/api/v3/invoices?authtoken=' + req.query.authtoken + '&status=draft&page=1&per_page=200&organization_id=' + app.parsedData.organization_id + '&customer_id=' + app.parsedData.customer_id;
+  var url = 'https://books.zoho.com/api/v3/invoices?authtoken=' + req.query.authtoken + '&status=unpaid&page=1&per_page=200&organization_id=' + app.parsedData.organization_id + '&customer_id=' + app.parsedData.customer_id;
   request.get({
     url: url
   }, function(err, httpResponse, response) {

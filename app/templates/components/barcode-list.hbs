@@ -1,5 +1,5 @@
-<div style="display:flex;flex-wrap: wrap;flex-direction: row;width:4.25in;margin-left:20px" class="show-print">
-  {{#each items as |item|}}
-    {{item-sticker item=item}}
+<div style="display:flex;flex-wrap: wrap;flex-direction: row;width:519px" class="show-print">
+  {{#each items as |item index|}}
+    {{item-sticker item=item index=index length=items.length}}
   {{/each}}
 </div>

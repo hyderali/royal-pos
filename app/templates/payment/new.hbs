@@ -41,36 +41,38 @@
   <button class="btn btn-primary pull-right" disabled= {{isSaving}} {{action "saveAndRecordPayment"}}>Record</button>
 </form>
 {{#if canShowPrint}}
-<div class="receipt-print">
-  <div style="border: 1px solid #333;">
+<div class="cash-print">
+  <div style="border: 1px solid #333;font-size:18px">
     <table class="pcs-itemtable" style="border-collapse: collapse;">
       <thead>
         <tr style="height:32px;">
           <td style="width:5%">S.No</td>
-          <td style="font-size: 10pt;word-wrap: break-word;width: 35%;"><b>Bill no&nbsp;</b></td>
-          <td style="font-size: 10pt;word-wrap: break-word;width:30%;" align="right"><b>Total Amount</b></td>
-          <td style="font-size: 10pt;word-wrap: break-word;width:30%;" align="right"><b>Paid Amount</b></td>
+          <td style="word-wrap: break-word;width: 35%;"><b>Bill no&nbsp;</b></td>
+          <td style="word-wrap: break-word;width:20%;" align="right"><b>Amount</b></td>
+          <td style="word-wrap: break-word;width:20%;" align="right"><b>Discount</b></td>
+          <td style="word-wrap: break-word;width:20%;" align="right"><b>Paid</b></td>
         </tr>
       </thead>
-      <tbody id="lineitem">
+      <tbody  style="font-weight: bold">
         {{#each model as |invoice index|}}
           <tr>
-            <td style="font-size: 9pt;" valign="top"><span style="font-size: 9pt;white-space: pre-wrap;word-wrap: break-word;" >{{get-index index}}</span></td>
-            <td style="font-size: 9pt" valign="top"><span style="font-size: 9pt;white-space: pre-wrap;word-wrap: break-word;" >{{invoice.invoice_number}}</span></td>
-            <td style="font-size: 9pt;text-align:right;" valign="top"><span style="font-size: 9pt;white-space: pre-wrap;word-wrap: break-word;" >{{invoice.balance}}</span></td>
-            <td style="font-size: 9pt;text-align:right;" valign="top"><span style="font-size: 9pt;white-space: pre-wrap;word-wrap: break-word;" >{{difference invoice.balance invoice.discount}}</span></td>
+            <td valign="top">{{get-index index}}</td>
+            <td valign="top">{{invoice.invoice_number}}</td>
+            <td style="text-align:right;" valign="top">{{invoice.balance}} </td>
+            <td style="text-align:right;" valign="top">{{invoice.discount}} </td>
+            <td style="text-align:right;" valign="top">{{difference invoice.balance invoice.discount}}</td>
           </tr>
         {{/each}}
       </tbody>
       <tfoot>
         <tr style="height:32px;">
-          <td colspan="2" style="font-size: 10pt;word-wrap: break-word;width: 60%;text-align: center;"><b>Total</b></td>
-          <td style="font-size: 10pt;word-wrap: break-word;width: 40%;" align="right"><b>{{total}}</b></td>
-          <td style="font-size: 10pt;word-wrap: break-word;width: 40%;" align="right"><b>{{totalPayable}}</b></td>
+          <td colspan="2" style="word-wrap: break-word;width: 40%;text-align: center;"><b>Total</b></td>
+          <td style="word-wrap: break-word;width: 20%;" align="right"><b>{{total}}</b></td>
+          <td style="word-wrap: break-word;width: 20%;" align="right"><b>{{discount}}</b></td>
+          <td style="word-wrap: break-word;width: 20%;" align="right"><b>{{totalPayable}}</b></td>
         </tr>
       </tfoot>
     </table>
   </div>
-  <div style="text-align: center;">&nbsp;Thank You Visit Again. <br> </div>
 </div>
 {{/if}}

@@ -16,3 +16,5 @@
 npm-debug.log*
 testem.log
 pdf/
+server/royal.json
+server/item.csv

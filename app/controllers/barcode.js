@@ -29,6 +29,10 @@ export default Ember.Controller.extend({
         });
       });
     },
+    clear() {
+      this.set('printitems', []);
+      this.set('items', []);
+    },
     addNewItem(itemName) {
       let itemslist = this.get('session.itemslist');
       let items = this.get('items');
