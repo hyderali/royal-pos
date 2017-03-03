@@ -46,7 +46,9 @@ app.all('/api/login', function(req, res) {
       message: 'success',
       user: user,
       organization_id: app.parsedData.organization_id,
-      customer_id: app.parsedData.customer_id
+      customer_id: app.parsedData.customer_id,
+      inventory_account_id: app.parsedData.inventory_account_id,
+      cogs_id: app.parsedData.cogs_id
     });
     return;
   }

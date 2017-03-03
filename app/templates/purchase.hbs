@@ -1,8 +1,13 @@
 <div class="form-horizontal hidden-print" style="margin:20px">
+  {{#if errorMessage}}
+    <div class="alert alert-danger">
+      {{errorMessage}}
+    </div>
+  {{/if}}
   <div class="form-group">
     <div class="col-md-3">Supplier</div>
     <div class="col-md-9">
-      {{#power-select selected=model.vendor options=session.vendors onchange=(action "selectVendor") as |vendor|}}
+      {{#power-select selected=model.vendor options=session.vendors onchange=(action "selectVendor") searchField="contact_name" as |vendor|}}
         {{vendor.contact_name}}
       {{/power-select}}
     </div>
@@ -81,13 +86,17 @@
       <div class="form-horizontal">
         <div class="form-group">
           <div class="col-md-2">SKU</div>
-          <div class="col-md-4">{{input class="form-control" value = newItemModel.sku}}</div>
+          <div class="col-md-4">{{input class="form-control" value = newItemModel.sku disabled=true}}</div>
           <div class="col-md-2">Name</div>
           <div class="col-md-4">{{input class="form-control" value = newItemModel.description autofocus=true}}</div>
         </div>
         <div class="form-group">
           <div class="col-md-2">Group</div>
-          <div class="col-md-4">{{input class="form-control" value = newItemModel.group}}</div>
+          <div class="col-md-4">
+            {{#power-select class="form-control" selected=newItemModel.group options=groups onchange=(action "selectGroup") onkeydown=(action "createGroupOnEnter") as |group|}}
+              {{group}}
+            {{/power-select}}
+          </div>
         </div>
         <div class="form-group">
           <div class="col-md-2">Purchase Rate</div>
@@ -103,13 +112,25 @@
         </div>
         <div class="form-group">
           <div class="col-md-2">Size</div>
-          <div class="col-md-4">{{input class="form-control" value = newItemModel.size}}</div>
+          <div class="col-md-4">
+            {{#power-select class="form-control" selected=newItemModel.size options=sizes onchange=(action "selectSize") onkeydown=(action "createSizeOnEnter") as |size|}}
+              {{size}}
+            {{/power-select}}
+          </div>
           <div class="col-md-2">Design</div>
-          <div class="col-md-4">{{input class="form-control" value = newItemModel.design}}</div>
+          <div class="col-md-4">
+            {{#power-select class="form-control" selected=newItemModel.design options=designs onchange=(action "selectDesign") onkeydown=(action "createDesignOnEnter") as |design|}}
+              {{design}}
+            {{/power-select}}
+          </div>
         </div>
         <div class="form-group">
           <div class="col-md-2">Brand</div>
-          <div class="col-md-4">{{input class="form-control" value = newItemModel.brand}}</div>
+          <div class="col-md-4">
+            {{#power-select class="form-control" selected=newItemModel.brand options=brands onchange=(action "selectBrand") onkeydown=(action "createBrandOnEnter") as |brand|}}
+              {{brand}}
+            {{/power-select}}
+          </div>
           <div class="col-md-2">Colour</div>
           <div class="col-md-4">{{input class="form-control" value = newItemModel.colour}}</div>
         </div>
