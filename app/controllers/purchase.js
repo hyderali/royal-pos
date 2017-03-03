@@ -206,7 +206,7 @@ export default Ember.Controller.extend({
           this.set('isShowingModal', false);
           let newNextNumber = `${(Number(sku) + 1)}`;
           let length = newNextNumber.length;
-          for (let i=length;i<9;i++ ) {
+          for (let i=length;i<8;i++ ) {
             newNextNumber = `0${newNextNumber}`;
           }
           this.set('nextNumber', newNextNumber);

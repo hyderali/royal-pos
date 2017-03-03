@@ -17,12 +17,13 @@ export default Ember.Controller.extend({
     },
     print() {
       let items = this.get('items');
-      let printitems = this.get('printitems');
+      let printitems = [];
       items.forEach(item => {
         for (let i = 0; i < Number(item.qty); i++) {
           printitems.pushObject(item);
         }
       });
+      this.set('printitems', printitems);
       Ember.run.next(this, () => {
         Ember.run.schedule('afterRender', this, () => {
           window.print();
