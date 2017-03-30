@@ -1,5 +1,5 @@
 import Ember from 'ember';
-
+import getItemName from '../utils/get-item-name';
 export default Ember.Component.extend({
   model: null,
   addNewItem: 'addNewItem',
@@ -11,7 +11,7 @@ export default Ember.Component.extend({
       if (itemName === 'print') {
         this.sendAction('saveAndPrint');
       }
-      this.sendAction('addNewItem', itemName);
+      this.sendAction('addNewItem', getItemName(itemName));
       this.set('id', '');
     },
     removeLineItem(lineItem) {

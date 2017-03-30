@@ -1,4 +1,5 @@
 import Ember from 'ember';
+import getItemName from '../utils/get-item-name';
 const {
   inject: {
     service
@@ -37,7 +38,7 @@ export default Ember.Controller.extend({
     addNewItem(itemName) {
       let itemslist = this.get('session.itemslist');
       let items = this.get('items');
-      let newItem = itemslist.findBy('SKU', itemName);
+      let newItem = itemslist.findBy('SKU', getItemName(itemName));
       if (newItem) {
         newItem.printRate = Number(newItem.Rate.split(' ')[1]);
         items.pushObject(newItem);

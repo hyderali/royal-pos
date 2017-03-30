@@ -1,10 +1,13 @@
 import Ember from 'ember';
+import getItemName from '../utils/get-item-name';
 const {
   computed,
   inject: {
     service
   },
-  isBlank
+  isBlank,
+  get,
+  set
 } = Ember;
 export default Ember.Controller.extend({
   vendor: null,
@@ -132,13 +135,13 @@ export default Ember.Controller.extend({
     },
     addNewItem(itemName) {
       let lineItems = this.get('model.line_items');
-      var existingLineItem = lineItems.findBy('sku', itemName);
+      var existingLineItem = lineItems.findBy('SKU', getItemName(itemName));
       let itemslist = this.get('session.itemslist');
       if(existingLineItem) {
-        existingLineItem.set('quantity', existingLineItem.get('quantity')+1);
+        set(existingLineItem , 'quantity', Number(get(existingLineItem, 'quantity'))+1);
         return;
       }
-      let newItem = itemslist.findBy('SKU', itemName);
+      let newItem = itemslist.findBy('SKU', getItemName(itemName));
       if (newItem) {
         let rate = Number(newItem.Rate.split(' ')[1]);
         newItem.rate = rate;
@@ -205,10 +208,7 @@ export default Ember.Controller.extend({
           this.get('model.line_items').pushObject(newLineItem);
           this.set('isShowingModal', false);
           let newNextNumber = `${(Number(sku) + 1)}`;
-          let length = newNextNumber.length;
-          for (let i=length;i<8;i++ ) {
-            newNextNumber = `0${newNextNumber}`;
-          }
+          newNextNumber = getItemName(newNextNumber);
           this.set('nextNumber', newNextNumber);
           this.set('newItemModel.isSaving', false);
         }
