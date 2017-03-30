@@ -79,6 +79,29 @@ app.all('/api/invoices', function(req, res) {
     });
   });
 });
+app.all('/api/updateinvoice', function(req, res) {
+  var body = JSON.parse(req.body);
+  var url = 'https://books.zoho.com/api/v3/invoices/'+req.query.invoice_id+'?authtoken=' + req.query.authtoken + '&organization_id=' + app.parsedData.organization_id;
+  request.put({
+    url: url,
+    form: {
+      JSONString: req.body
+    }
+  }, function(err, httpResponse, response) {
+    var parsedResponse = JSON.parse(response);
+    if (parsedResponse.code === 0) {
+      res.json({
+        message: 'success',
+        invoice_number: parsedResponse.invoice.invoice_number
+      });
+      return;
+    }
+    res.json({
+      message: 'failure',
+      error: parsedResponse.message
+    });
+  });
+});
 app.all('/api/creditnotes', function(req, res) {
   var body = JSON.parse(req.body);
   var url = 'https://books.zoho.com/api/v3/creditnotes?authtoken=' + req.query.authtoken + '&organization_id=' + app.parsedData.organization_id;
@@ -190,6 +213,35 @@ app.all('/api/applycredits', function(req, res) {
       message: 'failure',
       error: parsedResponse.message
     });
+  });
+});
+app.all('/api/searchinvoice', function(req, res) {
+  var url = 'https://books.zoho.com/api/v3/invoices?invoice_number_contains='+req.query.invoice_number+'&authtoken=' + req.query.authtoken + '&organization_id=' + app.parsedData.organization_id;
+  request.get({
+    url: url
+  }, function(err, httpResponse, response) {
+    var parsedResponse = JSON.parse(response);
+    if (parsedResponse.code === 0) {
+      var url = 'https://books.zoho.com/api/v3/invoices/'+parsedResponse.invoices[0].invoice_id+'?authtoken=' + req.query.authtoken + '&organization_id=' + app.parsedData.organization_id;
+      request.get({
+        url: url
+      }, function(err, httpResponse, response) {
+        var secondResponse = JSON.parse(response);
+        if (secondResponse.code === 0) {
+          res.json(secondResponse);
+          return;
+        }
+        res.json({
+          message: 'failure',
+          error: secondResponse.message
+        });
+      });
+    } else {
+      res.json({
+        message: 'failure',
+        error: parsedResponse.message
+      });
+    }
   });
 });
 app.all('/api/paymentpdf', function(req, res) {

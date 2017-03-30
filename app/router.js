@@ -17,6 +17,7 @@ Router.map(function() {
   this.route('purchase');
   this.route('printsticker');
   this.route('returns');
+  this.route('editsales');
 });
 
 export default Router;

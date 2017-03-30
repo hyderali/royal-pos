@@ -54,6 +54,10 @@ export default Ember.Object.extend({
       hours -=12;
       meridian = 'PM';
     }
-    return `${hours}:${date.getMinutes()} ${meridian}`;
+    let minutes = date.getMinutes();
+    if (minutes < 10) {
+      minutes = `0${minutes}`;
+    }
+    return `${hours}:${minutes} ${meridian}`;
   })
 });

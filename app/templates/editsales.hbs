@@ -1,5 +1,18 @@
-<h3 class="text-center hidden-print">Sales</h3>
+<h3 class="text-center hidden-print">Sales Edit</h3>
 <div style="margin:20px" class="hidden-print">
+  <div class="form-group">
+    <label class="col-md-3">Bill No: </label>
+    <div class="col-md-6">
+      {{input class="form-control" enter="searchInvoice" value=invoiceNumber autofocus=true}}
+    </div>
+    <div class="col-md-3">
+      <button disabled={{isSearching}} class="btn btn-primary" type="button" {{action "searchInvoice" invoiceNumber}}>Search</button>
+    </div>
+  </div>
+    <br><br><br>
+</div>
+{{#if canShowDetails}}
+<div class="hidden-print">
   <table class="table table-bordered">
     <thead>
       <tr>
@@ -60,4 +73,5 @@
     <div class="btn-group"><button type="button" {{action "newSale"}} class="btn btn-default">New Sale</button></div>
   </div>
 </div>
+{{/if}}
 {{sales-receipt model=model}}
