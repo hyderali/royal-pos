@@ -6,6 +6,7 @@ const { inject: { service } } = Ember;
 export default Ember.Route.extend({
   session: service(),
   store: service(),
+  postUrl: '/invoices',
   beforeModel() {
     if (!this.get('session.itemslist')) {
       return this.get('store').ajax('/itemslist').then((json) => {
@@ -17,6 +18,34 @@ export default Ember.Route.extend({
   },
   model() {
     return Invoice.create({line_items: []});
+  },
+  processedBody() {
+    let model = this.get('controller.model');
+    let customer_id = this.get('session.customer_id');
+    let date = todayDate();
+    let body = { customer_id: `${customer_id}`, date, discount: `${model.get('discountPercent')}%`,discount_type:'entity_level', is_discount_before_tax: false, adjustment: model.get('adjustment'), custom_fields: [ {label: 'Discount CF', value: model.get('discount')} ] };
+    let lineItems = model.get('line_items');
+    let serializedItems = lineItems.map((item) => {
+      return {item_id: item.get('item_id'), rate: item.get('rate'), quantity: item.get('quantity'), item_custom_fields: item.get('item_custom_fields')};
+    });
+    body.line_items = serializedItems;
+    model.set('isSaving', true);
+    return body;
+  },
+  postResponse(json) {
+    if(json.message === 'success') {
+      let model = this.get('controller.model');
+      model.setProperties({
+        entity_number: json.entity_number,
+        canShowPrint: true,
+        isSaving: false
+      });
+      Ember.run.schedule('afterRender', this, () => {
+        this.send('printReceipt');
+        this.send('printReceipt');
+        this.send('newSale');
+      });
+    }
   },
   actions: {
     addNewItem(itemName) {
@@ -46,29 +75,9 @@ export default Ember.Route.extend({
       lineItems.removeObject(lineItem);
     },
     saveAndPrint() {
-      let model = this.get('controller.model');
-      let customer_id = this.get('session.customer_id');
-      let date = todayDate();
-      let body = { customer_id: `${customer_id}`, date, discount: `${model.get('discountPercent')}%`,discount_type:'entity_level', is_discount_before_tax: false, adjustment: model.get('adjustment'), custom_fields: [ {label: 'Discount CF', value: model.get('discount')} ] };
-      let lineItems = model.get('line_items');
-      let serializedItems = lineItems.map((item) => {
-        return {item_id: item.get('item_id'), rate: item.get('rate'), quantity: item.get('quantity'), item_custom_fields: item.get('item_custom_fields')};
-      });
-      body.line_items = serializedItems;
-      model.set('isSaving', true);
-      this.get('store').ajax('/invoices', {method: 'POST', body}).then((json) => {
-        if(json.message === 'success') {
-          model.setProperties({
-            invoice_number: json.invoice_number,
-            canShowPrint: true,
-            isSaving: false
-          });
-          Ember.run.schedule('afterRender', this, () => {
-            this.send('printReceipt');
-            this.send('printReceipt');
-            this.send('newSale');
-          });
-        }
+      let body = this.processedBody();
+      this.get('store').ajax(this.get('postUrl'), {method: 'POST', body}).then((json) => {
+        this.postResponse(json);
       });
     },
     printReceipt() {

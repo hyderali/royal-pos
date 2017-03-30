@@ -1,0 +1,61 @@
+<div class="hidden-print">
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th style="width:5%">S.No</th>
+        <th style="width:15%">SKU</th>
+        <th style="width:15%">Name</th>
+        <th style="width:14%">Qty</th>
+        <th style="width:14%">Rate</th>
+        <th style="width:14%">Discount</th>
+        <th style="width:14%">Total</th>
+        <th style="width:9%"></th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each model.line_items as |lineItem index|}}
+        <tr>
+          <td>{{get-index index}}</td>
+          <td>{{lineItem.sku}}</td>
+          <td>{{lineItem.name}}</td>
+          <td>{{input class="form-control" value=lineItem.quantity}}</td>
+          <td>{{lineItem.rate}}</td>
+          <td>{{lineItem.discount}}</td>
+          <td>{{lineItem.total}}</td>
+          <td {{action "removeLineItem" lineItem}}><button type="button" class="btn btn-danger pull-right">Delete</button></td>
+        </tr>
+      {{/each}}
+      <tr>
+        <td></td>
+        <td>{{input class="form-control" value=id autofocus=true enter="itemChanged"}}</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+    </tbody>
+    <tfoot>
+      <tr>
+        <td colspan="3" class="text-right">Subtotal</td>
+        <td colspan="3">{{model.qtyTotal}}</td>
+        <td>{{model.subtotal}}</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td colspan="6" class="text-right">Discount</td>
+        <td>{{model.discount}}</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td colspan="6" class="text-right">Total</td>
+        <td>{{model.total}}</td>
+        <td></td>
+      </tr>
+    </tfoot>
+  </table>
+  <div class="btn-toolbar pull-right">
+    <div class="btn-group"><button type="button" disabled= {{model.isSaving}} {{action "saveAndPrint"}} class="btn btn-primary">Save & Print</button></div>
+    <div class="btn-group"><button type="button" {{action "newSale"}} class="btn btn-default">New Sale</button></div>
+  </div>
+</div>

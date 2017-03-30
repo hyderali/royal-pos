@@ -32,7 +32,7 @@ export default Ember.Route.extend({
       }
     });
   },
-  setupController(controller, model) {
+  setupController(controller) {
     this._super(...arguments);
     controller.set('credits', 0);
   },
@@ -111,7 +111,7 @@ export default Ember.Route.extend({
         balance -= invbalance;
       }
       if (balance) {
-        controller.set('applyCreditsError', 'Enough Invoices Not Selected');
+        controller.setProperties({isApplyingCredits: true, applyCreditsError: 'Enough Invoices Not Selected'});
         return;
       }
       let body = {invoices};

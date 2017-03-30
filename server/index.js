@@ -69,7 +69,7 @@ app.all('/api/invoices', function(req, res) {
     if (parsedResponse.code === 0) {
       res.json({
         message: 'success',
-        invoice_number: parsedResponse.invoice.invoice_number
+        entity_number: parsedResponse.invoice.invoice_number
       });
       return;
     }
@@ -92,7 +92,7 @@ app.all('/api/updateinvoice', function(req, res) {
     if (parsedResponse.code === 0) {
       res.json({
         message: 'success',
-        invoice_number: parsedResponse.invoice.invoice_number
+        entity_number: parsedResponse.invoice.invoice_number
       });
       return;
     }
@@ -115,7 +115,7 @@ app.all('/api/creditnotes', function(req, res) {
     if (parsedResponse.code === 0) {
       res.json({
         message: 'success',
-        invoice_number: parsedResponse.creditnote.creditnote_number
+        entity_number: parsedResponse.creditnote.creditnote_number
       });
       return;
     }
@@ -221,7 +221,7 @@ app.all('/api/searchinvoice', function(req, res) {
     url: url
   }, function(err, httpResponse, response) {
     var parsedResponse = JSON.parse(response);
-    if (parsedResponse.code === 0) {
+    if (parsedResponse.code === 0 && parsedResponse.invoices && parsedResponse.invoices.length) {
       var url = 'https://books.zoho.com/api/v3/invoices/'+parsedResponse.invoices[0].invoice_id+'?authtoken=' + req.query.authtoken + '&organization_id=' + app.parsedData.organization_id;
       request.get({
         url: url

@@ -8,7 +8,7 @@ export default Ember.Route.extend({
       return json.invoices;
     });
   },
-  setupController(controller, model) {
+  setupController(controller) {
     this._super(...arguments);
     this.get('store').ajax('/creditnoteslist').then((json) => {
       controller.set('creditnotes', json.creditnotes);
