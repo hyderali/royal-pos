@@ -16,6 +16,7 @@ Router.map(function() {
   this.route('barcode');
   this.route('purchase');
   this.route('printsticker');
+  this.route('returns');
 });
 
 export default Router;

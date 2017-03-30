@@ -1,6 +1,7 @@
 import Ember from 'ember';
-const { computed } = Ember;
+const { computed, inject: { controller } } = Ember;
 export default Ember.Controller.extend({
+  paymentController: controller('payment'),
   queryParams: ['invoiceids'],
   total: computed('model.@each.balance', function() {
     let model = this.get('model');
@@ -16,15 +17,31 @@ export default Ember.Controller.extend({
     }, 0);
     return total;
   }),
-  totalPayable: computed('total', 'discount', function() {
+  totalPayable: computed('total', 'discount', 'credits', function() {
     let total = this.get('total');
     let discount = Number(this.get('discount')||0);
-    return (total - discount).toFixed(2);
+    let credits = Number(this.get('credits')||0);
+    return (total - discount - credits).toFixed(2);
   }),
-  balance: computed('total', 'received', 'discount', function() {
+  balance: computed('total', 'received', 'discount', 'credits', function() {
     let total = this.get('total');
     let received = Number(this.get('received')||0);
     let discount = Number(this.get('discount')||0);
-    return (received + discount - total).toFixed(2);
-  })
+    let credits = Number(this.get('credits')||0);
+    return (received + discount + credits - total).toFixed(2);
+  }),
+  actions: {
+    showApplyCredits() {
+      this.set('isShowingModal', true);
+    },
+    closeModal() {
+      this.set('isShowingModal', false);
+    },
+    closeConfirmModal() {
+      this.setProperties({ isShowingConfirmModal: false, selectedCreditNote: null });
+    },
+    _applyCredits(creditNote) {
+      this.setProperties({ isShowingConfirmModal: true, selectedCreditNote: creditNote });
+    }
+  }
 });

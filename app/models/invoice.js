@@ -44,7 +44,7 @@ export default Ember.Object.extend({
   }),
   date: computed(function() {
     let date =  new Date();
-    return `${date.getDate()}/${date.getMonth()+1}/${date.getFullYear()}`
+    return `${date.getDate()}/${date.getMonth()+1}/${date.getFullYear()}`;
   }),
   time: computed(function() {
     let date =  new Date();
@@ -54,6 +54,6 @@ export default Ember.Object.extend({
       hours -=12;
       meridian = 'PM';
     }
-    return `${hours}:${date.getMinutes()} ${meridian}`
+    return `${hours}:${date.getMinutes()} ${meridian}`;
   })
 });

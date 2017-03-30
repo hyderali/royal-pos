@@ -79,6 +79,29 @@ app.all('/api/invoices', function(req, res) {
     });
   });
 });
+app.all('/api/creditnotes', function(req, res) {
+  var body = JSON.parse(req.body);
+  var url = 'https://books.zoho.com/api/v3/creditnotes?authtoken=' + req.query.authtoken + '&organization_id=' + app.parsedData.organization_id;
+  request.post({
+    url: url,
+    form: {
+      JSONString: req.body
+    }
+  }, function(err, httpResponse, response) {
+    var parsedResponse = JSON.parse(response);
+    if (parsedResponse.code === 0) {
+      res.json({
+        message: 'success',
+        invoice_number: parsedResponse.creditnote.creditnote_number
+      });
+      return;
+    }
+    res.json({
+      message: 'failure',
+      error: parsedResponse.message
+    });
+  });
+});
 app.all('/api/invoicepdf', function(req, res) {
   var invoiceId = req.query.invoice_id;
   var url = 'https://books.zoho.com/api/v3/invoices/' + invoiceId + '?print=true&accept=pdf&authtoken=' + req.query.authtoken + '&organization_id=' + app.parsedData.organization_id + '&customer_id=' + app.parsedData.customer_id;
@@ -108,6 +131,22 @@ app.all('/api/invoiceslist', function(req, res) {
     });
   })
 });
+app.all('/api/creditnoteslist', function(req, res) {
+  var url = 'https://books.zoho.com/api/v3/creditnotes?authtoken=' + req.query.authtoken + '&status=open&page=1&per_page=200&organization_id=' + app.parsedData.organization_id + '&customer_id=' + app.parsedData.customer_id + '&formatneeded=true';
+  request.get({
+    url: url
+  }, function(err, httpResponse, response) {
+    var parsedResponse = JSON.parse(response);
+    if (parsedResponse.code === 0) {
+      res.json(parsedResponse);
+      return;
+    }
+    res.json({
+      message: 'failure',
+      error: parsedResponse.message
+    });
+  })
+});
 app.all('/api/payments', function(req, res) {
   var body = JSON.parse(req.body);
   var url = 'https://books.zoho.com/api/v3/customerpayments?authtoken=' + req.query.authtoken + '&organization_id=' + app.parsedData.organization_id;
@@ -122,6 +161,28 @@ app.all('/api/payments', function(req, res) {
       res.json({
         message: 'success',
         payment_id: parsedResponse.payment.payment_id
+      });
+      return;
+    }
+    res.json({
+      message: 'failure',
+      error: parsedResponse.message
+    });
+  });
+});
+app.all('/api/applycredits', function(req, res) {
+  var body = JSON.parse(req.body);
+  var url = 'https://books.zoho.com/api/v3/creditnotes/'+req.query.creditnote_id+'/invoices?authtoken=' + req.query.authtoken + '&organization_id=' + app.parsedData.organization_id;
+  request.post({
+    url: url,
+    form: {
+      JSONString: req.body
+    }
+  }, function(err, httpResponse, response) {
+    var parsedResponse = JSON.parse(response);
+    if (parsedResponse.code === 0) {
+      res.json({
+        message: 'success'
       });
       return;
     }

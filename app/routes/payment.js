@@ -8,6 +8,12 @@ export default Ember.Route.extend({
       return json.invoices;
     });
   },
+  setupController(controller, model) {
+    this._super(...arguments);
+    this.get('store').ajax('/creditnoteslist').then((json) => {
+      controller.set('creditnotes', json.creditnotes);
+    });
+  },
   actions: {
     recordPayment(invoiceId) {
       this.transitionTo('payment.new', {queryParams: {invoiceids: [invoiceId]}});
