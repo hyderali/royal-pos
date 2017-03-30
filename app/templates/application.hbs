@@ -1,17 +1,25 @@
-<div style="position: fixed;top: 0;left: 20px;width: 80%;" class="hidden-print">
-  <h4>Royal Cotton Land</h4>
-  {{#if session.isAdmin}}
-  <div>
-    {{link-to "sales" "sales"}}
-    {{link-to "editsales" "editsales"}}
-    {{link-to "returns" "returns"}}
-    {{link-to "payment" "payment"}}
-    {{link-to "adjustitem" "barcode"}}
-    {{link-to "barcode" "barcode"}}
-    {{link-to "purchase" "purchase"}}
-    {{link-to "printsticker" "printsticker"}}
+<div style="position: fixed;top: 0;left: 20px;width: 100%;" class="hidden-print">
+  <nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#">Royal Cotton Land</a>
+    </div>
+    {{#if session.isAdmin}}
+    <div class="collapse navbar-collapse">
+      <ul class="nav navbar-nav">
+          {{#link-to "sales" tagName="li"}}{{link-to "Sales" "sales"}}{{/link-to}}
+          {{#link-to "editsales" tagName="li"}}{{link-to "Edit Sales" "editsales"}}{{/link-to}}
+          {{#link-to "returns" tagName="li"}}{{link-to "Returns" "returns"}}{{/link-to}}
+          {{#link-to "payment" tagName="li"}}{{link-to "Payment" "payment"}}{{/link-to}}
+          {{#link-to "adjustitem" tagName="li"}}{{link-to "Adjust Item" "adjustitem"}}{{/link-to}}
+          {{#link-to "barcode" tagName="li"}}{{link-to "Barcode" "barcode"}}{{/link-to}}
+          {{#link-to "purchase" tagName="li"}}{{link-to "Purchase" "purchase"}}{{/link-to}}
+          {{#link-to "printsticker" tagName="li"}}{{link-to "Print Sticker" "printsticker"}}{{/link-to}}
+      </ul>
+    </div>
+    {{/if}}
   </div>
-  {{/if}}
+</nav>
 </div>
 <div style="position:relative;top:60px" class="show-print">
     {{outlet}}
