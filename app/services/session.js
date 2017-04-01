@@ -9,5 +9,6 @@ export default Ember.Service.extend({
   vendors: [],
   inventory_account_id: null,
   cogs_id: null,
-  isAdmin: equal('user.is_admin', true)
+  isAdmin: equal('user.is_admin', true),
+  isSale: equal('user.is_sale', true)
 });
