@@ -1,4 +1,4 @@
-import itemName from 'royal-pos/utils/get-item-name';
+import getItemName from 'royal-pos/utils/get-item-name';
 import { module, test } from 'qunit';
 
 module('Unit | Utility | item name');
