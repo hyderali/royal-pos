@@ -1,5 +1,10 @@
 <h3 class="text-center hidden-print">Sales Edit</h3>
 <div style="margin:20px" class="hidden-print">
+  {{#if msg}}
+  <div class="alert alert-danger">
+    {{msg}}
+  </div>
+  {{/if}}
   <div class="form-group">
     <label class="col-md-3">Bill No: </label>
     <div class="col-md-6">

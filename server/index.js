@@ -216,7 +216,7 @@ app.all('/api/applycredits', function(req, res) {
   });
 });
 app.all('/api/searchinvoice', function(req, res) {
-  var url = 'https://books.zoho.com/api/v3/invoices?invoice_number_contains='+req.query.invoice_number+'&authtoken=' + req.query.authtoken + '&organization_id=' + app.parsedData.organization_id;
+  var url = 'https://books.zoho.com/api/v3/invoices?status=unpaid&invoice_number_contains='+req.query.invoice_number+'&authtoken=' + req.query.authtoken + '&organization_id=' + app.parsedData.organization_id;
   request.get({
     url: url
   }, function(err, httpResponse, response) {

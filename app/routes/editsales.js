@@ -14,7 +14,7 @@ export default SalesRoute.extend({
       invoice_number = `INV-${invoice_number}`;
       let params = {invoice_number};
       let controller = this.get('controller');
-      controller.set('isSearching', true);
+      controller.setProperties({msg: '', isSearching: true});
       this.get('store').ajax('/searchinvoice', {params}).then((json) => {
         if(json.message === 'success') {
           let model = Invoice.create({invoice_id: json.invoice.invoice_id, line_items: []});
@@ -24,6 +24,8 @@ export default SalesRoute.extend({
             model.get('line_items').pushObject(newLineItem);
           });
           controller.setProperties({model, canShowDetails: true, isSearching: false});
+        } else {
+          controller.setProperties({msg: json.message,model: null, canShowDetails: false, isSearching: false});
         }
       });
     },
