@@ -42,7 +42,6 @@ export default Ember.Route.extend({
       });
       Ember.run.schedule('afterRender', this, () => {
         this.send('printReceipt');
-        this.send('printReceipt');
         this.send('newSale');
       });
     }
@@ -81,6 +80,7 @@ export default Ember.Route.extend({
       });
     },
     printReceipt() {
+      window.print();
       window.print();
     },
     newSale() {

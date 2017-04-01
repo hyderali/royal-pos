@@ -2,9 +2,13 @@
 <div class="receipt-print">
   <div style="border: 1px solid #333;">
     <div style="border-bottom: 1px solid #333;">
+      {{#if isSales}}
       <div style="text-align: center;"><b><font size="6">ROYAL COTTON LAND</font></b></div>
       <div style="text-align: center;">6A, Mahal 1st Street</div>
       <div style="text-align: center;">Madurai<br><br></div>
+      {{else}}
+      <div style="text-align: center;"><b><font size="6">Sales Return</font></b></div>
+      {{/if}}
     </div>
     <table style="width:100%">
       <tbody>
