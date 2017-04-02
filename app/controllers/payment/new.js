@@ -41,7 +41,7 @@ export default Ember.Controller.extend({
       this.setProperties({ isShowingConfirmModal: false, selectedCreditNote: null });
     },
     _applyCredits(creditNote) {
-      this.setProperties({ isShowingConfirmModal: true, selectedCreditNote: creditNote });
+      this.setProperties({ isShowingConfirmModal: true, selectedCreditNote: creditNote, isApplyingCredits: false, applyCreditsError: '' });
     }
   }
 });

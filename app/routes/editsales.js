@@ -20,7 +20,10 @@ export default SalesRoute.extend({
           let model = Invoice.create({invoice_id: json.invoice.invoice_id, line_items: []});
           json.invoice.line_items.forEach(lineItem => {
             let newLineItem = LineItem.create(lineItem);
-            newLineItem.set('discount', newLineItem.get('item_custom_fields').findBy('label', 'Discount').value);
+            let discountObj = newLineItem.get('item_custom_fields').findBy('label', 'Discount');
+            if (discountObj) {
+              newLineItem.set('discount', discountObj.value);
+            }
             model.get('line_items').pushObject(newLineItem);
           });
           controller.setProperties({model, canShowDetails: true, isSearching: false});
