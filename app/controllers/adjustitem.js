@@ -2,9 +2,11 @@ import Ember from 'ember';
 const {
   inject: {
     service
-  }
+  },
+  Controller,
+  run: { schedule, next }
 } = Ember;
-export default Ember.Controller.extend({
+export default Controller.extend({
   items: [],
   printitems: [],
   failedItems: [],
@@ -20,7 +22,7 @@ export default Ember.Controller.extend({
       let items = this.get('items');
       let printitems = this.get('printitems');
       let body = {};
-      items.forEach(item => {
+      items.forEach((item) => {
         for (let i = 0; i < Number(item.qty); i++) {
           printitems.pushObject(item);
         }
@@ -34,8 +36,8 @@ export default Ember.Controller.extend({
           this.set('failedItems', json.failed_items);
           this.set('isShowingModal', true);
         }
-        Ember.run.next(this, () => {
-          Ember.run.schedule('afterRender', this, () => {
+        next(this, () => {
+          schedule('afterRender', this, () => {
             window.print();
           });
         });

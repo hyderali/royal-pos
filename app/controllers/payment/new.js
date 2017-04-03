@@ -1,6 +1,6 @@
 import Ember from 'ember';
-const { computed, inject: { controller } } = Ember;
-export default Ember.Controller.extend({
+const { computed, inject: { controller }, Controller } = Ember;
+export default Controller.extend({
   paymentController: controller('payment'),
   queryParams: ['invoiceids'],
   total: computed('model.@each.balance', function() {
@@ -19,15 +19,15 @@ export default Ember.Controller.extend({
   }),
   totalPayable: computed('total', 'discount', 'credits', function() {
     let total = this.get('total');
-    let discount = Number(this.get('discount')||0);
-    let credits = Number(this.get('credits')||0);
+    let discount = Number(this.get('discount') || 0);
+    let credits = Number(this.get('credits') || 0);
     return (total - discount - credits).toFixed(2);
   }),
   balance: computed('total', 'received', 'discount', 'credits', function() {
     let total = this.get('total');
-    let received = Number(this.get('received')||0);
-    let discount = Number(this.get('discount')||0);
-    let credits = Number(this.get('credits')||0);
+    let received = Number(this.get('received') || 0);
+    let discount = Number(this.get('discount') || 0);
+    let credits = Number(this.get('credits') || 0);
     return (received + discount + credits - total).toFixed(2);
   }),
   actions: {

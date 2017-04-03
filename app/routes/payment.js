@@ -1,6 +1,6 @@
 import Ember from 'ember';
-const { inject: { service } } = Ember;
-export default Ember.Route.extend({
+const { inject: { service }, Route } = Ember;
+export default Route.extend({
   session: service(),
   store: service(),
   model() {
@@ -16,10 +16,10 @@ export default Ember.Route.extend({
   },
   actions: {
     recordPayment(invoiceId) {
-      this.transitionTo('payment.new', {queryParams: {invoiceids: [invoiceId]}});
+      this.transitionTo('payment.new', { queryParams: { invoiceids: [invoiceId] } });
     },
     recordPayments(invoiceIds) {
-      this.transitionTo('payment.new', {queryParams: {invoiceids: invoiceIds}});
+      this.transitionTo('payment.new', { queryParams: { invoiceids: invoiceIds } });
     },
     reload() {
       this.refresh();

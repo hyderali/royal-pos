@@ -1,5 +1,6 @@
 import Ember from 'ember';
-export default Ember.Component.extend({
+const { Component } = Ember;
+export default Component.extend({
   tagName: 'tr',
   addNewItem: 'addNewItem',
   saveAndPrint: 'saveAndPrint',

@@ -1,6 +1,7 @@
+/* eslint camelcase: "off" */
 import Ember from 'ember';
-const { computed: { equal } } = Ember;
-export default Ember.Service.extend({
+const { computed: { equal }, Service } = Ember;
+export default Service.extend({
   isLoggedIn: false,
   user: null,
   itemslist: null,

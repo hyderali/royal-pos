@@ -1,6 +1,7 @@
+/* eslint camelcase: "off" */
 import Ember from 'ember';
-const { inject: { service }, isBlank } = Ember;
-export default Ember.Route.extend({
+const { inject: { service }, isBlank, Route, Object } = Ember;
+export default Route.extend({
   store: service(),
   session: service(),
   beforeModel() {
@@ -11,7 +12,7 @@ export default Ember.Route.extend({
     }
   },
   model() {
-    return Ember.Object.create({line_items: []});
+    return Object.create({ line_items: [] });
   },
   actions: {
     reload() {

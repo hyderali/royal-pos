@@ -3,9 +3,11 @@ import getItemName from '../utils/get-item-name';
 const {
   inject: {
     service
-  }
+  },
+  Controller,
+  run: { schedule, next }
 } = Ember;
-export default Ember.Controller.extend({
+export default Controller.extend({
   items: [],
   printitems: [],
   failedItems: [],
@@ -19,14 +21,14 @@ export default Ember.Controller.extend({
     print() {
       let items = this.get('items');
       let printitems = [];
-      items.forEach(item => {
+      items.forEach((item) => {
         for (let i = 0; i < Number(item.qty); i++) {
           printitems.pushObject(item);
         }
       });
       this.set('printitems', printitems);
-      Ember.run.next(this, () => {
-        Ember.run.schedule('afterRender', this, () => {
+      next(this, () => {
+        schedule('afterRender', this, () => {
           window.print();
         });
       });

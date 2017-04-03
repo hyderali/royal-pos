@@ -1,6 +1,7 @@
+/* eslint camelcase: "off" */
 import Ember from 'ember';
-const { computed } = Ember;
-export default Ember.Object.extend({
+const { computed, Object } = Ember;
+export default Object.extend({
   line_items: null,
   subtotal: computed('line_items.@each.total', function() {
     let lineItems = this.get('line_items');
@@ -13,7 +14,7 @@ export default Ember.Object.extend({
     let lineItems = this.get('line_items');
     let lineItemDiscount;
     let discount = lineItems.reduce((discount, item)=> {
-      lineItemDiscount = Number(item.get('total')) * (Number(item.get('discount')/100));
+      lineItemDiscount = Number(item.get('total')) * (Number(item.get('discount') / 100));
       return discount + lineItemDiscount;
     }, 0);
     return Math.round(discount);
@@ -21,13 +22,13 @@ export default Ember.Object.extend({
   discountPercent: computed('subtotal', 'discount', function() {
     let subtotal = this.get('subtotal');
     let discount = this.get('discount');
-    return ((discount/subtotal)*100).toFixed(2);
+    return ((discount / subtotal) * 100).toFixed(2);
   }),
   adjustment: computed('subtotal', 'discount', 'discountPercent', function() {
     let subtotal = this.get('subtotal');
     let discount = this.get('discount');
     let discountPercent = Number(this.get('discountPercent'));
-    let adjustment = (Number(((subtotal * discountPercent)/100).toFixed(2)) - discount).toFixed(2);
+    let adjustment = (Number(((subtotal * discountPercent) / 100).toFixed(2)) - discount).toFixed(2);
     return adjustment;
   }),
   qtyTotal: computed('line_items.@each.quantity', function() {
@@ -44,14 +45,14 @@ export default Ember.Object.extend({
   }),
   date: computed(function() {
     let date =  new Date();
-    return `${date.getDate()}/${date.getMonth()+1}/${date.getFullYear()}`;
+    return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
   }),
   time: computed(function() {
     let date =  new Date();
     let hours = date.getHours();
     let meridian = 'AM';
     if (hours > 12) {
-      hours -=12;
+      hours -= 12;
       meridian = 'PM';
     }
     let minutes = date.getMinutes();

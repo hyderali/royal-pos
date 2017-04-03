@@ -1,10 +1,10 @@
 import Ember from 'ember';
-const { inject: { service } } = Ember;
-export default Ember.Route.extend({
+const { inject: { service }, Route } = Ember;
+export default Route.extend({
   store: service(),
   session: service(),
   beforeModel() {
-    if(!this.get('session.isLoggedIn')) {
+    if (!this.get('session.isLoggedIn')) {
       this.transitionTo('login');
     }
   },
@@ -16,5 +16,5 @@ export default Ember.Route.extend({
         this.set('session.organization_id', json.organization_id);
       });
     }
-  },
+  }
 });

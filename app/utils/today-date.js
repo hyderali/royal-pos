@@ -1,7 +1,7 @@
 export default function todayDate() {
   let todayDate = new Date();
   let fullYear = todayDate.getFullYear();
-  let fullMonth = todayDate.getMonth()+1;
+  let fullMonth = todayDate.getMonth() + 1;
   if (fullMonth < 10) {
     fullMonth = `0${fullMonth}`;
   }

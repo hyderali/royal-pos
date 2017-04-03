@@ -1,3 +1,4 @@
+/* eslint camelcase: "off" */
 import Ember from 'ember';
 import LineItem from '../models/lineitem';
 import Invoice from '../models/invoice';
@@ -7,18 +8,18 @@ export default SalesRoute.extend({
   session: service(),
   store: service(),
   setupController(controller) {
-    controller.setProperties({canShowDetails: false, model:null});
+    controller.setProperties({ canShowDetails: false, model: null });
   },
   actions: {
     searchInvoice(invoice_number) {
       invoice_number = `INV-${invoice_number}`;
-      let params = {invoice_number};
+      let params = { invoice_number };
       let controller = this.get('controller');
-      controller.setProperties({msg: '', isSearching: true});
-      this.get('store').ajax('/searchinvoice', {params}).then((json) => {
-        if(json.message === 'success') {
-          let model = Invoice.create({invoice_id: json.invoice.invoice_id, line_items: []});
-          json.invoice.line_items.forEach(lineItem => {
+      controller.setProperties({ msg: '', isSearching: true });
+      this.get('store').ajax('/searchinvoice', { params }).then((json) => {
+        if (json.message === 'success') {
+          let model = Invoice.create({ invoice_id: json.invoice.invoice_id, line_items: [] });
+          json.invoice.line_items.forEach((lineItem) => {
             let newLineItem = LineItem.create(lineItem);
             let discountObj = newLineItem.get('item_custom_fields').findBy('label', 'Discount');
             if (discountObj) {
@@ -26,9 +27,9 @@ export default SalesRoute.extend({
             }
             model.get('line_items').pushObject(newLineItem);
           });
-          controller.setProperties({model, canShowDetails: true, isSearching: false});
+          controller.setProperties({ model, canShowDetails: true, isSearching: false });
         } else {
-          controller.setProperties({msg: json.message,model: null, canShowDetails: false, isSearching: false});
+          controller.setProperties({ msg: json.message, model: null, canShowDetails: false, isSearching: false });
         }
       });
     },
@@ -37,8 +38,8 @@ export default SalesRoute.extend({
       body.reason =  'Update';
       body.due_date =  body.date;
       let invoice_id = this.get('controller.model.invoice_id');
-      let params = {invoice_id};
-      this.get('store').ajax('/updateinvoice', {method: 'POST', body, params}).then((json) => {
+      let params = { invoice_id };
+      this.get('store').ajax('/updateinvoice', { method: 'POST', body, params }).then((json) => {
         this.postResponse(json);
       });
     },

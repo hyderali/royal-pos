@@ -1,6 +1,7 @@
 import Ember from 'ember';
+const { Component } = Ember;
 import getItemName from '../utils/get-item-name';
-export default Ember.Component.extend({
+export default Component.extend({
   model: null,
   addNewItem: 'addNewItem',
   removeLineItem: 'removeLineItem',

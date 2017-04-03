@@ -2,12 +2,12 @@ import Ember from 'ember';
 import Resolver from './resolver';
 import loadInitializers from 'ember-load-initializers';
 import config from './config/environment';
-
+const { TextSupport, run: { next }, Application } = Ember;
 let App;
-Ember.TextSupport.reopen({
+TextSupport.reopen({
   becomeFocused: function() {
     if (this.get('autofocus')) {
-      Ember.run.next(this, function() {
+      next(this, function() {
         if (this.isDestroyed || this.isDestroying) {
           return;
         }
@@ -18,7 +18,7 @@ Ember.TextSupport.reopen({
 });
 Ember.MODEL_FACTORY_INJECTIONS = true;
 
-App = Ember.Application.extend({
+App = Application.extend({
   modulePrefix: config.modulePrefix,
   podModulePrefix: config.podModulePrefix,
   Resolver,
