@@ -49,7 +49,10 @@
   "private": true,
   "dependencies": {
     "body-parser": "^1.15.2",
+    "bootstrap": "^3.3.7",
     "csvtojson": "^1.0.3",
+    "ember-cli-import-from-npm": "^0.1.4",
+    "jsbarcode": "^3.5.9",
     "request": "^2.79.0"
   }
 }
