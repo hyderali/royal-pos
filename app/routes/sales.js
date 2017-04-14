@@ -9,6 +9,11 @@ export default Route.extend({
   store: service(),
   postUrl: '/invoices',
   beforeModel() {
+    if (!this.get('session.salespersons')) {
+      this.get('store').ajax('/salespersons').then((json) => {
+        this.set('session.salespersons', json.salespersons);
+      });
+    }
     if (!this.get('session.itemslist')) {
       return this.get('store').ajax('/itemslist').then((json) => {
         this.set('session.itemslist', json.items);
@@ -24,7 +29,7 @@ export default Route.extend({
     let model = this.get('controller.model');
     let customer_id = this.get('session.customer_id');
     let date = todayDate();
-    let body = { customer_id: `${customer_id}`, date, discount: `${model.get('discountPercent')}%`, discount_type: 'entity_level', is_discount_before_tax: false, adjustment: model.get('adjustment'), custom_fields: [{ label: 'Discount CF', value: model.get('discount') }] };
+    let body = { customer_id: `${customer_id}`, date, discount: `${model.get('discountPercent')}%`, discount_type: 'entity_level', is_discount_before_tax: false, adjustment: model.get('adjustment'), custom_fields: [{ label: 'Discount CF', value: model.get('discount') }], salesperson_id: model.get('salesperson.salesperson_id') };
     let lineItems = model.get('line_items');
     let serializedItems = lineItems.map((item) => {
       return { item_id: item.get('item_id'), rate: item.get('rate'), quantity: item.get('quantity'), item_custom_fields: item.get('item_custom_fields') };

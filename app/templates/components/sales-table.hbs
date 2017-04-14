@@ -1,4 +1,14 @@
 <div class="hidden-print">
+  {{#if isSales}}
+  <div class="form-group">
+    <div class="col-md-3">Sales Person</div>
+    <div class="col-md-9">
+      {{#power-select selected=model.salesperson options=session.salespersons onchange=(action "selectSP") searchField="salesperson_name" as |salesperson|}}
+        {{salesperson.salesperson_name}}
+      {{/power-select}}
+    </div>
+  </div><br><br>
+  {{/if}}
   <table class="table table-bordered">
     <thead>
       <tr>
@@ -27,7 +37,7 @@
       {{/each}}
       <tr>
         <td></td>
-        <td>{{input class="form-control" value=id autofocus=true enter="itemChanged"}}</td>
+        <td>{{input class="form-control" value=id enter="itemChanged" autofocus=(not isSales)}}</td>
         <td></td>
         <td></td>
         <td></td>

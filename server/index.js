@@ -1,4 +1,4 @@
-/*jshint node:true*/
+/* eslint-disable */
 var bodyParser = require('body-parser');
 var fs = require('fs');
 var request = require('request');
@@ -146,6 +146,22 @@ app.all('/api/invoiceslist', function(req, res) {
     var parsedResponse = JSON.parse(response);
     if (parsedResponse.code === 0) {
       res.json(parsedResponse);
+      return;
+    }
+    res.json({
+      message: 'failure',
+      error: parsedResponse.message
+    });
+  })
+});
+app.all('/api/salespersons', function(req, res) {
+  var url = 'https://books.zoho.com/api/v3/invoices/editpage?authtoken=' + req.query.authtoken + '&organization_id=' + app.parsedData.organization_id;
+  request.get({
+    url: url
+  }, function(err, httpResponse, response) {
+    var parsedResponse = JSON.parse(response);
+    if (parsedResponse.code === 0) {
+      res.json({salespersons: parsedResponse.salespersons});
       return;
     }
     res.json({

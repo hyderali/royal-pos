@@ -1,12 +1,18 @@
 import Ember from 'ember';
-const { Component } = Ember;
+const { inject: { service }, Component } = Ember;
 import getItemName from '../utils/get-item-name';
 export default Component.extend({
+  session: service(),
+  isSales: true,
   model: null,
   addNewItem: 'addNewItem',
   removeLineItem: 'removeLineItem',
   saveAndPrint: 'saveAndPrint',
   newSale: 'newSale',
+  didInsertElement() {
+    this._super();
+    this.$('.ember-basic-dropdown-trigger').focus();
+  },
   actions: {
     itemChanged(itemName) {
       if (itemName === 'print') {
@@ -23,6 +29,9 @@ export default Component.extend({
     },
     newSale() {
       this.sendAction('newSale');
+    },
+    selectSP(salesperson) {
+      this.set('model.salesperson', salesperson);
     }
   }
 });
