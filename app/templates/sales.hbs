@@ -1,3 +1,8 @@
 <h3 class="text-center hidden-print">Sales</h3>
+{{#if errorMessage}}
+  <div class="alert alert-danger hidden-print">
+    {{errorMessage}}
+  </div>
+{{/if}}
 {{sales-table model=model}}
 {{sales-receipt model=model}}

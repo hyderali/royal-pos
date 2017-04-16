@@ -32,7 +32,7 @@ export default SalesRoute.extend({
           });
           controller.setProperties({ model, canShowDetails: true, isSearching: false });
         } else {
-          controller.setProperties({ msg: json.message, model: null, canShowDetails: false, isSearching: false });
+          controller.setProperties({ msg: json.error, model: null, canShowDetails: false, isSearching: false });
         }
       });
     },

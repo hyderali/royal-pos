@@ -25,6 +25,10 @@ export default Route.extend({
   model() {
     return Invoice.create({ line_items: [] });
   },
+  setupController(controller) {
+    this._super(...arguments);
+    controller.set('errorMessage', '');
+  },
   processedBody() {
     let model = this.get('controller.model');
     let customer_id = this.get('session.customer_id');
@@ -39,8 +43,8 @@ export default Route.extend({
     return body;
   },
   postResponse(json) {
+    let model = this.get('controller.model');
     if (json.message === 'success') {
-      let model = this.get('controller.model');
       model.setProperties({
         entity_number: json.entity_number,
         canShowPrint: true,
@@ -50,6 +54,9 @@ export default Route.extend({
         this.send('printReceipt');
         this.send('newSale');
       });
+    } else {
+      this.set('controller.errorMessage', json.error);
+      model.set('isSaving', false);
     }
   },
   actions: {
@@ -80,6 +87,7 @@ export default Route.extend({
       lineItems.removeObject(lineItem);
     },
     saveAndPrint() {
+      this.set('controller.errorMessage', '');
       let body = this.processedBody();
       this.get('store').ajax(this.get('postUrl'), { method: 'POST', body }).then((json) => {
         this.postResponse(json);
