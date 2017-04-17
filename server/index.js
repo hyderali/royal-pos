@@ -40,7 +40,9 @@ module.exports = function(app) {
               reject(parsedResponse.message);
             }
           } catch (e) {
-            reject('Error');
+
+            console.log(`URL is ${url}`);
+            reject('Error in connection. Try again');
           }
         })
       });
