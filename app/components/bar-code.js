@@ -10,7 +10,7 @@ export default Component.extend({
     this._super();
     schedule('afterRender', this, () => {
       this.$().JsBarcode(sku, {
-        width: 1,
+        width: 1.5,
         height: 22.5,
         fontSize: 13,
         margin: 0

@@ -12,11 +12,11 @@
     </div>
     <table style="width:100%">
       <tbody>
-        <tr style="border-bottom: 1px solid #333;">
+        <tr style="border-bottom: 1px solid #333;font-size: 18px;">
           <td>{{numberLabel}}:</td>
           <td style="border-left: 1px solid #333;padding-left:5px">{{model.entity_number}}</td>
         </tr>
-        <tr>
+        <tr style="font-size: 18px;">
           <td>Date: </td>
           <td style="border-left: 1px solid #333;padding-left:5px">{{model.date}} <span class="pull-right" style="margin-right: 10px">{{model.time}}</span></td>
         </tr>
@@ -44,7 +44,7 @@
         {{/each}}
       </tbody>
       <tfoot>
-        <tr style="height:32px;font-size: 20px;font-weight: bold;">
+        <tr style="height:32px;">
           <td colspan="3" style="word-wrap: break-word;width: 5%;">Sub Total</td>
           <td style="word-wrap: break-word;width: 11%;" align="right">{{model.qtyTotal}}</td>
           <td style="word-wrap: break-word;width: 25%;" align="right">{{model.subtotal}}</td>
