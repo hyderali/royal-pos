@@ -4,8 +4,8 @@
     <div style="border-bottom: 1px solid #333;">
       {{#if isSales}}
       <div style="text-align: center;"><b><font size="6">ROYAL COTTON LAND</font></b></div>
-      <div style="text-align: center;">6A, Mahal 1st Street</div>
-      <div style="text-align: center;">Madurai<br><br></div>
+      <div style="text-align: center;font-size:20px">6A, Mahal 1st Street</div>
+      <div style="text-align: center;font-size:20px">Madurai<br><br></div>
       {{else}}
       <div style="text-align: center;"><b><font size="6">Sales Return</font></b></div>
       {{/if}}
@@ -44,13 +44,13 @@
         {{/each}}
       </tbody>
       <tfoot>
-        <tr style="height:32px;">
+        <tr style="height:32px;font-size:22px">
           <td colspan="3" style="word-wrap: break-word;width: 5%;">Sub Total</td>
           <td style="word-wrap: break-word;width: 11%;" align="right">{{model.qtyTotal}}</td>
-          <td style="word-wrap: break-word;width: 25%;" align="right">{{model.subtotal}}</td>
+          <td style="word-wrap: break-word;width: 25%;" align="right"><b>{{model.subtotal}}</b></td>
         </tr>
         {{#if model.discount}}
-        <tr style="height:32px;font-size:18px">
+        <tr style="height:32px;font-size:22px">
           <td colspan="4" style="word-wrap: break-word;width: 5%;">Discount</td>
           <td style="word-wrap: break-word;width: 25%;" align="right"><b> {{model.discount}}</b></td>
         </tr>
