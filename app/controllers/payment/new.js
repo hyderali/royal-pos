@@ -21,7 +21,7 @@ export default Controller.extend({
     let total = this.get('total');
     let discount = Number(this.get('discount') || 0);
     let credits = Number(this.get('credits') || 0);
-    return (total - discount - credits).toFixed(2);
+    return Math.round(total - discount - credits);
   }),
   balance: computed('total', 'received', 'discount', 'credits', function() {
     let total = this.get('total');
