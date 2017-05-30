@@ -19,18 +19,6 @@ export default Object.extend({
     }, 0);
     return Math.round(discount);
   }),
-  discountPercent: computed('subtotal', 'discount', function() {
-    let subtotal = this.get('subtotal');
-    let discount = this.get('discount');
-    return ((discount / subtotal) * 100).toFixed(2);
-  }),
-  adjustment: computed('subtotal', 'discount', 'discountPercent', function() {
-    let subtotal = this.get('subtotal');
-    let discount = this.get('discount');
-    let discountPercent = Number(this.get('discountPercent'));
-    let adjustment = (Number(((subtotal * discountPercent) / 100).toFixed(2)) - discount).toFixed(2);
-    return adjustment;
-  }),
   qtyTotal: computed('line_items.@each.quantity', function() {
     let lineItems = this.get('line_items');
     let qtyTotal = lineItems.reduce((sum, item)=> {

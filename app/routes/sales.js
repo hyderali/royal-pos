@@ -33,7 +33,7 @@ export default Route.extend({
     let model = this.get('controller.model');
     let customer_id = this.get('session.customer_id');
     let date = todayDate();
-    let body = { customer_id: `${customer_id}`, date, discount: `${model.get('discountPercent')}%`, discount_type: 'entity_level', is_discount_before_tax: false, adjustment: model.get('adjustment'), custom_fields: [{ label: 'Discount CF', value: model.get('discount') }], salesperson_id: model.get('salesperson.salesperson_id') };
+    let body = { customer_id: `${customer_id}`, date, discount: `${model.get('discount')}`, discount_type: 'entity_level', is_discount_before_tax: false, salesperson_id: model.get('salesperson.salesperson_id') };
     let lineItems = model.get('line_items');
     let serializedItems = lineItems.map((item) => {
       return { item_id: item.get('item_id'), rate: item.get('rate'), quantity: item.get('quantity'), item_custom_fields: item.get('item_custom_fields') };
