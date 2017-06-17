@@ -16,7 +16,7 @@ export default Route.extend({
   },
   actions: {
     reload() {
-      this.set('printItems', []);
+      this.set('controller.printItems', []);
       this.refresh();
     }
   }

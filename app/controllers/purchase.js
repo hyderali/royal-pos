@@ -213,7 +213,6 @@ export default Controller.extend({
           let newNextNumber = `${(Number(sku) + 1)}`;
           newNextNumber = getItemName(newNextNumber);
           this.set('nextNumber', newNextNumber);
-          this.set('newItemModel.isSaving', false);
         }
       });
     },
@@ -246,6 +245,7 @@ export default Controller.extend({
           next(this, () => {
             schedule('afterRender', this, () => {
               window.print();
+              this.send('reload');
             });
           });
         } else if (json.message === 'failure') {
