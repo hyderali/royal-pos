@@ -12,7 +12,6 @@ export default SalesRoute.extend({
   },
   actions: {
     searchInvoice(invoice_number) {
-      invoice_number = `INV-${invoice_number}`;
       let params = { invoice_number };
       let controller = this.get('controller');
       controller.setProperties({ msg: '', isSearching: true });
