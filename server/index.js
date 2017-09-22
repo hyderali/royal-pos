@@ -204,7 +204,8 @@ module.exports = function(app) {
     });
   });
   app.all('/api/creditnoteslist', function(req, res) {
-    var url = `/creditnotes?authtoken=${req.query.authtoken}&status=open&page=1&per_page=200&customer_id=${app.parsedData.customer_id}&formatneeded=true`;
+    //var url = `/creditnotes?authtoken=${req.query.authtoken}&status=open&page=1&per_page=200&customer_id=${app.parsedData.customer_id}&formatneeded=true`;
+    var url = `/creditnotes?authtoken=${req.query.authtoken}&filter_by=Status.Open&page=1&per_page=200&formatneeded=true`;
     makeRequest(url, {
       method: 'GET'
     }).then(function(json) {
