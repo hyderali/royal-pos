@@ -140,7 +140,7 @@ module.exports = function(app) {
     });
   });
   app.all('/api/invoices', function(req, res) {
-    var url = `/invoices?authtoken=${req.query.authtoken}`;
+    var url = `/invoices?authtoken=${req.query.authtoken}&is_quick_create=true`;
     makeRequest(url, {
       method: 'POST',
       body: req.body
