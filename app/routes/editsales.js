@@ -19,8 +19,10 @@ export default SalesRoute.extend({
         if (json.message === 'success') {
           let salespersons = this.get('session.salespersons') || [];
           let salesperson = salespersons.findBy('salesperson_id', json.invoice.salesperson_id);
+          let phoneNumber = (json.invoice.custom_fields.findBy('label', 'Phone Number') || {}).value;
           let model = Invoice.create({ invoice_id: json.invoice.invoice_id, line_items: [] });
           model.set('salesperson', salesperson);
+          model.set('phone_number', phoneNumber);
           json.invoice.line_items.forEach((lineItem) => {
             let newLineItem = LineItem.create(lineItem);
             let discountObj = newLineItem.get('item_custom_fields').findBy('label', 'Discount');
