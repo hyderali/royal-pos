@@ -300,6 +300,31 @@ module.exports = function(app) {
       });
     });
   });
+  app.all('/api/items', function(req, res) {
+    var cfParams = req.query.cf_params;
+    var cfParamString = '';
+    for (var key in cfParams) {
+      if (cfParams.hasOwnProperty(key)) {
+        cfParamString = `${cfParamString}${key}=${cfParams[key]}&`
+      }
+    }
+    console.log(cfParamString);
+    var url = `/items?${cfParamString}authtoken=${req.query.authtoken}&page=${req.query.page}`;
+    makeRequest(url, {
+      method: 'GET'
+    }).then(function(json) {
+      res.json({
+        message: 'success',
+        items: json.items,
+        has_more_page: json.page_context.has_more_page
+      });
+    }).catch(function(message) {
+      res.json({
+        message: 'failure',
+        error: message
+      });
+    });
+  });
   app.all('/api/newitem', function(req, res) {
     var url = `/items?authtoken=${req.query.authtoken}`;
     makeRequest(url, {

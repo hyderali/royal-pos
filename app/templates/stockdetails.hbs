@@ -1,0 +1,93 @@
+<h3 class="text-center hidden-print">Stock Details</h3>
+<div class="form-horizontal" style="padding:20px;">
+  <div class="form-group row">
+    <div class="col-md-3">
+      <div>Group</div>
+      <div>
+        {{#power-select class="form-control" selected=searchModel.group options=session.groups onchange=(action "selectGroup") as |design|}}
+          {{design}}
+        {{/power-select}}
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div>Size</div>
+      <div>
+        {{#power-select class="form-control" selected=searchModel.size options=session.sizes onchange=(action "selectSize") as |size|}}
+          {{size}}
+        {{/power-select}}
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div>Design</div>
+      <div>
+        {{#power-select class="form-control" selected=searchModel.design options=session.designs onchange=(action "selectDesign") as |design|}}
+          {{design}}
+        {{/power-select}}
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div>Brand</div>
+      <div>
+        {{#power-select class="form-control" selected=searchModel.brand options=session.brands onchange=(action "selectBrand") as |design|}}
+          {{design}}
+        {{/power-select}}
+      </div>
+    </div>
+  </div>
+  <div class="form-group row">
+    <div class="col-md-2">
+      <button class="btn btn-primary" {{action "searchItems"}}>Search</button>
+    </div>
+  </div>
+  <hr>
+  <table class="table">
+    <thead>
+      <tr>
+        <th> S.No </th>
+        <th> SKU </th>
+        <th> Name </th>
+        <th> Purchase Rate </th>
+        <th> Sales Rate </th>
+        <th> Group </th>
+        <th> Size </th>
+        <th> Design </th>
+        <th> Brand </th>
+        <th> Quantity </th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#if isLoading}}
+      <tr>
+        <td colspan="10" align="center">Loading</td>
+      </tr>
+      {{else}}
+      {{#each results as |result index|}}
+      <tr>
+        <td> {{get-index index}} </td>
+        <td> {{result.sku}} </td>
+        <td> {{result.description}} </td>
+        <td> {{result.purchase_rate}} </td>
+        <td> {{result.rate}} </td>
+        <td> {{get result groupCFIDLabeL}} </td>
+        <td> {{get result sizeCFIDLabeL}} </td>
+        <td> {{get result designCFIDLabeL}} </td>
+        <td> {{get result brandCFIDLabeL}} </td>
+        <td> {{result.stock_on_hand}} </td>
+      </tr>
+      {{/each}}
+      {{/if}}
+    </tbody>
+    {{#unless isLoading}}
+    <tfoot>
+      <tr>
+        {{#if hasMore}}
+        <td colspan="10" align="center" {{action "loadMore"}}><a href="#">Load More</a></td>
+        {{else if results}}
+        <td colspan="9" align="right">Total</td>
+        <td>{{totalQty}}</td>
+        {{/if}}
+      </tr>
+    </tfoot>
+    {{/unless}}
+  </table>
+</div>
