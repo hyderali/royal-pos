@@ -24,16 +24,16 @@ export default Route.extend({
       let brand = controller.get('searchModel.brand');
       let results = controller.get('results');
       if (group) {
-        cfParams[`custom_field_${controller.get('groupCFID')}_contains`] = group;
+        cfParams[`custom_field_${controller.get('groupCFID')}`] = group;
       }
       if (size) {
-        cfParams[`custom_field_${controller.get('sizeCFID')}_contains`] = size;
+        cfParams[`custom_field_${controller.get('sizeCFID')}`] = size;
       }
       if (design) {
-        cfParams[`custom_field_${controller.get('designCFID')}_contains`] = design;
+        cfParams[`custom_field_${controller.get('designCFID')}`] = design;
       }
       if (brand) {
-        cfParams[`custom_field_${controller.get('brandCFID')}_contains`] = brand;
+        cfParams[`custom_field_${controller.get('brandCFID')}`] = brand;
       }
       controller.set('isLoading', true);
       this.get('store').ajax('/items', { params: { 'cf_params': cfParams, page } }).then((json) => {

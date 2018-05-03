@@ -308,7 +308,6 @@ module.exports = function(app) {
         cfParamString = `${cfParamString}${key}=${cfParams[key]}&`
       }
     }
-    console.log(cfParamString);
     var url = `/items?${cfParamString}authtoken=${req.query.authtoken}&page=${req.query.page}`;
     makeRequest(url, {
       method: 'GET'
