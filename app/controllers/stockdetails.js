@@ -67,7 +67,7 @@ export default Controller.extend({
       this.send('searchItems', this.get('page') + 1);
     },
     clearAll() {
-      this.set('searchModel', {});
+      this.setProperties({ searchModel: {}, results: [] });
     }
   }
 });
