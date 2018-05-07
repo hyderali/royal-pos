@@ -4,7 +4,7 @@
     <div class="col-md-3">
       <div>Group</div>
       <div>
-        {{#power-select class="form-control" selected=searchModel.group options=session.groups onchange=(action "selectGroup") as |design|}}
+        {{#power-select class="form-control" selected=searchModel.group options=session.groups onchange=(action "selectGroup") onkeydown=(action "createGroupOnEnter") as |design|}}
           {{design}}
         {{/power-select}}
       </div>
@@ -12,7 +12,7 @@
     <div class="col-md-3">
       <div>Size</div>
       <div>
-        {{#power-select class="form-control" selected=searchModel.size options=session.sizes onchange=(action "selectSize") as |size|}}
+        {{#power-select class="form-control" selected=searchModel.size options=session.sizes onchange=(action "selectSize") onkeydown=(action "createSizeOnEnter") as |size|}}
           {{size}}
         {{/power-select}}
       </div>
@@ -20,7 +20,7 @@
     <div class="col-md-3">
       <div>Design</div>
       <div>
-        {{#power-select class="form-control" selected=searchModel.design options=session.designs onchange=(action "selectDesign") as |design|}}
+        {{#power-select class="form-control" selected=searchModel.design options=session.designs onchange=(action "selectDesign") onkeydown=(action "createDesignOnEnter") as |design|}}
           {{design}}
         {{/power-select}}
       </div>
@@ -28,7 +28,7 @@
     <div class="col-md-3">
       <div>Brand</div>
       <div>
-        {{#power-select class="form-control" selected=searchModel.brand options=session.brands onchange=(action "selectBrand") as |design|}}
+        {{#power-select class="form-control" selected=searchModel.brand options=session.brands onchange=(action "selectBrand") onkeydown=(action "createBrandOnEnter") as |design|}}
           {{design}}
         {{/power-select}}
       </div>
