@@ -64,7 +64,7 @@ export default Controller.extend({
 
         let selected = this.get('newItemModel.group') || '';
         if (!selected.includes(select.searchText)) {
-          this.get('groups').pushObject(select.searchText);
+          this.get('session.groups').pushObject(select.searchText);
           select.actions.choose(select.searchText);
         }
       }
@@ -78,7 +78,7 @@ export default Controller.extend({
 
         let selected = this.get('newItemModel.size') || '';
         if (!selected.includes(select.searchText)) {
-          this.get('sizes').pushObject(select.searchText);
+          this.get('session.sizes').pushObject(select.searchText);
           select.actions.choose(select.searchText);
         }
       }
@@ -92,7 +92,7 @@ export default Controller.extend({
 
         let selected = this.get('newItemModel.design') || '';
         if (!selected.includes(select.searchText)) {
-          this.get('designs').pushObject(select.searchText);
+          this.get('session.designs').pushObject(select.searchText);
           select.actions.choose(select.searchText);
         }
       }
@@ -106,7 +106,7 @@ export default Controller.extend({
 
         let selected = this.get('newItemModel.brand') || '';
         if (!selected.includes(select.searchText)) {
-          this.get('brands').pushObject(select.searchText);
+          this.get('session.brands').pushObject(select.searchText);
           select.actions.choose(select.searchText);
         }
       }
