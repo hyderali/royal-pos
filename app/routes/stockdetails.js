@@ -37,10 +37,12 @@ export default Route.extend({
       }
       controller.set('isLoading', true);
       this.store.ajax('/items', { params: { 'cf_params': cfParams, page } }).then((json) => {
+        let items = json.items;
+        items = items.filterBy('stock_on_hand');
         if (page === 1) {
-          results = json.items;
+          results = items;
         } else {
-          results = results.concat(json.items);
+          results = results.concat(items);
         }
         controller.setProperties({ results, hasMore: json.has_more_page, isLoading: false, page });
       });
