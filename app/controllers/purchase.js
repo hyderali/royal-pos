@@ -53,13 +53,16 @@ export default Controller.extend({
       this.set('newItemModel.group', group);
     },
     createGroupOnEnter(select, e) {
+      let searchText = select.searchText
       if (e.keyCode === 13 && select.isOpen
-        && !select.highlighted && !isBlank(select.searchText)) {
+        && !select.highlighted && !isBlank(searchText)) {
 
         let selected = this.get('newItemModel.group') || '';
-        if (!selected.includes(select.searchText)) {
-          this.get('session.groups').pushObject(select.searchText);
-          select.actions.choose(select.searchText);
+        if (!selected.includes(searchText)) {
+          let body = { searchText, attribute: 'groups' };
+          this.store.ajax('/newattribute', { method: 'POST', body });
+          this.get('session.groups').pushObject(searchText);
+          select.actions.choose(searchText);
         }
       }
     },
@@ -67,13 +70,16 @@ export default Controller.extend({
       this.set('newItemModel.size', size);
     },
     createSizeOnEnter(select, e) {
+      let searchText = select.searchText
       if (e.keyCode === 13 && select.isOpen
-        && !select.highlighted && !isBlank(select.searchText)) {
+        && !select.highlighted && !isBlank(searchText)) {
 
         let selected = this.get('newItemModel.size') || '';
-        if (!selected.includes(select.searchText)) {
-          this.get('session.sizes').pushObject(select.searchText);
-          select.actions.choose(select.searchText);
+        if (!selected.includes(searchText)) {
+          let body = { searchText, attribute: 'sizes' };
+          this.store.ajax('/newattribute', { method: 'POST', body });
+          this.get('session.sizes').pushObject(searchText);
+          select.actions.choose(searchText);
         }
       }
     },
@@ -81,13 +87,16 @@ export default Controller.extend({
       this.set('newItemModel.design', design);
     },
     createDesignOnEnter(select, e) {
+      let searchText = select.searchText
       if (e.keyCode === 13 && select.isOpen
-        && !select.highlighted && !isBlank(select.searchText)) {
+        && !select.highlighted && !isBlank(searchText)) {
 
         let selected = this.get('newItemModel.design') || '';
-        if (!selected.includes(select.searchText)) {
-          this.get('session.designs').pushObject(select.searchText);
-          select.actions.choose(select.searchText);
+        if (!selected.includes(searchText)) {
+          let body = { searchText, attribute: 'designs' };
+          this.store.ajax('/newattribute', { method: 'POST', body });
+          this.get('session.designs').pushObject(searchText);
+          select.actions.choose(searchText);
         }
       }
     },
@@ -95,13 +104,16 @@ export default Controller.extend({
       this.set('newItemModel.brand', brand);
     },
     createBrandOnEnter(select, e) {
+      let searchText = select.searchText
       if (e.keyCode === 13 && select.isOpen
-        && !select.highlighted && !isBlank(select.searchText)) {
+        && !select.highlighted && !isBlank(searchText)) {
 
         let selected = this.get('newItemModel.brand') || '';
-        if (!selected.includes(select.searchText)) {
-          this.get('session.brands').pushObject(select.searchText);
-          select.actions.choose(select.searchText);
+        if (!selected.includes(searchText)) {
+          let body = { searchText, attribute: 'brands' };
+          this.store.ajax('/newattribute', { method: 'POST', body });
+          this.get('session.brands').pushObject(searchText);
+          select.actions.choose(searchText);
         }
       }
     },
