@@ -1,7 +1,10 @@
 /* eslint camelcase: "off" */
-import Ember from 'ember';
+import { set, get } from '@ember/object';
+
+import { inject as service } from '@ember/service';
+import Route from '@ember/routing/route';
+import { schedule } from '@ember/runloop';
 import todayDate from '../../utils/today-date';
-const { get, set, inject: { service }, Route, run: { schedule } } = Ember;
 
 export default Route.extend({
   session: service(),
@@ -42,9 +45,9 @@ export default Route.extend({
       this.refresh();
     },
     saveAndRecordPayment() {
-      let controller = this.get('controller');
-      let invoices = controller.get('model');
-      let credits = controller.get('credits');
+      let controller = this.controller;
+      let invoices = controller.model;
+      let credits = controller.credits;
       let customer_id = this.get('session.customer_id');
       let date = todayDate();
       let body = {
@@ -79,7 +82,7 @@ export default Route.extend({
       body.invoices = serializedInvoices;
       body.amount = amount;
       this.set('controller.isSaving', true);
-      this.get('store').ajax('/payments', {
+      this.store.ajax('/payments', {
         method: 'POST',
         body
       }).then((json) => {
@@ -93,9 +96,9 @@ export default Route.extend({
       });
     },
     applyCredits() {
-      let controller = this.get('controller');
-      let selectedCreditNote = controller.get('selectedCreditNote');
-      let model = controller.get('model');
+      let controller = this.controller;
+      let selectedCreditNote = controller.selectedCreditNote;
+      let model = controller.model;
       let { balance, creditnote_id } = selectedCreditNote;
       let invoices = [];
       controller.send('closeConfirmModal');
@@ -117,7 +120,7 @@ export default Route.extend({
       }
       let body = { invoices };
       let params = { creditnote_id };
-      this.get('store').ajax('/applycredits', {
+      this.store.ajax('/applycredits', {
         method: 'POST',
         body,
         params

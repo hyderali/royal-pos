@@ -1,9 +1,9 @@
 /* eslint camelcase: "off" */
-import Ember from 'ember';
+import { inject as service } from '@ember/service';
+
 import LineItem from '../models/lineitem';
 import Invoice from '../models/invoice';
 import SalesRoute from './sales';
-const { inject: { service } } = Ember;
 export default SalesRoute.extend({
   session: service(),
   store: service(),
@@ -13,9 +13,9 @@ export default SalesRoute.extend({
   actions: {
     searchInvoice(invoice_number) {
       let params = { invoice_number };
-      let controller = this.get('controller');
+      let controller = this.controller;
       controller.setProperties({ msg: '', isSearching: true });
-      this.get('store').ajax('/searchinvoice', { params }).then((json) => {
+      this.store.ajax('/searchinvoice', { params }).then((json) => {
         if (json.message === 'success') {
           let salespersons = this.get('session.salespersons') || [];
           let salesperson = salespersons.findBy('salesperson_id', json.invoice.salesperson_id);
@@ -43,7 +43,7 @@ export default SalesRoute.extend({
       body.due_date =  body.date;
       let invoice_id = this.get('controller.model.invoice_id');
       let params = { invoice_id };
-      this.get('store').ajax('/updateinvoice', { method: 'POST', body, params }).then((json) => {
+      this.store.ajax('/updateinvoice', { method: 'POST', body, params }).then((json) => {
         this.postResponse(json);
       });
     },

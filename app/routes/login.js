@@ -1,5 +1,6 @@
-import Ember from 'ember';
-const { inject: { service }, Object, Route } = Ember;
+import { inject as service } from '@ember/service';
+import Object from '@ember/object';
+import Route from '@ember/routing/route';
 export default Route.extend({
   session: service(),
   store: service(),
@@ -12,7 +13,7 @@ export default Route.extend({
       let { username, password } = model;
       let body = { username, password };
       model.set('error', '');
-      this.get('store').ajax('/login', { method: 'POST', body }).then((json) => {
+      this.store.ajax('/login', { method: 'POST', body }).then((json) => {
         if (json.message === 'success') {
           this.set('session.isLoggedIn', true);
           this.set('session.user', json.user);
