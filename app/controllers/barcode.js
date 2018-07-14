@@ -1,12 +1,7 @@
-import Ember from 'ember';
+import { inject as service } from '@ember/service';
+import Controller from '@ember/controller';
+import { next, schedule } from '@ember/runloop';
 import getItemName from '../utils/get-item-name';
-const {
-  inject: {
-    service
-  },
-  Controller,
-  run: { schedule, next }
-} = Ember;
 export default Controller.extend({
   items: [],
   printitems: [],
@@ -19,7 +14,7 @@ export default Controller.extend({
       this.toggleProperty('isShowingModal');
     },
     print() {
-      let items = this.get('items');
+      let items = this.items;
       let printitems = [];
       items.forEach((item) => {
         for (let i = 0; i < Number(item.qty); i++) {
@@ -39,7 +34,7 @@ export default Controller.extend({
     },
     addNewItem(itemName) {
       let itemslist = this.get('session.itemslist');
-      let items = this.get('items');
+      let items = this.items;
       let newItem = itemslist.findBy('SKU', getItemName(itemName));
       if (newItem) {
         newItem.printRate = Number(newItem.Rate.split(' ')[1]);

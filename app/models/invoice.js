@@ -1,17 +1,17 @@
 /* eslint camelcase: "off" */
-import Ember from 'ember';
-const { computed, Object } = Ember;
+import Object, { computed } from '@ember/object';
+
 export default Object.extend({
   line_items: null,
   subtotal: computed('line_items.@each.total', function() {
-    let lineItems = this.get('line_items');
+    let lineItems = this.line_items;
     let subtotal = lineItems.reduce((sum, item)=> {
       return sum + Number(item.get('total'));
     }, 0);
     return subtotal;
   }),
   discount: computed('line_items.@each.{discount,total}', function() {
-    let lineItems = this.get('line_items');
+    let lineItems = this.line_items;
     let lineItemDiscount;
     let discount = lineItems.reduce((discount, item)=> {
       lineItemDiscount = Number(item.get('total')) * (Number(item.get('discount') / 100));
@@ -20,15 +20,15 @@ export default Object.extend({
     return Math.round(discount);
   }),
   qtyTotal: computed('line_items.@each.quantity', function() {
-    let lineItems = this.get('line_items');
+    let lineItems = this.line_items;
     let qtyTotal = lineItems.reduce((sum, item)=> {
       return sum + Number(item.get('quantity'));
     }, 0);
     return qtyTotal;
   }),
   total: computed('subtotal', 'discount', function() {
-    let subtotal = this.get('subtotal');
-    let discount = this.get('discount');
+    let subtotal = this.subtotal;
+    let discount = this.discount;
     return subtotal - discount;
   }),
   date: computed(function() {

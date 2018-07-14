@@ -1,5 +1,5 @@
-import Ember from 'ember';
-const { inject: { service }, Route } = Ember;
+import { inject as service } from '@ember/service';
+import Route from '@ember/routing/route';
 export default Route.extend({
   session: service(),
   store: service(),
@@ -8,7 +8,7 @@ export default Route.extend({
     if (itemCF) {
       return itemCF;
     }
-    return this.get('store').ajax('/itemcustomfields').then((json) => {
+    return this.store.ajax('/itemcustomfields').then((json) => {
       itemCF = json.custom_fields;
       this.set('session.itemCF', itemCF);
       return itemCF;
@@ -16,27 +16,27 @@ export default Route.extend({
   },
   actions: {
     searchItems(page = 1) {
-      let controller = this.get('controller');
+      let controller = this.controller;
       let cfParams = {};
       let group = controller.get('searchModel.group');
       let size = controller.get('searchModel.size');
       let design = controller.get('searchModel.design');
       let brand = controller.get('searchModel.brand');
-      let results = controller.get('results');
+      let results = controller.results;
       if (group) {
-        cfParams[`custom_field_${controller.get('groupCFID')}`] = group;
+        cfParams[`custom_field_${controller.groupCFID}`] = group;
       }
       if (size) {
-        cfParams[`custom_field_${controller.get('sizeCFID')}`] = size;
+        cfParams[`custom_field_${controller.sizeCFID}`] = size;
       }
       if (design) {
-        cfParams[`custom_field_${controller.get('designCFID')}`] = design;
+        cfParams[`custom_field_${controller.designCFID}`] = design;
       }
       if (brand) {
-        cfParams[`custom_field_${controller.get('brandCFID')}`] = brand;
+        cfParams[`custom_field_${controller.brandCFID}`] = brand;
       }
       controller.set('isLoading', true);
-      this.get('store').ajax('/items', { params: { 'cf_params': cfParams, page } }).then((json) => {
+      this.store.ajax('/items', { params: { 'cf_params': cfParams, page } }).then((json) => {
         if (page === 1) {
           results = json.items;
         } else {

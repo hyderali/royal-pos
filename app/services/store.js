@@ -1,5 +1,5 @@
-import Ember from 'ember';
-const { inject: { service }, merge, Service } = Ember;
+import { merge } from '@ember/polyfills';
+import Service, { inject as service } from '@ember/service';
 export default Service.extend({
   session: service(),
   ajax(requestUrl, options = {}) {

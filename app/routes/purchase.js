@@ -1,12 +1,15 @@
 /* eslint camelcase: "off" */
-import Ember from 'ember';
-const { inject: { service }, isBlank, Route, Object } = Ember;
+import { inject as service } from '@ember/service';
+
+import { isBlank } from '@ember/utils';
+import Route from '@ember/routing/route';
+import Object from '@ember/object';
 export default Route.extend({
   store: service(),
   session: service(),
   beforeModel() {
     if (isBlank(this.get('session.vendors'))) {
-      return this.get('store').ajax('/vendors').then((json) => {
+      return this.store.ajax('/vendors').then((json) => {
         this.set('session.vendors', json.contacts);
       });
     }

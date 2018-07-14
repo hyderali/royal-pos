@@ -1,16 +1,16 @@
-import Ember from 'ember';
-const { inject: { service }, Route } = Ember;
+import { inject as service } from '@ember/service';
+import Route from '@ember/routing/route';
 export default Route.extend({
   session: service(),
   store: service(),
   model() {
-    return this.get('store').ajax('/invoiceslist').then((json) => {
+    return this.store.ajax('/invoiceslist').then((json) => {
       return json.invoices;
     });
   },
   setupController(controller) {
     this._super(...arguments);
-    this.get('store').ajax('/creditnoteslist').then((json) => {
+    this.store.ajax('/creditnoteslist').then((json) => {
       controller.set('creditnotes', json.creditnotes);
     });
   },

@@ -1,5 +1,7 @@
-import Ember from 'ember';
-const { inject: { service }, computed, Controller, isBlank } = Ember;
+import { inject as service } from '@ember/service';
+import { computed } from '@ember/object';
+import Controller from '@ember/controller';
+import { isBlank } from '@ember/utils';
 export default Controller.extend({
   session: service(),
   searchModel: null,
@@ -8,43 +10,43 @@ export default Controller.extend({
     this.set('searchModel', {});
   },
   groupCFID: computed('model.[]', function() {
-    let model = this.get('model') || [];
+    let model = this.model || [];
     let groupCF = model.findBy('label', 'Group');
     return groupCF.customfield_id;
   }),
   groupCFIDLabeL: computed('groupCFID', function() {
-    let groupCFID = this.get('groupCFID');
+    let groupCFID = this.groupCFID;
     return `cf_${groupCFID}`;
   }),
   sizeCFID: computed('model.[]', function() {
-    let model = this.get('model') || [];
+    let model = this.model || [];
     let groupCF = model.findBy('label', 'Size');
     return groupCF.customfield_id;
   }),
   sizeCFIDLabeL: computed('sizeCFID', function() {
-    let groupCFID = this.get('sizeCFID');
+    let groupCFID = this.sizeCFID;
     return `cf_${groupCFID}`;
   }),
   designCFID: computed('model.[]', function() {
-    let model = this.get('model') || [];
+    let model = this.model || [];
     let groupCF = model.findBy('label', 'Design');
     return groupCF.customfield_id;
   }),
   designCFIDLabeL: computed('designCFID', function() {
-    let groupCFID = this.get('designCFID');
+    let groupCFID = this.designCFID;
     return `cf_${groupCFID}`;
   }),
   brandCFID: computed('model.[]', function() {
-    let model = this.get('model') || [];
+    let model = this.model || [];
     let groupCF = model.findBy('label', 'Brand');
     return groupCF.customfield_id;
   }),
   brandCFIDLabeL: computed('brandCFID', function() {
-    let groupCFID = this.get('brandCFID');
+    let groupCFID = this.brandCFID;
     return `cf_${groupCFID}`;
   }),
   totalQty: computed('results.[]', function() {
-    let results = this.get('results') || [];
+    let results = this.results || [];
     let totalQty = results.reduce((first, next) => {
       return first + next.stock_on_hand;
     }, 0);
@@ -108,7 +110,7 @@ export default Controller.extend({
       }
     },
     loadMore() {
-      this.send('searchItems', this.get('page') + 1);
+      this.send('searchItems', this.page + 1);
     },
     clearAll() {
       this.setProperties({ searchModel: {}, results: [] });
