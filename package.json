@@ -13,7 +13,7 @@
   "scripts": {
     "build": "ember build",
     "lint:js": "eslint .",
-    "start": "ember serve",
+    "start": "npm run fetchItems && ember server",
     "test": "ember test",
     "fetchItems": "node lib/fetch-items.js"
   },
