@@ -1,12 +1,16 @@
 import Ember from 'ember';
+import { next } from '@ember/runloop';
+import Application from '@ember/application';
 import Resolver from './resolver';
 import loadInitializers from 'ember-load-initializers';
 import config from './config/environment';
-const { TextSupport, run: { next }, Application } = Ember;
-let App;
+const {
+  TextSupport
+} = Ember;
 TextSupport.reopen({
-  becomeFocused: function() {
-    if (this.get('autofocus')) {
+  didInsertElement: function() {
+    this._super(...arguments);
+    if (this.autofocus) {
       next(this, function() {
         if (this.isDestroyed || this.isDestroying) {
           return;
@@ -14,15 +18,14 @@ TextSupport.reopen({
         this.$().focus();
       });
     }
-  }.on('didInsertElement')
+  }
 });
-Ember.MODEL_FACTORY_INJECTIONS = true;
-
-App = Application.extend({
+const App = Application.extend({
   modulePrefix: config.modulePrefix,
   podModulePrefix: config.podModulePrefix,
   Resolver,
   ready() {
+    /* eslint ember/no-global-jquery: 'off' */
     // Remove loading splash screen
     $('#preLoader').remove();
   }

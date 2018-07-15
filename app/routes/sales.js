@@ -1,21 +1,23 @@
 /* eslint camelcase: "off" */
-import Ember from 'ember';
+import { inject as service } from '@ember/service';
+
+import Route from '@ember/routing/route';
+import { schedule } from '@ember/runloop';
 import todayDate from '../utils/today-date';
 import LineItem from '../models/lineitem';
 import Invoice from '../models/invoice';
-const { inject: { service }, Route, run: { schedule } } = Ember;
 export default Route.extend({
   session: service(),
   store: service(),
   postUrl: '/invoices',
   beforeModel() {
     if (!this.get('session.salespersons')) {
-      this.get('store').ajax('/salespersons').then((json) => {
+      this.store.ajax('/salespersons').then((json) => {
         this.set('session.salespersons', json.salespersons);
       });
     }
     if (!this.get('session.itemslist')) {
-      return this.get('store').ajax('/itemslist').then((json) => {
+      return this.store.ajax('/itemslist').then((json) => {
         this.set('session.itemslist', json.items.filterBy('Status', 'Active'));
         this.set('session.customer_id', json.customer_id);
         this.set('session.organization_id', json.organization_id);
@@ -89,7 +91,7 @@ export default Route.extend({
     saveAndPrint() {
       this.set('controller.errorMessage', '');
       let body = this.processedBody();
-      this.get('store').ajax(this.get('postUrl'), { method: 'POST', body }).then((json) => {
+      this.store.ajax(this.postUrl, { method: 'POST', body }).then((json) => {
         this.postResponse(json);
       });
     },

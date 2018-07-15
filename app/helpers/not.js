@@ -1,5 +1,4 @@
-import Ember from 'ember';
-const { Helper: { helper } } = Ember;
+import { helper } from '@ember/component/helper';
 export function not(params/* , hash*/) {
   return !params[0];
 }

@@ -1,11 +1,6 @@
-import Ember from 'ember';
-const {
-  inject: {
-    service
-  },
-  Controller,
-  run: { schedule, next }
-} = Ember;
+import { inject as service } from '@ember/service';
+import Controller from '@ember/controller';
+import { next, schedule } from '@ember/runloop';
 export default Controller.extend({
   items: [],
   printitems: [],
@@ -19,8 +14,8 @@ export default Controller.extend({
     },
     print() {
       this.set('failedItems', []);
-      let items = this.get('items');
-      let printitems = this.get('printitems');
+      let items = this.items;
+      let printitems = this.printitems;
       let body = {};
       items.forEach((item) => {
         for (let i = 0; i < Number(item.qty); i++) {
@@ -28,7 +23,7 @@ export default Controller.extend({
         }
       });
       body.items = items;
-      this.get('store').ajax('/itemsupdate', {
+      this.store.ajax('/itemsupdate', {
         method: 'POST',
         body
       }).then((json) => {
@@ -45,7 +40,7 @@ export default Controller.extend({
     },
     addNewItem(itemName) {
       let itemslist = this.get('session.itemslist');
-      let items = this.get('items');
+      let items = this.items;
       let newItem = itemslist.findBy('SKU', itemName);
       if (newItem) {
         items.pushObject(newItem);
