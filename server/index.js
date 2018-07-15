@@ -393,19 +393,21 @@ module.exports = function(app) {
   app.all('/api/newattribute', function(req, res) {
     var body = JSON.parse(req.body);
     var attribute = body.attribute;
+    var searchText = body.searchText;
     var files = {
       groups: './items/groups.json',
       sizes: './items/sizes.json',
       designs: './items/designs.json',
       brands: './items/brands.json'
     };
+    app[attribute].push(searchText);
     var fileName = files[attribute];
     fs.readFile(fileName, 'utf8', function(err, groups) {
       if (err) {
         return console.log(err);
       }
       var parsedData = JSON.parse(groups);
-      parsedData[attribute].push(body.searchText);
+      parsedData[attribute].push(searchText);
       fs.writeFile(fileName, JSON.stringify(parsedData), (err) => {
         if (err) {
           return console.log(err);
