@@ -50,6 +50,13 @@ export default Controller.extend({
     }, 0);
     return totalQty;
   }),
+  totalAmount: computed('results.[]', function() {
+    let results = this.get('results') || [];
+    let totalQty = results.reduce((first, next) => {
+      return first + (next.purchase_rate * next.stock_on_hand);
+    }, 0);
+    return totalQty;
+  }),
   actions: {
     selectGroup(group) {
       this.set('searchModel.group', group);
