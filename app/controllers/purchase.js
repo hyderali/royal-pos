@@ -1,17 +1,11 @@
 /* eslint camelcase: "off" */
-import Ember from 'ember';
+import { inject as service } from '@ember/service';
+
+import { isBlank } from '@ember/utils';
+import { set, get, computed } from '@ember/object';
+import Controller from '@ember/controller';
+import { next, schedule } from '@ember/runloop';
 import getItemName from '../utils/get-item-name';
-const {
-  computed,
-  inject: {
-    service
-  },
-  isBlank,
-  get,
-  set,
-  Controller,
-  run: { schedule, next }
-} = Ember;
 export default Controller.extend({
   vendor: null,
   session: service(),
@@ -59,13 +53,16 @@ export default Controller.extend({
       this.set('newItemModel.group', group);
     },
     createGroupOnEnter(select, e) {
+      let searchText = select.searchText
       if (e.keyCode === 13 && select.isOpen
-        && !select.highlighted && !isBlank(select.searchText)) {
+        && !select.highlighted && !isBlank(searchText)) {
 
         let selected = this.get('newItemModel.group') || '';
-        if (!selected.includes(select.searchText)) {
-          this.get('session.groups').pushObject(select.searchText);
-          select.actions.choose(select.searchText);
+        if (!selected.includes(searchText)) {
+          let body = { searchText, attribute: 'groups' };
+          this.store.ajax('/newattribute', { method: 'POST', body });
+          this.get('session.groups').pushObject(searchText);
+          select.actions.choose(searchText);
         }
       }
     },
@@ -73,13 +70,16 @@ export default Controller.extend({
       this.set('newItemModel.size', size);
     },
     createSizeOnEnter(select, e) {
+      let searchText = select.searchText
       if (e.keyCode === 13 && select.isOpen
-        && !select.highlighted && !isBlank(select.searchText)) {
+        && !select.highlighted && !isBlank(searchText)) {
 
         let selected = this.get('newItemModel.size') || '';
-        if (!selected.includes(select.searchText)) {
-          this.get('session.sizes').pushObject(select.searchText);
-          select.actions.choose(select.searchText);
+        if (!selected.includes(searchText)) {
+          let body = { searchText, attribute: 'sizes' };
+          this.store.ajax('/newattribute', { method: 'POST', body });
+          this.get('session.sizes').pushObject(searchText);
+          select.actions.choose(searchText);
         }
       }
     },
@@ -87,13 +87,16 @@ export default Controller.extend({
       this.set('newItemModel.design', design);
     },
     createDesignOnEnter(select, e) {
+      let searchText = select.searchText
       if (e.keyCode === 13 && select.isOpen
-        && !select.highlighted && !isBlank(select.searchText)) {
+        && !select.highlighted && !isBlank(searchText)) {
 
         let selected = this.get('newItemModel.design') || '';
-        if (!selected.includes(select.searchText)) {
-          this.get('session.designs').pushObject(select.searchText);
-          select.actions.choose(select.searchText);
+        if (!selected.includes(searchText)) {
+          let body = { searchText, attribute: 'designs' };
+          this.store.ajax('/newattribute', { method: 'POST', body });
+          this.get('session.designs').pushObject(searchText);
+          select.actions.choose(searchText);
         }
       }
     },
@@ -101,13 +104,16 @@ export default Controller.extend({
       this.set('newItemModel.brand', brand);
     },
     createBrandOnEnter(select, e) {
+      let searchText = select.searchText
       if (e.keyCode === 13 && select.isOpen
-        && !select.highlighted && !isBlank(select.searchText)) {
+        && !select.highlighted && !isBlank(searchText)) {
 
         let selected = this.get('newItemModel.brand') || '';
-        if (!selected.includes(select.searchText)) {
-          this.get('session.brands').pushObject(select.searchText);
-          select.actions.choose(select.searchText);
+        if (!selected.includes(searchText)) {
+          let body = { searchText, attribute: 'brands' };
+          this.store.ajax('/newattribute', { method: 'POST', body });
+          this.get('session.brands').pushObject(searchText);
+          select.actions.choose(searchText);
         }
       }
     },
@@ -131,11 +137,11 @@ export default Controller.extend({
       }
     },
     addItem() {
-      let nextNumber = this.get('nextNumber');
+      let nextNumber = this.nextNumber;
       let newItemModel = {};
       this.set('newItemModel', newItemModel);
       if (isBlank(nextNumber)) {
-        this.get('store').ajax('/itemcustomfields').then((json) => {
+        this.store.ajax('/itemcustomfields').then((json) => {
           nextNumber = json.custom_fields.findBy('data_type', 'autonumber').value;
           newItemModel.sku = nextNumber;
           this.set('isShowingModal', true);
@@ -146,7 +152,7 @@ export default Controller.extend({
       }
     },
     saveItem() {
-      let newItemModel = this.get('newItemModel');
+      let newItemModel = this.newItemModel;
       let { description, sku, rate, purchase_rate, group, discount, size, design, brand, colour } = newItemModel;
       let newItem = { sku, rate, purchase_rate };
       newItem.name = `${description} - ${sku}`;
@@ -165,7 +171,7 @@ export default Controller.extend({
       newItem.inventory_account_id = this.get('session.inventory_account_id');
       let body = newItem;
       this.set('newItemModel.isSaving', true);
-      this.get('store').ajax('/newitem', { method: 'POST', body }).then((json) => {
+      this.store.ajax('/newitem', { method: 'POST', body }).then((json) => {
         if (json.message === 'success') {
           this.set('newItemModel', null);
           let newLineItem = {
@@ -192,7 +198,7 @@ export default Controller.extend({
       });
     },
     save() {
-      let model = this.get('model');
+      let model = this.model;
       let body = {};
       let lineItems = model.get('line_items');
       body.vendor_id = model.get('vendor.contact_id');
@@ -214,7 +220,7 @@ export default Controller.extend({
       });
       model.set('isSaving', true);
       this.set('errorMessage', '');
-      this.get('store').ajax('/newbill', { method: 'POST', body }).then((json) => {
+      this.store.ajax('/newbill', { method: 'POST', body }).then((json) => {
         if (json.message === 'success') {
           this.set('printItems', printItems);
           next(this, () => {

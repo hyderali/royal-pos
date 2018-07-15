@@ -1,5 +1,5 @@
-import Ember from 'ember';
-const { inject: { service }, Route } = Ember;
+import { inject as service } from '@ember/service';
+import Route from '@ember/routing/route';
 export default Route.extend({
   store: service(),
   session: service(),
@@ -10,7 +10,7 @@ export default Route.extend({
   },
   afterModel() {
     if (!this.get('session.itemslist')) {
-      return this.get('store').ajax('/itemslist').then((json) => {
+      return this.store.ajax('/itemslist').then((json) => {
         this.set('session.itemslist', json.items.filterBy('Status', 'Active'));
         this.set('session.customer_id', json.customer_id);
         this.set('session.organization_id', json.organization_id);

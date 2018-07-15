@@ -20,6 +20,34 @@ module.exports = function(app) {
     var parsedData = JSON.parse(data);
     app.parsedData = parsedData;
   });
+  fs.readFile('./items/brands.json', 'utf8', function(err, brands) {
+    if (err) {
+      return console.log(err);
+    }
+    var parsedBrands = JSON.parse(brands);
+    app.brands = parsedBrands.brands;
+  });
+  fs.readFile('./items/designs.json', 'utf8', function(err, designs) {
+    if (err) {
+      return console.log(err);
+    }
+    var parsedDesigns = JSON.parse(designs);
+    app.designs = parsedDesigns.designs;
+  });
+  fs.readFile('./items/groups.json', 'utf8', function(err, groups) {
+    if (err) {
+      return console.log(err);
+    }
+    var parsedGroups = JSON.parse(groups);
+    app.groups = parsedGroups.groups;
+  });
+  fs.readFile('./items/sizes.json', 'utf8', function(err, sizes) {
+    if (err) {
+      return console.log(err);
+    }
+    var parsedSizes = JSON.parse(sizes);
+    app.sizes = parsedSizes.sizes;
+  });
   converter.fromFile("./server/item.csv", function(err, result) {
     app.itemslist = result;
   });
@@ -115,7 +143,11 @@ module.exports = function(app) {
         organization_id: app.parsedData.organization_id,
         customer_id: app.parsedData.customer_id,
         inventory_account_id: app.parsedData.inventory_account_id,
-        cogs_id: app.parsedData.cogs_id
+        cogs_id: app.parsedData.cogs_id,
+        brands: app.brands,
+        designs: app.designs,
+        groups: app.groups,
+        sizes: app.sizes
       });
       return;
     }
@@ -355,6 +387,31 @@ module.exports = function(app) {
       res.json({
         message: 'failure',
         error: message
+      });
+    });
+  });
+  app.all('/api/newattribute', function(req, res) {
+    var body = JSON.parse(req.body);
+    var attribute = body.attribute;
+    var searchText = body.searchText;
+    var files = {
+      groups: './items/groups.json',
+      sizes: './items/sizes.json',
+      designs: './items/designs.json',
+      brands: './items/brands.json'
+    };
+    app[attribute].push(searchText);
+    var fileName = files[attribute];
+    fs.readFile(fileName, 'utf8', function(err, groups) {
+      if (err) {
+        return console.log(err);
+      }
+      var parsedData = JSON.parse(groups);
+      parsedData[attribute].push(searchText);
+      fs.writeFile(fileName, JSON.stringify(parsedData), (err) => {
+        if (err) {
+          return console.log(err);
+        }
       });
     });
   });

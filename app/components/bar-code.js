@@ -1,12 +1,13 @@
 /* eslint new-cap: "off" */
-import Ember from 'ember';
-const { Component, run: { schedule } } = Ember;
+import Component from '@ember/component';
+
+import { schedule } from '@ember/runloop';
 export default Component.extend({
   tagName: 'svg',
   sku: '',
   classNames: ['text-center'],
   didInsertElement() {
-    let sku = this.get('sku');
+    let sku = this.sku;
     this._super();
     schedule('afterRender', this, () => {
       this.$().JsBarcode(sku, {
