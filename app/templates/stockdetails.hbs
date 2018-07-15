@@ -47,13 +47,14 @@
         <th> S.No </th>
         <th> SKU </th>
         <th> Name </th>
-        <th> Purchase Rate </th>
-        <th> Sales Rate </th>
         <th> Group </th>
         <th> Size </th>
         <th> Design </th>
         <th> Brand </th>
+        <th> Sales Rate </th>
+        <th> Purchase Rate </th>
         <th> Quantity </th>
+        <th> Amount </th>
       </tr>
     </thead>
     <tbody>
@@ -67,13 +68,14 @@
         <td> {{get-index index}} </td>
         <td> {{result.sku}} </td>
         <td> {{result.description}} </td>
-        <td> {{result.purchase_rate}} </td>
-        <td> {{result.rate}} </td>
         <td> {{get result groupCFIDLabeL}} </td>
         <td> {{get result sizeCFIDLabeL}} </td>
         <td> {{get result designCFIDLabeL}} </td>
         <td> {{get result brandCFIDLabeL}} </td>
+        <td> {{result.rate}} </td>
+        <td> {{result.purchase_rate}} </td>
         <td> {{result.stock_on_hand}} </td>
+        <td> {{product result.stock_on_hand result.purchase_rate}} </td>
       </tr>
       {{/each}}
       {{/if}}
@@ -86,6 +88,7 @@
         {{else if results}}
         <td colspan="9" align="right">Total</td>
         <td>{{totalQty}}</td>
+        <td>{{totalAmount}}</td>
         {{/if}}
       </tr>
     </tfoot>
