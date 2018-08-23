@@ -9,6 +9,7 @@
       <th> Old Price </th>
       <th> New Price </th>
       <th> Quantity </th>
+      <th style="width:9%"> </th>
     </tr>
   </thead>
   <tbody>
@@ -19,10 +20,12 @@
         <td>{{item.Rate}}</td>
         <td>{{input value=item.printRate class="form-control" autofocus=true}}</td>
         <td>{{input value=item.qty class="form-control"}}</td>
+        <td {{action "removeLineItem" item}}><button type="button" class="btn btn-danger pull-right">Delete</button></td>
       </tr>
     {{/each}}
     <tr>
       <td> {{input class="form-control" autofocus=true enter="addNewItem"}}</td>
+      <td></td>
       <td></td>
       <td></td>
       <td></td>
