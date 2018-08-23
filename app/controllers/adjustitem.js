@@ -45,6 +45,11 @@ export default Controller.extend({
       if (newItem) {
         items.pushObject(newItem);
       }
-    }
+    },
+    removeLineItem(lineItem) {
+      let lineItems = this.items;
+      lineItems.removeObject(lineItem);
+    },
+
   }
 });
