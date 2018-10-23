@@ -2,7 +2,7 @@
 import { inject as service } from '@ember/service';
 
 import { isBlank } from '@ember/utils';
-import { set, get, computed } from '@ember/object';
+import { set, get, computed, setProperties } from '@ember/object';
 import Controller from '@ember/controller';
 import { next, schedule } from '@ember/runloop';
 import getItemName from '../utils/get-item-name';
@@ -45,6 +45,22 @@ export default Controller.extend({
     });
     return total;
   }),
+  openNewItem(newItemModel, nextNumber, lineItem) {
+    newItemModel.sku = nextNumber;
+        if(lineItem) {
+          setProperties(newItemModel, {
+            description: (get(lineItem, 'Item Code') || '').split(' -')[0],
+            group: get(lineItem, 'CF.Group'),
+            purchase_rate: (get(lineItem, 'PurchaseRate') || '').split(' ')[1],
+            rate: (get(lineItem, 'Rate') || '').split(' ')[1],
+            discount: get(lineItem, 'CF.Discount'),
+            size: get(lineItem, 'CF.Size'),
+            design: get(lineItem, 'CF.Design'),
+            brand: get(lineItem, 'CF.Brand')
+          });
+        }
+        this.set('isShowingModal', true);
+  },
   actions: {
     selectVendor(vendor) {
       this.set('model.vendor', vendor);
@@ -136,7 +152,7 @@ export default Controller.extend({
         lineItems.pushObject(newItem);
       }
     },
-    addItem() {
+    addItem(lineItem) {
       let nextNumber = this.nextNumber;
       let newItemModel = {};
       this.set('newItemModel', newItemModel);
@@ -144,11 +160,10 @@ export default Controller.extend({
         this.store.ajax('/itemcustomfields').then((json) => {
           nextNumber = json.custom_fields.findBy('data_type', 'autonumber').value;
           newItemModel.sku = nextNumber;
-          this.set('isShowingModal', true);
+          this.openNewItem(newItemModel, nextNumber, lineItem);
         });
       } else {
-        newItemModel.sku = nextNumber;
-        this.set('isShowingModal', true);
+        this.openNewItem(newItemModel, nextNumber, lineItem);
       }
     },
     saveItem() {
@@ -183,6 +198,7 @@ export default Controller.extend({
             Rate: `INR ${rate}`,
             printRate: rate,
             CF: {
+              Group: group,
               Discount: discount,
               Brand: brand,
               Design: design,
