@@ -49,7 +49,10 @@
           <td> {{lineItem.CF.Size}} </td>
           <td> {{input class="form-control" value=lineItem.quantity autofocus=true}} </td>
           <td> {{input class="form-control" value=lineItem.sticker}} </td>
-          <td> <button type="button" class="btn btn-danger pull-right" {{action "removeLineItem" lineItem}}>Delete</button> </td>
+          <td>
+            <button type="button" class="btn btn-danger pull-right" {{action "removeLineItem" lineItem}}>Delete</button> <br>
+            <a href="#" {{action "addItem" lineItem}}>Clone</a>
+          </td>
         </tr>
       {{/each}}
       <tr>
