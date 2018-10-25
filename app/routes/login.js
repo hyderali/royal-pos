@@ -23,6 +23,7 @@ export default Route.extend({
             customer_id: json.customer_id,
             inventory_account_id: json.inventory_account_id,
             cogs_id: json.cogs_id,
+            names: json.names,
             brands: json.brands,
             designs: json.designs,
             groups: json.groups,
