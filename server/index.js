@@ -20,6 +20,13 @@ module.exports = function(app) {
     var parsedData = JSON.parse(data);
     app.parsedData = parsedData;
   });
+  fs.readFile('./items/names.json', 'utf8', function(err, names) {
+    if (err) {
+      return console.log(err);
+    }
+    var parsedNames = JSON.parse(names);
+    app.names = parsedNames.names;
+  });
   fs.readFile('./items/brands.json', 'utf8', function(err, brands) {
     if (err) {
       return console.log(err);
@@ -144,6 +151,7 @@ module.exports = function(app) {
         customer_id: app.parsedData.customer_id,
         inventory_account_id: app.parsedData.inventory_account_id,
         cogs_id: app.parsedData.cogs_id,
+        names: app.names,
         brands: app.brands,
         designs: app.designs,
         groups: app.groups,
@@ -395,6 +403,7 @@ module.exports = function(app) {
     var attribute = body.attribute;
     var searchText = body.searchText;
     var files = {
+      names: './items/names.json',
       groups: './items/groups.json',
       sizes: './items/sizes.json',
       designs: './items/designs.json',

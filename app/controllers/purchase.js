@@ -65,6 +65,23 @@ export default Controller.extend({
     selectVendor(vendor) {
       this.set('model.vendor', vendor);
     },
+    selectName(name) {
+      this.set('newItemModel.description', name);
+    },
+    createNameOnEnter(select, e) {
+      let searchText = select.searchText
+      if (e.keyCode === 13 && select.isOpen
+        && !select.highlighted && !isBlank(searchText)) {
+
+        let selected = this.get('newItemModel.description') || '';
+        if (!selected.includes(searchText)) {
+          let body = { searchText, attribute: 'names' };
+          this.store.ajax('/newattribute', { method: 'POST', body });
+          this.get('session.groups').pushObject(searchText);
+          select.actions.choose(searchText);
+        }
+      }
+    },
     selectGroup(group) {
       this.set('newItemModel.group', group);
     },
