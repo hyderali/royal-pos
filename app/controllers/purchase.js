@@ -49,7 +49,7 @@ export default Controller.extend({
     newItemModel.sku = nextNumber;
         if(lineItem) {
           setProperties(newItemModel, {
-            description: (get(lineItem, 'Item Code') || '').split(' -')[0],
+            description: (get(lineItem, 'Item Name') || '').split(' -')[0],
             group: get(lineItem, 'CF.Group'),
             purchase_rate: (get(lineItem, 'PurchaseRate') || '').split(' ')[1],
             rate: (get(lineItem, 'Rate') || '').split(' ')[1],
@@ -207,7 +207,7 @@ export default Controller.extend({
         if (json.message === 'success') {
           this.set('newItemModel', null);
           let newLineItem = {
-            'Item Code': json.item.name,
+            'Item Name': json.item.name,
             item_id: json.item.item_id,
             SKU: sku,
             Description: description,
@@ -240,7 +240,7 @@ export default Controller.extend({
         return {
           item_id: lineItem.item_id,
           quantity: lineItem.quantity,
-          name: lineItem['Item Code'],
+          name: lineItem['Item Name'],
           description: lineItem.Description,
           account_id: this.get('session.inventory_account_id')
         };

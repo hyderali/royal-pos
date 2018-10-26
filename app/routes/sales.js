@@ -76,7 +76,7 @@ export default Route.extend({
           discount: newItem.CF.Discount,
           item_custom_fields: [{ label: 'Discount', value: newItem.CF.Discount }], rate: Number(newItem.Rate.split(' ')[1]),
           quantity: 1,
-          name: newItem['Item Code'],
+          name: newItem['Item Name'],
           sku: newItem.SKU,
           item_id: newItem['Item ID'],
           description: newItem.Description
