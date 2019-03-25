@@ -1,0 +1,35 @@
+<div class="btn btn-toolbar hidden-print" style="margin-top:30px">
+  <button {{action 'print'}} class="btn btn-primary">Print</button>
+  <button {{action 'addNewItem'}} class="btn btn-primary">Add Item</button>
+  <button {{action 'clear'}} class="btn btn-default">Clear</button>
+</div>
+<table class="table hidden-print">
+  <thead>
+    <tr>
+      <th> S.No </th>
+      <th> Item Name </th>
+      <th> Price </th>
+      <th> Quantity </th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each items as |item index|}}
+      <tr>
+        <td>{{index}}</td>
+        <td>{{input class="form-control" value=item.name autofocus=true}}</td>
+        <td>{{input class="form-control" value=item.price}}</td>
+        <td>{{input value=item.qty class="form-control" enter="addNewItem"}}</td>
+      </tr>
+    {{/each}}
+  </tbody>
+</table>
+<div style="display:flex;flex-wrap: wrap;flex-direction: row;width:519px" class="show-print">
+  {{#each printitems as |item|}}
+  <div class="item-sticker">
+    <div class="text-center" style="font-size:10px">ROYAL COTTON LAND</div>
+    <div class="text-center" style="">{{item.name}}</div>
+    <div class="text-center" style="font-size:60px;font-weight:bold;margin-top:-5px">{{item.price}}</div>
+  </div>
+  {{/each}}
+</div>
+
