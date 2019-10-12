@@ -63,4 +63,7 @@
 text {
     font-family: "Helvetica Neue",Helvetica,Arial,sans-serif !important;
 }
+.form-control:focus {
+  border-width: 5px;
+}
 @import "ember-power-select";
