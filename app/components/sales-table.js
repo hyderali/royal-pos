@@ -6,6 +6,7 @@ export default Component.extend({
   isSales: true,
   model: null,
   addNewItem: 'addNewItem',
+  addTempItem: 'addTempItem',
   removeLineItem: 'removeLineItem',
   saveAndPrint: 'saveAndPrint',
   newSale: 'newSale',
@@ -16,7 +17,13 @@ export default Component.extend({
   actions: {
     itemChanged(itemName) {
       if (itemName === 'print') {
-        this.sendAction('saveAndPrint');
+        this.sendAction('saveAndPrint', false);
+      }
+      if (itemName === 'save') {
+        this.sendAction('saveAndPrint', true);
+      }
+      if (itemName === '0000') {
+        this.sendAction('addTempItem');
       }
       this.sendAction('addNewItem', getItemName(itemName));
       this.set('id', '');
@@ -24,8 +31,8 @@ export default Component.extend({
     removeLineItem(lineItem) {
       this.sendAction('removeLineItem', lineItem);
     },
-    saveAndPrint() {
-      this.sendAction('saveAndPrint');
+    saveAndPrint(skipPrint) {
+      this.sendAction('saveAndPrint', skipPrint);
     },
     newSale() {
       this.sendAction('newSale');

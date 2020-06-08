@@ -38,15 +38,19 @@ export default Route.extend({
     let body = { customer_id: `${customer_id}`, date, discount: `${model.get('discount')}`, discount_type: 'entity_level', is_discount_before_tax: false, salesperson_id: model.get('salesperson.salesperson_id'), custom_fields: [{ label: 'Phone Number', value: model.get('phone_number') }] };
     let lineItems = model.get('line_items');
     let serializedItems = lineItems.map((item) => {
-      return { item_id: item.get('item_id'), rate: item.get('rate'), quantity: item.get('quantity'), item_custom_fields: item.get('item_custom_fields') };
+      return { item_id: item.get('item_id'), rate: item.get('rate'), quantity: item.get('quantity'), item_custom_fields: item.get('item_custom_fields'), description: item.get('description') };
     });
     body.line_items = serializedItems;
     model.set('isSaving', true);
     return body;
   },
-  postResponse(json) {
+  postResponse(json, skipPrint) {
     let model = this.get('controller.model');
     if (json.message === 'success') {
+      if (skipPrint) {
+        this.send('newSale');
+        return;
+      }
       model.setProperties({
         entity_number: json.entity_number,
         canShowPrint: true,
@@ -84,15 +88,26 @@ export default Route.extend({
         lineItems.pushObject(newLineItem);
       }
     },
+    addTempItem() {
+      let lineItems = this.get('controller.model.line_items');
+      let newLineItem = LineItem.create({
+        description: 'Others',
+        isCustom: true,
+        quantity: 1,
+        rate: 0,
+        discount: 0
+      });
+      lineItems.pushObject(newLineItem);
+    },
     removeLineItem(lineItem) {
       let lineItems = this.get('controller.model.line_items');
       lineItems.removeObject(lineItem);
     },
-    saveAndPrint() {
+    saveAndPrint(skipPrint) {
       this.set('controller.errorMessage', '');
       let body = this.processedBody();
       this.store.ajax(this.postUrl, { method: 'POST', body }).then((json) => {
-        this.postResponse(json);
+        this.postResponse(json, skipPrint);
       });
     },
     printReceipt() {
