@@ -37,14 +37,14 @@ export default SalesRoute.extend({
         }
       });
     },
-    saveAndPrint() {
+    saveAndPrint(skipPrint) {
       let body = this.processedBody();
       body.reason =  'Update';
       body.due_date =  body.date;
       let invoice_id = this.get('controller.model.invoice_id');
       let params = { invoice_id };
       this.store.ajax('/updateinvoice', { method: 'POST', body, params }).then((json) => {
-        this.postResponse(json);
+        this.postResponse(json, skipPrint);
       });
     },
     newSale() {
