@@ -51,7 +51,7 @@
   <button class="btn btn-default pull-right" {{action "goToList"}} type="button">Cancel</button>
   <button class="btn btn-primary pull-right" disabled= {{isSaving}} {{action "saveAndRecordPayment"}}>Record</button>
 </form>
-{{#if canShowPrint}}
+
 <div class="cash-print">
   <div style="border: 1px solid #333;font-size:24px">
     <table class="pcs-itemtable" style="border-collapse: collapse;">
@@ -101,7 +101,7 @@
     </table>
   </div>
 </div>
-{{/if}}
+
 {{#if isShowingModal}}
   {{#modal-dialog container-class="new-item" close='closeModal' translucentOverlay=true}}
     <div class="hidden-print">
