@@ -24,6 +24,10 @@ export default SalesRoute.extend({
           model.set('salesperson', salesperson);
           model.set('phone_number', phoneNumber);
           json.invoice.line_items.forEach((lineItem) => {
+            if (!lineItem.item_id) {
+              lineItem.isCustom=true;
+              lineItem.canFocus=false;
+            }
             let newLineItem = LineItem.create(lineItem);
             let discountObj = newLineItem.get('item_custom_fields').findBy('label', 'Discount');
             if (discountObj) {

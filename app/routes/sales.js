@@ -93,6 +93,7 @@ export default Route.extend({
       let newLineItem = LineItem.create({
         description: 'Others',
         isCustom: true,
+        canFocus: true,
         quantity: 1,
         rate: 0,
         discount: 0

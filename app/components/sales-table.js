@@ -1,6 +1,8 @@
 import { inject as service } from '@ember/service';
 import Component from '@ember/component';
+import { isBlank } from '@ember/utils';
 import getItemName from '../utils/get-item-name';
+import { set } from '@ember/object';
 export default Component.extend({
   session: service(),
   isSales: true,
@@ -10,9 +12,21 @@ export default Component.extend({
   removeLineItem: 'removeLineItem',
   saveAndPrint: 'saveAndPrint',
   newSale: 'newSale',
-  didInsertElement() {
-    this._super();
-    this.$('.ember-basic-dropdown-trigger').focus();
+  customItems: [
+    'Others',
+    'China Item',
+    'Cotton Pant',
+    'Shirt',
+    'Boys Pant',
+    'Mens Inner',
+    'Ladies Inner'
+  ],
+  focusComesFromOutside(e) {
+    let blurredEl = e.relatedTarget;
+    if (isBlank(blurredEl)) {
+      return false;
+    }
+    return !blurredEl.classList.contains('ember-power-select-search-input');
   },
   actions: {
     itemChanged(itemName) {
@@ -27,6 +41,14 @@ export default Component.extend({
       }
       this.sendAction('addNewItem', getItemName(itemName));
       this.set('id', '');
+    },
+    handleEPSFocus(select, e) {
+      if (this.focusComesFromOutside(e)) {
+        select.actions.open();
+      }
+    },
+    selectCustomItem(lineItem, name) {
+      set(lineItem, 'description', name);
     },
     removeLineItem(lineItem) {
       this.sendAction('removeLineItem', lineItem);

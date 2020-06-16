@@ -33,11 +33,19 @@
         <tr>
           <td>{{get-index index}}</td>
           <td>{{lineItem.sku}}</td>
-          <td>{{lineItem.name}}</td>
+          <td>
+            {{#if lineItem.isCustom}}
+              {{#power-select selected=lineItem.description options=customItems onfocus=(action "handleEPSFocus") onchange=(action "selectCustomItem" lineItem) autofocus=lineItem.canFocus as |customItem|}}
+                {{customItem}}
+              {{/power-select}}
+            {{else}}
+              {{lineItem.name}}
+            {{/if}}
+          </td>
           <td>{{input class="form-control" value=lineItem.quantity disabled=model.isSaving}}</td>
           <td>
             {{#if lineItem.isCustom}}
-              <td>{{input class="form-control" value=lineItem.rate autofocus=true disabled=model.isSaving}}</td>
+              <td>{{input class="form-control" value=lineItem.rate disabled=model.isSaving}}</td>
             {{else}}
               {{lineItem.rate}}
             {{/if}}
