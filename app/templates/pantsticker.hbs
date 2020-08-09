@@ -1,0 +1,26 @@
+<div class="btn btn-toolbar hidden-print" style="margin-top:30px">
+  <button {{action 'print'}} class="btn btn-primary">Print</button>
+  <button {{action 'clear'}} class="btn btn-default">Clear</button>
+  <button {{action 'addItem'}} class="btn btn-default">Add Item</button>
+</div>
+<table class="table hidden-print">
+  <thead>
+    <tr>
+      <th> Size </th>
+      <th> Fit </th>
+      <th> Price </th>
+      <th> Quantity </th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each items as |item|}}
+      <tr>
+        <td>{{input value=item.size class="form-control" autofocus=true autocomplete="on"}}</td>
+        <td>{{input value=item.fit class="form-control" autocomplete="on"}}</td>
+        <td>{{input value=item.price class="form-control" autocomplete="on"}}</td>
+        <td>{{input value=item.qty class="form-control" autocomplete="on"}}</td>
+      </tr>
+    {{/each}}
+  </tbody>
+</table>
+{{pant-sticker-list items=printitems}}
