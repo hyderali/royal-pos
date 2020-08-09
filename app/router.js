@@ -19,6 +19,7 @@ Router.map(function() {
   this.route('editsales');
   this.route('stockdetails');
   this.route('plainsticker');
+  this.route('pantsticker');
 });
 
 export default Router;
