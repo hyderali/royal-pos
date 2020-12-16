@@ -20,6 +20,7 @@ Router.map(function() {
   this.route('stockdetails');
   this.route('plainsticker');
   this.route('pantsticker');
+  this.route('packsticker');
 });
 
 export default Router;
