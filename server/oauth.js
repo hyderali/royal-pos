@@ -16,7 +16,7 @@ module.exports = {
           user.access_token = parsedResponse.access_token;
           if(shouldRegenerate) {
             setTimeout(() => {
-              self.generateAccessToken(user);
+              self.generateAccessToken(user, true);
             }, 1000 * 60 * 50);
           }
           resolve(parsedResponse);
