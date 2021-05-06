@@ -11,7 +11,7 @@
   <div class="form-group">
     <div class="col-md-3">Phone Number</div>
     <div class="col-md-9">
-      {{input class="form-control" value=model.phone_number autofocus=true}}
+      {{input class="form-control" value=model.phone_number}}
     </div>
   </div><br><br>
   {{/if}}
@@ -57,7 +57,7 @@
       {{/each}}
       <tr>
         <td></td>
-        <td>{{input class="form-control" value=id enter="itemChanged" autofocus=(not isSales)}}</td>
+        <td>{{input class="form-control" value=id enter="itemChanged" autofocus=true}}</td>
         <td></td>
         <td></td>
         <td></td>
