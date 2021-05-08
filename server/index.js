@@ -7,17 +7,23 @@ var converter = new Converter({
   checkType: false
 });
 var RSVP = require('rsvp');
-
+var oauth = require('./oauth');
 // To use it create some files under `mocks/`
 // e.g. `server/mocks/ember-hamsters.js`
 //
-module.exports = function(app) {
+module.exports = async function(app) {
   app.use(bodyParser.text());
-  fs.readFile('./server/royal.json', 'utf8', function(err, data) {
+  fs.readFile('./server/royal.json', 'utf8', async function(err, data) {
     if (err) {
       return console.log(err);
     }
     var parsedData = JSON.parse(data);
+    for (var i = 0, l = parsedData.users.length; i < l; i++) {
+      var usr = parsedData.users[i];
+      if(usr.refresh_token) {
+        await oauth.generateAccessToken(usr, true);
+      }
+    }
     app.parsedData = parsedData;
   });
   fs.readFile('./items/names.json', 'utf8', function(err, names) {
@@ -58,14 +64,34 @@ module.exports = function(app) {
   converter.fromFile("./server/item.csv", function(err, result) {
     app.itemslist = result;
   });
-
+  function getAccessToken(username) {
+    var users = app.parsedData.users;
+    var selectedUser;
+    for (var i = 0, l = users.length; i < l; i++) {
+      var usr = users[i];
+      if(usr.username === username) {
+        selectedUser = usr;
+        break;
+      }
+    }
+    return selectedUser.access_token;
+  };
   function makeRequest(url, options) {
-    url = `https://books.zoho.com/api/v3${url}&organization_id=${app.parsedData.organization_id}`;
+    var appendSymbol = '?';
+    if(url.indexOf('?')!== -1) {
+      appendSymbol = '&';
+    }
+    url = `https://books.zoho.com/api/v3${url}${appendSymbol}organization_id=${app.parsedData.organization_id}`;
     var method = options.method;
+    var accessToken = getAccessToken(options.username);
+    var headers = {
+      Authorization: 'Zoho-oauthtoken '+accessToken
+    };
     if (method === 'GET') {
       return new RSVP.Promise((resolve, reject) => {
         request.get({
-          url: url
+          url,
+          headers
         }, function(err, httpResponse, response) {
           try {
             var parsedResponse = JSON.parse(response);
@@ -85,10 +111,11 @@ module.exports = function(app) {
     if (method === 'POST') {
       return new RSVP.Promise((resolve, reject) => {
         request.post({
-          url: url,
+          url,
           form: {
             JSONString: options.body
-          }
+          },
+          headers
         }, function(err, httpResponse, response) {
           try {
             var parsedResponse = JSON.parse(response);
@@ -106,10 +133,11 @@ module.exports = function(app) {
     if (method === 'PUT') {
       return new RSVP.Promise((resolve, reject) => {
         request.put({
-          url: url,
+          url,
           form: {
             JSONString: options.body
-          }
+          },
+          headers
         }, function(err, httpResponse, response) {
           try {
             var parsedResponse = JSON.parse(response);
@@ -127,9 +155,7 @@ module.exports = function(app) {
   };
   app.all('/api/itemslist', function(req, res) {
     res.json({
-      items: app.itemslist,
-      organization_id: app.parsedData.organization_id,
-      customer_id: app.parsedData.customer_id
+      items: app.itemslist
     });
   });
   app.all('/api/login', function(req, res) {
@@ -164,9 +190,10 @@ module.exports = function(app) {
     });
   });
   app.all('/api/salespersons', function(req, res) {
-    var url = `/invoices/editpage?authtoken=${req.query.authtoken}`;
+    var url = '/invoices/editpage';
     makeRequest(url, {
-      method: 'GET'
+      method: 'GET',
+      username: req.query.username
     }).then(function(json) {
       res.json({
         message: 'success',
@@ -180,10 +207,11 @@ module.exports = function(app) {
     });
   });
   app.all('/api/invoices', function(req, res) {
-    var url = `/invoices?authtoken=${req.query.authtoken}&is_quick_create=true`;
+    var url = '/invoices?is_quick_create=true';
     makeRequest(url, {
       method: 'POST',
-      body: req.body
+      body: req.body,
+      username: req.query.username
     }).then(function(json) {
       res.json({
         message: 'success',
@@ -197,10 +225,11 @@ module.exports = function(app) {
     });
   });
   app.all('/api/updateinvoice', function(req, res) {
-    var url = `/invoices/${req.query.invoice_id}?authtoken=${req.query.authtoken}`;
+    var url = `/invoices/${req.query.invoice_id}`;
     makeRequest(url, {
       method: 'PUT',
-      body: req.body
+      body: req.body,
+      username: req.query.username
     }).then(function(json) {
       res.json({
         message: 'success',
@@ -214,10 +243,11 @@ module.exports = function(app) {
     });
   });
   app.all('/api/creditnotes', function(req, res) {
-    var url = `/creditnotes?authtoken=${req.query.authtoken}`;
+    var url = '/creditnotes';
     makeRequest(url, {
       method: 'POST',
-      body: req.body
+      body: req.body,
+      username: req.query.username
     }).then(function(json) {
       res.json({
         message: 'success',
@@ -231,9 +261,10 @@ module.exports = function(app) {
     });
   });
   app.all('/api/invoiceslist', function(req, res) {
-    var url = `/invoices?authtoken=${req.query.authtoken}&status=unpaid&page=1&per_page=200&customer_id=${app.parsedData.customer_id}`;
+    var url = `/invoices?status=unpaid&page=1&per_page=200&customer_id=${app.parsedData.customer_id}`;
     makeRequest(url, {
-      method: 'GET'
+      method: 'GET',
+      username: req.query.username
     }).then(function(json) {
       res.json(json);
     }).catch(function(message) {
@@ -244,10 +275,11 @@ module.exports = function(app) {
     });
   });
   app.all('/api/creditnoteslist', function(req, res) {
-    //var url = `/creditnotes?authtoken=${req.query.authtoken}&status=open&page=1&per_page=200&customer_id=${app.parsedData.customer_id}&formatneeded=true`;
-    var url = `/creditnotes?authtoken=${req.query.authtoken}&filter_by=Status.Open&page=1&per_page=200&formatneeded=true`;
+    //var url = `/creditnotes?status=open&page=1&per_page=200&customer_id=${app.parsedData.customer_id}&formatneeded=true`;
+    var url = '/creditnotes?filter_by=Status.Open&page=1&per_page=200&formatneeded=true';
     makeRequest(url, {
-      method: 'GET'
+      method: 'GET',
+      username: req.query.username
     }).then(function(json) {
       res.json(json);
     }).catch(function(message) {
@@ -258,10 +290,11 @@ module.exports = function(app) {
     });
   });
   app.all('/api/payments', function(req, res) {
-    var url = `/customerpayments?authtoken=${req.query.authtoken}`;
+    var url = '/customerpayments';
     makeRequest(url, {
       method: 'POST',
-      body: req.body
+      body: req.body,
+      username: req.query.username
     }).then(function(json) {
       res.json({
         message: 'success',
@@ -275,10 +308,11 @@ module.exports = function(app) {
     });
   });
   app.all('/api/applycredits', function(req, res) {
-    var url = `/creditnotes/${req.query.creditnote_id}/invoices?authtoken=${req.query.authtoken}`;
+    var url = `/creditnotes/${req.query.creditnote_id}/invoices`;
     makeRequest(url, {
       method: 'POST',
-      body: req.body
+      body: req.body,
+      username: req.query.username
     }).then(function(json) {
       res.json({
         message: 'success'
@@ -291,13 +325,15 @@ module.exports = function(app) {
     });
   });
   app.all('/api/searchinvoice', function(req, res) {
-    var url = `/invoices?status=unpaid&invoice_number_contains=${req.query.invoice_number}&authtoken=${req.query.authtoken}`;
+    var url = `/invoices?status=unpaid&invoice_number_contains=${req.query.invoice_number}`;
     makeRequest(url, {
-      method: 'GET'
+      method: 'GET',
+      username: req.query.username
     }).then(function(json) {
-      var url = '/invoices/' + json.invoices[0].invoice_id + '?authtoken=' + req.query.authtoken;
+      var url = '/invoices/' + json.invoices[0].invoice_id;
       makeRequest(url, {
-        method: 'GET'
+        method: 'GET',
+        username: req.query.username
       }).then(function(secondJson) {
         res.json(secondJson);
       });
@@ -309,9 +345,10 @@ module.exports = function(app) {
     });
   });
   app.all('/api/vendors', function(req, res) {
-    var url = `/contacts?filter_by=Status.ActiveVendors&authtoken=${req.query.authtoken}`;
+    var url = '/contacts?filter_by=Status.ActiveVendors';
     makeRequest(url, {
-      method: 'GET'
+      method: 'GET',
+      username: req.query.username
     }).then(function(json) {
       res.json({
         message: 'success',
@@ -325,9 +362,10 @@ module.exports = function(app) {
     });
   });
   app.all('/api/itemcustomfields', function(req, res) {
-    var url = `/settings/preferences/customfields?entity=item&is_entity_edit=true&authtoken=${req.query.authtoken}`;
+    var url = '/settings/preferences/customfields?entity=item&is_entity_edit=true';
     makeRequest(url, {
-      method: 'GET'
+      method: 'GET',
+      username: req.query.username
     }).then(function(json) {
       res.json({
         message: 'success',
@@ -348,9 +386,10 @@ module.exports = function(app) {
         cfParamString = `${cfParamString}${key}=${cfParams[key]}&`
       }
     }
-    var url = `/items?${cfParamString}authtoken=${req.query.authtoken}&page=${req.query.page}`;
+    var url = `/items?${cfParamString}page=${req.query.page}`;
     makeRequest(url, {
-      method: 'GET'
+      method: 'GET',
+      username: req.query.username
     }).then(function(json) {
       res.json({
         message: 'success',
@@ -365,10 +404,11 @@ module.exports = function(app) {
     });
   });
   app.all('/api/newitem', function(req, res) {
-    var url = `/items?authtoken=${req.query.authtoken}`;
+    var url = '/items';
     makeRequest(url, {
       method: 'POST',
-      body: req.body
+      body: req.body,
+      username: req.query.username
     }).then(function(json) {
       res.json({
         message: 'success',
@@ -382,10 +422,11 @@ module.exports = function(app) {
     });
   });
   app.all('/api/newbill', function(req, res) {
-    var url = `/bills?authtoken=${req.query.authtoken}`;
+    var url = '/bills';
     makeRequest(url, {
       method: 'POST',
-      body: req.body
+      body: req.body,
+      username: req.query.username
     }).then(function(json) {
       res.json({
         message: 'success',
@@ -427,15 +468,15 @@ module.exports = function(app) {
   app.all('/api/itemsupdate', function(req, res) {
     var body = JSON.parse(req.body);
     var items = body.items || [];
-    var appendParams = `?authtoken=${req.query.authtoken}`;
     var promises = items.map(function(item) {
-      var apiurl = `/items/${item['Item ID']}${appendParams}`;
+      var apiurl = `/items/${item['Item ID']}`;
       return new RSVP.Promise((resolve, reject) => {
         makeRequest(apiurl, {
           method: 'PUT',
           body: JSON.stringify({
             rate: item.printRate
-          })
+          }),
+          username: req.query.username
         }).then(function(json) {
           resolve({
             message: 'success'
@@ -473,11 +514,16 @@ module.exports = function(app) {
   });
   // app.all('/api/invoicepdf', function(req, res) {
   //   var invoiceId = req.query.invoice_id;
-  //   var url = 'https://books.zoho.com/api/v3/invoices/' + invoiceId + '?print=true&accept=pdf&authtoken=' + req.query.authtoken + '&organization_id=' + app.parsedData.organization_id + '&customer_id=' + app.parsedData.customer_id;
+  //   var url = 'https://books.zoho.com/api/v3/invoices/' + invoiceId + '?print=true&accept=pdf&organization_id=' + app.parsedData.organization_id + '&customer_id=' + app.parsedData.customer_id;
   //   var fileName = "pdf/invoice-" + invoiceId + ".pdf";
   //   var file = fs.createWriteStream(fileName);
   //   request
-  //     .get(url)
+  //     .get({
+        //   url,
+        //   headers: {
+        //     Authorization: 'Zoho-oauthtoken '+json.access_token
+        //   }
+        // })
   //     .on('response', function(response) {
   //       response.pipe(file).on('close', function(code) {
   //         res.sendFile(fileName, {

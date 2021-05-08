@@ -3,10 +3,10 @@ import Service, { inject as service } from '@ember/service';
 export default Service.extend({
   session: service(),
   ajax(requestUrl, options = {}) {
-    let authtoken = this.get('session.user.authtoken');
+    let username = this.get('session.user.username');
     let method = options.method || 'GET';
     let queryParams = {
-      authtoken
+      username
     };
     merge(queryParams, (options.params || {}));
     queryParams = $.param(queryParams);
