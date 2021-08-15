@@ -9,7 +9,7 @@
         {{#each model as |invoice|}}
           <tr style="cursor:pointer">
             <td>
-              {{input type="checkbox" checked=invoice.selected}}
+              <Input @type="checkbox" @checked={{invoice.selected}} />
             </td>
             <td {{action "recordPayment" invoice.invoice_id}}>
               {{invoice.invoice_number}}

@@ -7,25 +7,25 @@
       {{#if session.isAdmin}}
         <div class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
-            {{#link-to "sales" tagName="li" }}{{link-to "Sales" "sales"}}{{/link-to}}
-            {{#link-to "editsales" tagName="li" }}{{link-to "Edit Sales" "editsales"}}{{/link-to}}
-            {{#link-to "returns" tagName="li" }}{{link-to "Returns" "returns"}}{{/link-to}}
-            {{#link-to "payment" tagName="li" }}{{link-to "Payment" "payment"}}{{/link-to}}
-            {{#link-to "adjustitem" tagName="li" }}{{link-to "Adjust Item" "adjustitem"}}{{/link-to}}
-            {{#link-to "stockdetails" tagName="li" }}{{link-to "Stock Details" "stockdetails"}}{{/link-to}}
-            {{#link-to "barcode" tagName="li" }}{{link-to "Barcode" "barcode"}}{{/link-to}}
-            {{#link-to "pantsticker" tagName="li" }}{{link-to "Pant Sticker" "pantsticker"}}{{/link-to}}
-            {{#link-to "purchase" tagName="li" }}{{link-to "Purchase" "purchase"}}{{/link-to}}
-            {{#link-to "printsticker" tagName="li" }}{{link-to "Print Sticker" "printsticker"}}{{/link-to}}
-            {{#link-to "plainsticker" tagName="li" }}{{link-to "Plain Sticker" "plainsticker"}}{{/link-to}}
-            {{#link-to "packsticker" tagName="li" }}{{link-to "Pack Sticker" "packsticker"}}{{/link-to}}
+            <LinkTo @route="sales" @tagName="li"><LinkTo @route="sales">Sales</LinkTo></LinkTo>
+            <LinkTo @route="editsales" @tagName="li"><LinkTo @route="editsales">Edit Sales</LinkTo></LinkTo>
+            <LinkTo @route="returns" @tagName="li"><LinkTo @route="returns">Returns</LinkTo></LinkTo>
+            <LinkTo @route="payment" @tagName="li"><LinkTo @route="payment">Payment</LinkTo></LinkTo>
+            <LinkTo @route="adjustitem" @tagName="li"><LinkTo @route="adjustitem">Adjust Item</LinkTo></LinkTo>
+            <LinkTo @route="stockdetails" @tagName="li"><LinkTo @route="stockdetails">Stock Details</LinkTo></LinkTo>
+            <LinkTo @route="barcode" @tagName="li"><LinkTo @route="barcode">Barcode</LinkTo></LinkTo>
+            <LinkTo @route="pantsticker" @tagName="li"><LinkTo @route="pantsticker">Pant Sticker</LinkTo></LinkTo>
+            <LinkTo @route="purchase" @tagName="li"><LinkTo @route="purchase">Purchase</LinkTo></LinkTo>
+            <LinkTo @route="printsticker" @tagName="li"><LinkTo @route="printsticker">Print Sticker</LinkTo></LinkTo>
+            <LinkTo @route="plainsticker" @tagName="li"><LinkTo @route="plainsticker">Plain Sticker</LinkTo></LinkTo>
+            <LinkTo @route="packsticker" @tagName="li"><LinkTo @route="packsticker">Pack Sticker</LinkTo></LinkTo>
           </ul>
         </div>
         {{else if session.isSale}}
         <ul class="nav navbar-nav">
-          {{#link-to "sales" tagName="li" }}{{link-to "Sales" "sales"}}{{/link-to}}
-          {{#link-to "editsales" tagName="li" }}{{link-to "Edit Sales" "editsales"}}{{/link-to}}
-          {{#link-to "returns" tagName="li" }}{{link-to "Returns" "returns"}}{{/link-to}}
+          <LinkTo @route="sales" @tagName="li"><LinkTo @route="sales">Sales</LinkTo></LinkTo>
+          <LinkTo @route="editsales" @tagName="li"><LinkTo @route="editsales">Edit Sales</LinkTo></LinkTo>
+          <LinkTo @route="returns" @tagName="li"><LinkTo @route="returns">Returns</LinkTo></LinkTo>
         </ul>
       {{/if}}
     </div>

@@ -3,15 +3,15 @@
   <div class="form-group">
     <div class="col-md-3">Sales Person</div>
     <div class="col-md-9">
-      {{#power-select selected=model.salesperson options=session.salespersons onchange=(action "selectSP") searchField="salesperson_name" as |salesperson|}}
+      <PowerSelect @selected={{model.salesperson}} @options={{session.salespersons}} @onChange={{action "selectSP"}} @searchField="salesperson_name" as |salesperson|>
         {{salesperson.salesperson_name}}
-      {{/power-select}}
+      </PowerSelect>
     </div>
   </div>
   <div class="form-group">
     <div class="col-md-3">Phone Number</div>
     <div class="col-md-9">
-      {{input class="form-control" value=model.phone_number}}
+      <Input class="form-control" @value={{model.phone_number}} />
     </div>
   </div><br><br>
   {{/if}}
@@ -35,17 +35,17 @@
           <td>{{lineItem.sku}}</td>
           <td>
             {{#if lineItem.isCustom}}
-              {{#power-select selected=lineItem.description options=customItems onfocus=(action "handleEPSFocus") onchange=(action "selectCustomItem" lineItem) autofocus=lineItem.canFocus as |customItem|}}
+              <PowerSelect @selected={{lineItem.description}} @options={{customItems}} @onfocus={{action "handleEPSFocus"}} @onChange={{action "selectCustomItem" lineItem}} @autofocus={{lineItem.canFocus}} as |customItem|>
                 {{customItem}}
-              {{/power-select}}
+              </PowerSelect>
             {{else}}
               {{lineItem.name}}
             {{/if}}
           </td>
-          <td>{{input class="form-control" value=lineItem.quantity disabled=model.isSaving}}</td>
+          <td><Input class="form-control" @value={{lineItem.quantity}} @disabled={{model.isSaving}} /></td>
           <td>
             {{#if lineItem.isCustom}}
-              <td>{{input class="form-control" value=lineItem.rate disabled=model.isSaving}}</td>
+              <td><Input class="form-control" @value={{lineItem.rate}} @disabled={{model.isSaving}} /></td>
             {{else}}
               {{lineItem.rate}}
             {{/if}}
@@ -57,7 +57,7 @@
       {{/each}}
       <tr>
         <td></td>
-        <td>{{input class="form-control" value=id enter="itemChanged" autofocus=true}}</td>
+        <td><Input class="form-control" @value={{id}} @enter="itemChanged" @autofocus={{true}} /></td>
         <td></td>
         <td></td>
         <td></td>

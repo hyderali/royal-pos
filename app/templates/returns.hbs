@@ -1,5 +1,5 @@
 <div  style="background-color:#F3F307">
 <h3 class="text-center hidden-print">Returns</h3>
-{{sales-table model=model isSales=false}}
-{{sales-receipt model=model numberLabel="Credit No" isSales=false}}
+<SalesTable @model={{model}} @isSales={{false}} />
+<SalesReceipt @model={{model}} @numberLabel="Credit No" @isSales={{false}} />
 </div>
