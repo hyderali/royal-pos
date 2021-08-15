@@ -3,10 +3,10 @@
   <div style="border: 1px solid #333;">
     <div style="border-bottom: 1px solid #333;">
       {{#if isSales}}
-      <div style="text-align: center;"><b><font size="6">ROYAL COTTON LAND</font></b></div>
-      <div style="text-align: center;font-size:20px">6A, Mahal 1st Street</div>
+      <div style="text-align: center;"><b><font size="6">{{session.org_name}}</font></b></div>
+      <div style="text-align: center;font-size:20px">{{session.org_address}}</div>
       <div style="text-align: center;font-size:20px">Madurai</div>
-      <div style="text-align: center;font-size:20px">Ph: 0452-4268125<br><br></div>
+      <div style="text-align: center;font-size:20px">Ph: {{session.org_phone}}<br><br></div>
       {{else}}
       <div style="text-align: center;"><b><font size="6">Sales Return</font></b></div>
       {{/if}}
