@@ -18,13 +18,13 @@
         <td>{{item.SKU}}</td>
         <td>{{item.Description}}</td>
         <td>{{item.Rate}}</td>
-        <td>{{input value=item.printRate class="form-control" autofocus=true}}</td>
-        <td>{{input value=item.qty class="form-control"}}</td>
+        <td><Input @value={{item.printRate}} class="form-control" @autofocus={{true}} /></td>
+        <td><Input @value={{item.qty}} class="form-control" /></td>
         <td {{action "removeLineItem" item}}><button type="button" class="btn btn-danger pull-right">Delete</button></td>
       </tr>
     {{/each}}
     <tr>
-      <td> {{input class="form-control" autofocus=true enter="addNewItem"}}</td>
+      <td> <Input class="form-control" @autofocus={{true}} @enter="addNewItem" /></td>
       <td></td>
       <td></td>
       <td></td>
@@ -32,9 +32,9 @@
     </tr>
   </tbody>
 </table>
-{{barcode-list items=printitems}}
+<BarcodeList @items={{printitems}} />
 {{#if isShowingModal}}
-  {{#modal-dialog close='toggleTranslucent' translucentOverlay=true}}
+  <ModalDialog @close="toggleTranslucent" @translucentOverlay={{true}}>
     <div class="hidden-print">
       <h1>Prices Not Updated</h1>
       <p>The following's items prices are not updated</p>
@@ -56,5 +56,5 @@
       </table>
       <button {{action 'toggleTranslucent'}} class="btn btn-primary">Close</button>
     </div>
-  {{/modal-dialog}}
+  </ModalDialog>
 {{/if}}

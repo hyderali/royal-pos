@@ -17,15 +17,15 @@
         <td>{{item.SKU}}</td>
         <td>{{item.Description}}</td>
         <td>{{item.Rate}}</td>
-        <td>{{input value=item.qty class="form-control" autofocus=true}}</td>
+        <td><Input @value={{item.qty}} class="form-control" @autofocus={{true}} /></td>
       </tr>
     {{/each}}
     <tr>
-      <td> {{input class="form-control" autofocus=true enter="addNewItem"}}</td>
+      <td> <Input class="form-control" @autofocus={{true}} @enter="addNewItem" /></td>
       <td></td>
       <td></td>
       <td></td>
     </tr>
   </tbody>
 </table>
-{{barcode-list items=printitems}}
+<BarcodeList @items={{printitems}} />

@@ -16,9 +16,9 @@
     {{#each items as |item index|}}
       <tr>
         <td>{{index}}</td>
-        <td>{{input class="form-control" value=item.name autofocus=true}}</td>
-        <td>{{input class="form-control" value=item.price}}</td>
-        <td>{{input value=item.qty class="form-control" enter="addNewItem"}}</td>
+        <td><Input class="form-control" @value={{item.name}} @autofocus={{true}} /></td>
+        <td><Input class="form-control" @value={{item.price}} /></td>
+        <td><Input @value={{item.qty}} class="form-control" @enter="addNewItem" /></td>
       </tr>
     {{/each}}
   </tbody>

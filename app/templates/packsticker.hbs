@@ -16,13 +16,13 @@
   <tbody>
     {{#each items as |item|}}
       <tr>
-        <td>{{input value=item.size class="form-control" autofocus=true autocomplete="on"}}</td>
-        <td>{{input value=item.weight class="form-control" autocomplete="on"}}</td>
-        <td>{{input value=item.price class="form-control" autocomplete="on"}}</td>
-        <td>{{input value=item.pcs class="form-control" autocomplete="on"}}</td>
-        <td>{{input value=item.qty class="form-control" autocomplete="on"}}</td>
+        <td><Input @value={{item.size}} class="form-control" @autofocus={{true}} @autocomplete="on" /></td>
+        <td><Input @value={{item.weight}} class="form-control" @autocomplete="on" /></td>
+        <td><Input @value={{item.price}} class="form-control" @autocomplete="on" /></td>
+        <td><Input @value={{item.pcs}} class="form-control" @autocomplete="on" /></td>
+        <td><Input @value={{item.qty}} class="form-control" @autocomplete="on" /></td>
       </tr>
     {{/each}}
   </tbody>
 </table>
-{{pack-sticker-list items=printitems}}
+<PackStickerList @items={{printitems}} />

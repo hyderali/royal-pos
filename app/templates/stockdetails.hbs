@@ -4,33 +4,33 @@
     <div class="col-md-3">
       <div>Group</div>
       <div>
-        {{#power-select class="form-control" selected=searchModel.group options=session.groups onchange=(action "selectGroup") as |design|}}
+        <PowerSelect @class="form-control" @selected={{searchModel.group}} @options={{session.groups}} @onChange={{action "selectGroup"}} as |design|>
           {{design}}
-        {{/power-select}}
+        </PowerSelect>
       </div>
     </div>
     <div class="col-md-3">
       <div>Size</div>
       <div>
-        {{#power-select class="form-control" selected=searchModel.size options=session.sizes onchange=(action "selectSize") as |size|}}
+        <PowerSelect @class="form-control" @selected={{searchModel.size}} @options={{session.sizes}} @onChange={{action "selectSize"}} as |size|>
           {{size}}
-        {{/power-select}}
+        </PowerSelect>
       </div>
     </div>
     <div class="col-md-3">
       <div>Design</div>
       <div>
-        {{#power-select class="form-control" selected=searchModel.design options=session.designs onchange=(action "selectDesign") as |design|}}
+        <PowerSelect @class="form-control" @selected={{searchModel.design}} @options={{session.designs}} @onChange={{action "selectDesign"}} as |design|>
           {{design}}
-        {{/power-select}}
+        </PowerSelect>
       </div>
     </div>
     <div class="col-md-3">
       <div>Brand</div>
       <div>
-        {{#power-select class="form-control" selected=searchModel.brand options=session.brands onchange=(action "selectBrand") as |design|}}
+        <PowerSelect @class="form-control" @selected={{searchModel.brand}} @options={{session.brands}} @onChange={{action "selectBrand"}} as |design|>
           {{design}}
-        {{/power-select}}
+        </PowerSelect>
       </div>
     </div>
   </div>

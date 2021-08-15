@@ -7,15 +7,15 @@
   <div class="form-group">
     <div class="col-md-3">Supplier</div>
     <div class="col-md-9">
-      {{#power-select selected=model.vendor options=session.vendors onchange=(action "selectVendor") searchField="contact_name" as |vendor|}}
+      <PowerSelect @selected={{model.vendor}} @options={{session.vendors}} @onChange={{action "selectVendor"}} @searchField="contact_name" as |vendor|>
         {{vendor.contact_name}}
-      {{/power-select}}
+      </PowerSelect>
     </div>
   </div>
   <div class="form-group">
     <div class="col-md-3">Bill Number</div>
     <div class="col-md-9">
-      {{input class="form-control" value=model.bill_number}}
+      <Input class="form-control" @value={{model.bill_number}} />
     </div>
   </div>
   <table class="table">
@@ -47,8 +47,8 @@
           <td> {{lineItem.CF.Brand}} </td>
           <td> {{lineItem.CF.Design}} </td>
           <td> {{lineItem.CF.Size}} </td>
-          <td> {{input class="form-control" value=lineItem.quantity autofocus=true}} </td>
-          <td> {{input class="form-control" value=lineItem.sticker}} </td>
+          <td> <Input class="form-control" @value={{lineItem.quantity}} @autofocus={{true}} /> </td>
+          <td> <Input class="form-control" @value={{lineItem.sticker}} /> </td>
           <td>
             <button type="button" class="btn btn-danger pull-right" {{action "removeLineItem" lineItem}}>Delete</button> <br>
             <a href="#" {{action "addItem" lineItem}}>Clone</a>
@@ -58,7 +58,7 @@
       <tr>
         <td></td>
         <td>
-          {{input class="form-control" autofocus=true enter="addNewItem"}}
+          <Input class="form-control" @autofocus={{true}} @enter="addNewItem" />
           <a href="#" {{action "addItem"}}>Add Item</a>
         </td>
         <td colspan="10"></td>
@@ -84,62 +84,62 @@
   </div>
 </div>
 {{#if isShowingModal}}
-  {{#modal-dialog container-class="new-item" close='closeModal' translucentOverlay=true}}
+  <ModalDialog @container-class="new-item" @close="closeModal" @translucentOverlay={{true}}>
     <div class="hidden-print">
       <div class="form-horizontal">
         <div class="form-group">
           <div class="col-md-2">SKU</div>
-          <div class="col-md-4">{{input class="form-control" value = newItemModel.sku disabled=true}}</div>
+          <div class="col-md-4"><Input class="form-control" @value={{newItemModel.sku}} @disabled={{true}} /></div>
           <div class="col-md-2">Name</div>
           <div class="col-md-4">
-            {{#power-select class="form-control" selected=newItemModel.description options=session.names onchange=(action "selectName") onkeydown=(action "createNameOnEnter") as |name|}}
+            <PowerSelect @class="form-control" @selected={{newItemModel.description}} @options={{session.names}} @onChange={{action "selectName"}} @onkeydown={{action "createNameOnEnter"}} as |name|>
               {{name}}
-            {{/power-select}}
+            </PowerSelect>
           </div>
         </div>
         <div class="form-group">
           <div class="col-md-2">Group</div>
           <div class="col-md-4">
-            {{#power-select class="form-control" selected=newItemModel.group options=session.groups onchange=(action "selectGroup") onkeydown=(action "createGroupOnEnter") as |group|}}
+            <PowerSelect @class="form-control" @selected={{newItemModel.group}} @options={{session.groups}} @onChange={{action "selectGroup"}} @onkeydown={{action "createGroupOnEnter"}} as |group|>
               {{group}}
-            {{/power-select}}
+            </PowerSelect>
           </div>
         </div>
         <div class="form-group">
           <div class="col-md-2">Purchase Rate</div>
-          <div class="col-md-4">{{input class="form-control" value = newItemModel.purchase_rate focus-out="purchaseRateChanged"}}</div>
+          <div class="col-md-4"><Input class="form-control" @value={{newItemModel.purchase_rate}} @focus-out="purchaseRateChanged" /></div>
           <div class="col-md-2">Profit</div>
-          <div class="col-md-4">{{input class="form-control" value = newItemModel.profit focus-out="profitChanged"}}</div>
+          <div class="col-md-4"><Input class="form-control" @value={{newItemModel.profit}} @focus-out="profitChanged" /></div>
         </div>
         <div class="form-group">
           <div class="col-md-2">Sales Rate</div>
-          <div class="col-md-4">{{input class="form-control" value = newItemModel.rate}}</div>
+          <div class="col-md-4"><Input class="form-control" @value={{newItemModel.rate}} /></div>
           <div class="col-md-2">Discount</div>
-          <div class="col-md-4">{{input class="form-control" value = newItemModel.discount}}</div>
+          <div class="col-md-4"><Input class="form-control" @value={{newItemModel.discount}} /></div>
         </div>
         <div class="form-group">
           <div class="col-md-2">Size</div>
           <div class="col-md-4">
-            {{#power-select class="form-control" selected=newItemModel.size options=session.sizes onchange=(action "selectSize") onkeydown=(action "createSizeOnEnter") as |size|}}
+            <PowerSelect @class="form-control" @selected={{newItemModel.size}} @options={{session.sizes}} @onChange={{action "selectSize"}} @onkeydown={{action "createSizeOnEnter"}} as |size|>
               {{size}}
-            {{/power-select}}
+            </PowerSelect>
           </div>
           <div class="col-md-2">Design</div>
           <div class="col-md-4">
-            {{#power-select class="form-control" selected=newItemModel.design options=session.designs onchange=(action "selectDesign") onkeydown=(action "createDesignOnEnter") as |design|}}
+            <PowerSelect @class="form-control" @selected={{newItemModel.design}} @options={{session.designs}} @onChange={{action "selectDesign"}} @onkeydown={{action "createDesignOnEnter"}} as |design|>
               {{design}}
-            {{/power-select}}
+            </PowerSelect>
           </div>
         </div>
         <div class="form-group">
           <div class="col-md-2">Brand</div>
           <div class="col-md-4">
-            {{#power-select class="form-control" selected=newItemModel.brand options=session.brands onchange=(action "selectBrand") onkeydown=(action "createBrandOnEnter") as |brand|}}
+            <PowerSelect @class="form-control" @selected={{newItemModel.brand}} @options={{session.brands}} @onChange={{action "selectBrand"}} @onkeydown={{action "createBrandOnEnter"}} as |brand|>
               {{brand}}
-            {{/power-select}}
+            </PowerSelect>
           </div>
           <div class="col-md-2">Colour</div>
-          <div class="col-md-4">{{input class="form-control" value = newItemModel.colour}}</div>
+          <div class="col-md-4"><Input class="form-control" @value={{newItemModel.colour}} /></div>
         </div>
         <div class="btn btn-toolbar">
           <button {{action 'saveItem'}} disabled={{newItemModel.isSaving}} class="btn btn-primary">Save</button>
@@ -147,6 +147,6 @@
         </div>
       </div>
     </div>
-  {{/modal-dialog}}
+  </ModalDialog>
 {{/if}}
-{{barcode-list items=printItems}}
+<BarcodeList @items={{printItems}} />

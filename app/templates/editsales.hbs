@@ -8,7 +8,7 @@
   <div class="form-group">
     <label class="col-md-3">Bill No: </label>
     <div class="col-md-6">
-      {{input class="form-control" enter="searchInvoice" value=invoiceNumber autofocus=true}}
+      <Input class="form-control" @enter="searchInvoice" @value={{invoiceNumber}} @autofocus={{true}} />
     </div>
     <div class="col-md-3">
       <button disabled={{isSearching}} class="btn btn-primary" type="button" {{action "searchInvoice" invoiceNumber}}>Search</button>
@@ -17,6 +17,6 @@
     <br><br><br>
 </div>
 {{#if canShowDetails}}
-{{sales-table model=model}}
+<SalesTable @model={{model}} />
 {{/if}}
-{{sales-receipt model=model}}
+<SalesReceipt @model={{model}} />

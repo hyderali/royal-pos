@@ -19,7 +19,7 @@
         <tr>
           <td>{{get-index index}}</td>
           <td>{{invoice.invoice_number}}</td>
-          <td>{{input type="text" class="form-control" value=invoice.discount autofocus=invoice.autofocus disabled=(not (difference invoice.balance invoice.credits_applied))}}</td>
+          <td><Input @type="text" class="form-control" @value={{invoice.discount}} @autofocus={{invoice.autofocus}} @disabled={{not (difference invoice.balance invoice.credits_applied)}} /></td>
           <td>{{invoice.credits_applied}}</td>
           <td>{{invoice.balance}}</td>
         </tr>
@@ -40,7 +40,7 @@
       </tr>
       <tr>
         <td colspan="2" class="text-right">Received</td>
-        <td>{{input class="form-control" value=received}}</td>
+        <td><Input class="form-control" @value={{received}} /></td>
       </tr>
       <tr>
         <td colspan="2" class="text-right">Balance</td>
@@ -103,7 +103,7 @@
 </div>
 
 {{#if isShowingModal}}
-  {{#modal-dialog container-class="new-item" close='closeModal' translucentOverlay=true}}
+  <ModalDialog @container-class="new-item" @close="closeModal" @translucentOverlay={{true}}>
     <div class="hidden-print">
       {{#if applyCreditsError}}
       <div class="alert alert-danger">
@@ -142,10 +142,10 @@
         <button {{action 'closeModal'}} class="btn btn-default">Close</button>
       </div>
     </div>
-  {{/modal-dialog}}
+  </ModalDialog>
 {{/if}}
 {{#if isShowingConfirmModal}}
-  {{#modal-dialog container-class="new-item" close='closeConfirmModal' translucentOverlay=true}}
+  <ModalDialog @container-class="new-item" @close="closeConfirmModal" @translucentOverlay={{true}}>
     <div class="hidden-print">
       Are you sure about applying
       <div class="btn btn-toolbar">
@@ -153,5 +153,5 @@
         <button {{action 'closeConfirmModal'}} class="btn btn-default">Close</button>
       </div>
     </div>
-  {{/modal-dialog}}
+  </ModalDialog>
 {{/if}}
