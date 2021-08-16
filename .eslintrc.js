@@ -25,7 +25,11 @@ module.exports = {
     $: false
   },
   rules: {
-    'ember/no-jquery': 'error'
+    'ember/no-jquery': 0,
+    'ember/closure-actions': 0,
+    'ember/avoid-leaking-state-in-ember-objects': 0,
+    'ember/no-observers': 0,
+
   },
   overrides: [
     // node files

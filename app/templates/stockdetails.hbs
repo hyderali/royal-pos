@@ -36,8 +36,8 @@
   </div>
   <div class="form-group row">
     <div class="col-md-2">
-      <button class="btn btn-primary" {{action "searchItems"}}>Search</button>
-      <button class="btn btn-default" {{action "clearAll"}}>Clear All</button>
+      <button class="btn btn-primary" type="button" {{action "searchItems"}}>Search</button>
+      <button class="btn btn-default" type="button" {{action "clearAll"}}>Clear All</button>
     </div>
   </div>
   <hr>
@@ -59,39 +59,39 @@
     </thead>
     <tbody>
       {{#if isLoading}}
-      <tr>
-        <td colspan="10" align="center">Loading</td>
-      </tr>
+        <tr>
+          <td colspan="10" align="center">Loading</td>
+        </tr>
       {{else}}
-      {{#each results as |result index|}}
-      <tr>
-        <td> {{get-index index}} </td>
-        <td> {{result.sku}} </td>
-        <td> {{result.description}} </td>
-        <td> {{get result groupCFIDLabeL}} </td>
-        <td> {{get result sizeCFIDLabeL}} </td>
-        <td> {{get result designCFIDLabeL}} </td>
-        <td> {{get result brandCFIDLabeL}} </td>
-        <td> {{result.rate}} </td>
-        <td> {{result.purchase_rate}} </td>
-        <td> {{result.stock_on_hand}} </td>
-        <td> {{product result.stock_on_hand result.purchase_rate}} </td>
-      </tr>
-      {{/each}}
+        {{#each results as |result index|}}
+          <tr>
+            <td> {{get-index index}} </td>
+            <td> {{result.sku}} </td>
+            <td> {{result.description}} </td>
+            <td> {{get result groupCFIDLabeL}} </td>
+            <td> {{get result sizeCFIDLabeL}} </td>
+            <td> {{get result designCFIDLabeL}} </td>
+            <td> {{get result brandCFIDLabeL}} </td>
+            <td> {{result.rate}} </td>
+            <td> {{result.purchase_rate}} </td>
+            <td> {{result.stock_on_hand}} </td>
+            <td> {{product result.stock_on_hand result.purchase_rate}} </td>
+          </tr>
+        {{/each}}
       {{/if}}
     </tbody>
     {{#unless isLoading}}
-    <tfoot>
-      <tr>
-        {{#if hasMore}}
-        <td colspan="10" align="center" {{action "loadMore"}}><a href="#">Load More</a></td>
-        {{else if results}}
-        <td colspan="9" align="right">Total</td>
-        <td>{{totalQty}}</td>
-        <td>{{totalAmount}}</td>
-        {{/if}}
-      </tr>
-    </tfoot>
+      <tfoot>
+        <tr>
+          {{#if hasMore}}
+            <td colspan="10" align="center" {{action "loadMore"}}><a href="#">Load More</a></td>
+          {{else if results}}
+            <td colspan="9" align="right">Total</td>
+            <td>{{totalQty}}</td>
+            <td>{{totalAmount}}</td>
+          {{/if}}
+        </tr>
+      </tfoot>
     {{/unless}}
   </table>
 </div>

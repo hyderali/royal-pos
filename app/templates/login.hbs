@@ -1,9 +1,9 @@
 <div class="container" style="margin-top: 200px;max-width: 400px;">
   <form>
     {{#if model.error}}
-    <div class="alert alert-danger">
-      <p>{{model.error}}</p>
-    </div>
+      <div class="alert alert-danger">
+        <p>{{model.error}}</p>
+      </div>
     {{/if}}
     <div class="form-group">
       <label class="control-label">
@@ -18,7 +18,7 @@
       <Input @type="password" class="form-control" @value={{model.password}} />
     </div>
     <div class="btn-toolbar">
-      <button class="btn btn-primary" {{action "login"}}>Enter</button>
+      <button class="btn btn-primary" type="button" {{action "login"}}>Enter</button>
     </div>
   </form>
 </div>
