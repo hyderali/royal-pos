@@ -1,5 +1,5 @@
 <div class="btn btn-toolbar hidden-print" style="margin-top:30px">
-  <button {{action 'print'}} class="btn btn-primary">Print</button>
+  <button class="btn btn-primary" type="button" {{action "print"}}>Print</button>
 </div>
 <table class="table hidden-print">
   <thead>
@@ -54,7 +54,7 @@
           {{/each}}
         </tbody>
       </table>
-      <button {{action 'toggleTranslucent'}} class="btn btn-primary">Close</button>
+      <button class="btn btn-primary" type="button" {{action "toggleTranslucent"}}>Close</button>
     </div>
   </ModalDialog>
 {{/if}}

@@ -1,9 +1,9 @@
 <h3 class="text-center hidden-print">Sales Edit</h3>
 <div style="margin:20px" class="hidden-print">
   {{#if msg}}
-  <div class="alert alert-danger">
-    {{msg}}
-  </div>
+    <div class="alert alert-danger">
+      {{msg}}
+    </div>
   {{/if}}
   <div class="form-group">
     <label class="col-md-3">Bill No: </label>
@@ -14,9 +14,9 @@
       <button disabled={{isSearching}} class="btn btn-primary" type="button" {{action "searchInvoice" invoiceNumber}}>Search</button>
     </div>
   </div>
-    <br><br><br>
+  <br><br><br>
 </div>
 {{#if canShowDetails}}
-<SalesTable @model={{model}} />
+  <SalesTable @model={{model}} />
 {{/if}}
 <SalesReceipt @model={{model}} />

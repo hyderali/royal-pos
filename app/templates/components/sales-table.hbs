@@ -1,19 +1,19 @@
 <div class="hidden-print">
   {{#if isSales}}
-  <div class="form-group">
-    <div class="col-md-3">Sales Person</div>
-    <div class="col-md-9">
-      <PowerSelect @selected={{model.salesperson}} @options={{session.salespersons}} @onChange={{action "selectSP"}} @searchField="salesperson_name" as |salesperson|>
-        {{salesperson.salesperson_name}}
-      </PowerSelect>
+    <div class="form-group">
+      <div class="col-md-3">Sales Person</div>
+      <div class="col-md-9">
+        <PowerSelect @selected={{model.salesperson}} @options={{session.salespersons}} @onChange={{action "selectSP"}} @searchField="salesperson_name" as |salesperson|>
+          {{salesperson.salesperson_name}}
+        </PowerSelect>
+      </div>
     </div>
-  </div>
-  <div class="form-group">
-    <div class="col-md-3">Phone Number</div>
-    <div class="col-md-9">
-      <Input class="form-control" @value={{model.phone_number}} />
-    </div>
-  </div><br><br>
+    <div class="form-group">
+      <div class="col-md-3">Phone Number</div>
+      <div class="col-md-9">
+        <Input class="form-control" @value={{model.phone_number}} />
+      </div>
+    </div><br><br>
   {{/if}}
   <table class="table table-bordered">
     <thead>
@@ -87,10 +87,10 @@
   <div class="btn-toolbar pull-right">
     <div class="btn-group">
       <button type="button" disabled= {{model.isSaving}} {{action "saveAndPrint" true}} class="btn btn-default">Save & New</button>
-      </div>
+    </div>
     <div class="btn-group">
       <button type="button" disabled= {{model.isSaving}} {{action "saveAndPrint" false}} class="btn btn-primary">Save & Print</button>
-      </div>
+    </div>
     <div class="btn-group"><button type="button" {{action "newSale"}} class="btn btn-default">New Sale</button></div>
   </div>
 </div>
