@@ -58,7 +58,7 @@
   },
   "dependencies": {
     "body-parser": "^1.15.2",
-    "bootstrap": "^3.3.7",
+    "bootstrap": "^3.4.1",
     "csvtojson": "^1.0.3",
     "jsbarcode": "^3.5.9",
     "json-2-csv": "^3.14.4",
