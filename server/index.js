@@ -6,6 +6,7 @@ var Converter = require("csvtojson").Converter;
 var converter = new Converter({
   checkType: false
 });
+var json2CSVConverter = require('json-2-csv');
 var RSVP = require('rsvp');
 var oauth = require('./oauth');
 // To use it create some files under `mocks/`
@@ -514,6 +515,59 @@ module.exports = async function(app) {
         message: reason.message
       })
     });
+  });
+  app.all('/api/adjustment', function(req, res) {
+    var body = JSON.parse(req.body);
+    var items = body.items;
+    var newItems,newItemsCSV, currentItem, adjustmentsCSV, itemsPromise, adjustmentsPromise;
+    newItemsCSV = fs.readFileSync('./csvs/newitem.csv', 'utf8');
+    adjustmentsCSV = fs.readFileSync('./csvs/itemadjustment.csv', 'utf8');
+    itemsPromise = json2CSVConverter.csv2jsonAsync(newItemsCSV).then((result)=> {
+      return new RSVP.Promise((resolve, reject) => {
+        newItems = result || [];
+        items.forEach(item => {
+          currentItem = newItems.find(citem => citem.SKU === item.SKU);
+          if(currentItem) {
+            currentItem['Initial Stock'] = Number(currentItem['Initial Stock']) + Number(item['Initial Stock']);
+          } else {
+            newItems.push(item);
+          }
+        });
+        resolve(newItems);
+      });
+    }).then((newItems) => {
+      json2CSVConverter.json2csvAsync(newItems).then((newItemsCSV) => {
+        fs.writeFileSync('./csvs/newitem.csv', newItemsCSV);
+      })
+    });
+    adjustmentsPromise = json2CSVConverter.csv2jsonAsync(adjustmentsCSV).then((adjustments)=> {
+      return new RSVP.Promise((resolve, reject) => {
+        var lastRefNumber = Number((adjustments[adjustments.length - 1] || {})['Reference Number'] || 0);
+        items.forEach(item => {
+          adjustments.push({
+            'Date': '2021-08-17',
+            'Reference Number': lastRefNumber + 1,
+            'Reason': 'Moved to Royal Sarees & Readymades',
+            'Quantity Adjusted': item['Initial Stock'],
+            'Item Name': item['Item Name'],
+            'SKU': item['SKU'],
+            'Account': 'Royal Sarees & Readymade'
+          });
+        });
+        resolve(adjustments);
+      });
+    }).then((adjustments) => {
+      json2CSVConverter.json2csvAsync(adjustments).then((adjustmentsCSV) => {
+        fs.writeFileSync('./csvs/itemadjustment.csv', adjustmentsCSV);
+      })
+    });
+    RSVP.hash({itemsPromise, adjustmentsPromise}).then(()=> {
+      res.json({
+        message: 'success',
+      });
+    }).catch(()=> {
+      throw err;
+    })
   });
   // app.all('/api/invoicepdf', function(req, res) {
   //   var invoiceId = req.query.invoice_id;
