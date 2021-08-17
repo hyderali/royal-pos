@@ -27,3 +27,4 @@ server/item.csv
 /bower.json.ember-try
 /package.json.ember-try
 items/
+csvs/

@@ -19,6 +19,7 @@
             <LinkTo @route="printsticker" @tagName="li"><LinkTo @route="printsticker">Print Sticker</LinkTo></LinkTo>
             <LinkTo @route="plainsticker" @tagName="li"><LinkTo @route="plainsticker">Plain Sticker</LinkTo></LinkTo>
             <LinkTo @route="packsticker" @tagName="li"><LinkTo @route="packsticker">Pack Sticker</LinkTo></LinkTo>
+            <LinkTo @route="addstock" @tagName="li"><LinkTo @route="addstock">Add Stock</LinkTo></LinkTo>
           </ul>
         </div>
       {{else if session.isSale}}
@@ -31,6 +32,6 @@
     </div>
   </nav>
 </div>
-<div style="position:relative;top:60px" class="show-print">
+<div style="position:relative;top:{{if session.isAdmin "125" "60"}}px" class="show-print">
   {{outlet}}
 </div>

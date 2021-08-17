@@ -16,6 +16,7 @@
     "lint:js": "eslint .",
     "start": "npm run fetchItems && ember server",
     "test": "ember test",
+    "serve": "ember server",
     "fetchItems": "node lib/fetch-items.js"
   },
   "devDependencies": {
@@ -60,6 +61,7 @@
     "bootstrap": "^3.3.7",
     "csvtojson": "^1.0.3",
     "jsbarcode": "^3.5.9",
+    "json-2-csv": "^3.14.4",
     "request": "^2.79.0"
   }
 }
