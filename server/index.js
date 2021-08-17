@@ -565,8 +565,11 @@ module.exports = async function(app) {
       res.json({
         message: 'success',
       });
-    }).catch(()=> {
-      throw err;
+    }).catch((err)=> {
+      res.json({
+        message: 'failure',
+        error: err.message
+      });
     })
   });
   // app.all('/api/invoicepdf', function(req, res) {

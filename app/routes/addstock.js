@@ -50,14 +50,17 @@ export default Route.extend({
       let body = {
         items: controller.items
       };
-      this.set('isSaving', true);
-      this.store.ajax('/adjustment', { method: 'POST', body }).then(() => {
-        controller.set('items', []);
-        controller.set('id', '');
-      }).catch(error => {
-        this.set('controller.errorMessage', error);
+      controller.set('isSaving', true);
+      controller.set('errorMessage', '');
+      this.store.ajax('/adjustment', { method: 'POST', body }).then((json) => {
+        if (json.message === 'success') {
+          controller.set('items', []);
+          controller.set('id', '');
+        } else if (json.message === 'failure') {
+          controller.set('errorMessage', json.error);
+        }
       }).finally(() => {
-        this.set('isSaving', false);
+        controller.set('isSaving', false);
       });
     },
     removeLineItem(lineItem) {
