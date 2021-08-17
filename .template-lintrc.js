@@ -12,5 +12,6 @@ module.exports = {
     'no-invalid-interactive': false,
     'no-yield-only': false,
     'no-obsolete-elements': false,
+    'style-concatenation': false,
   }
 };
