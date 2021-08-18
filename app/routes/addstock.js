@@ -14,6 +14,7 @@ export default Route.extend({
       let existingLineItem = lineItems.findBy('SKU', itemName);
       if (existingLineItem) {
         set(existingLineItem, 'Initial Stock', existingLineItem['Initial Stock'] + 1);
+        controller.set('total', controller.total+1);
         controller.set('id', '');
         return;
       }
