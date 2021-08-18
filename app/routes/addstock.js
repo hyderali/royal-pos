@@ -59,6 +59,7 @@ export default Route.extend({
         if (json.message === 'success') {
           controller.set('items', []);
           controller.set('id', '');
+          controller.set('total', 0);
         } else if (json.message === 'failure') {
           controller.set('errorMessage', json.error);
         }
