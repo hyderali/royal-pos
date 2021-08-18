@@ -6,6 +6,7 @@ export default Route.extend({
   session: service(),
   setupController(controller) {
     controller.set('items', []);
+    controller.set('total', 0);
   },
   actions: {
     itemChanged(itemName) {
@@ -13,7 +14,7 @@ export default Route.extend({
       let lineItems = controller.items;
       let existingLineItem = lineItems.findBy('SKU', itemName);
       if (existingLineItem) {
-        set(existingLineItem, 'Initial Stock', existingLineItem['Initial Stock'] + 1);
+        set(existingLineItem, 'Initial Stock', Number(existingLineItem['Initial Stock']) + 1);
         controller.set('total', controller.total+1);
         controller.set('id', '');
         return;
@@ -45,6 +46,7 @@ export default Route.extend({
         lineItems.pushObject(newLineItem);
       }
       controller.set('id', '');
+      controller.set('total', controller.total+1);
     },
     save() {
       let controller = this.controller;

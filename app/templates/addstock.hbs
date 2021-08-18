@@ -21,10 +21,11 @@
       <tr>
         <td> {{get-index index}} </td>
         <td> {{result.SKU}} </td>
-        <td> {{get result "Item Name"}} </td>
+        <td> {{result.[Item Name]}} </td>
         <td> {{result.Rate}} </td>
-        <td> {{get result "Purchase Rate"}} </td>
-        <td> {{get result "Initial Stock"}} </td>
+        <td> {{result.[Purchase Rate]}} </td>
+        <td> <Input class="form-control" @value={{result.[Initial Stock]}} @focus-out="computeTotal"/> </td>
+        {{!-- <td> {{result.[Initial Stock]}} </td> --}}
         <td {{action "removeLineItem" result}}><button type="button" class="btn btn-danger pull-right">Delete</button></td>
       </tr>
     {{/each}}
