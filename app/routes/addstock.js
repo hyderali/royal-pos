@@ -1,6 +1,7 @@
 import Route from '@ember/routing/route';
 import { inject as service } from '@ember/service';
 import { set } from '@ember/object';
+import getItemName from '../utils/get-item-name';
 export default Route.extend({
   store: service(),
   session: service(),
@@ -10,6 +11,7 @@ export default Route.extend({
   },
   actions: {
     itemChanged(itemName) {
+      itemName = getItemName(itemName);
       let controller = this.controller;
       let lineItems = controller.items;
       let existingLineItem = lineItems.findBy('SKU', itemName);

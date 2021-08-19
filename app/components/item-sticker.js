@@ -1,6 +1,8 @@
+import { inject as service } from '@ember/service';
 import { computed } from '@ember/object';
 import Component from '@ember/component';
 export default Component.extend({
+  session: service(),
   classNames: ['item-sticker'],
   classNameBindings: ['isFirstRow:first-row', 'isLastRow:last-row'],
   isFirstRow: computed('index', function() {

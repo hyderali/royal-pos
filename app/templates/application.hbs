@@ -1,37 +1,43 @@
-<div style="position: fixed;top: 0;left: 20px;width: 100%;" class="hidden-print">
-  <nav class="navbar navbar-default">
-    <div class="container-fluid">
-      <div class="navbar-header">
-        <a class="navbar-brand" href="#">Royal Cotton Land</a>
-      </div>
-      {{#if session.isAdmin}}
-        <div class="collapse navbar-collapse">
-          <ul class="nav navbar-nav">
-            <LinkTo @route="sales" @tagName="li"><LinkTo @route="sales">Sales</LinkTo></LinkTo>
-            <LinkTo @route="editsales" @tagName="li"><LinkTo @route="editsales">Edit Sales</LinkTo></LinkTo>
-            <LinkTo @route="returns" @tagName="li"><LinkTo @route="returns">Returns</LinkTo></LinkTo>
-            <LinkTo @route="payment" @tagName="li"><LinkTo @route="payment">Payment</LinkTo></LinkTo>
-            <LinkTo @route="adjustitem" @tagName="li"><LinkTo @route="adjustitem">Adjust Item</LinkTo></LinkTo>
-            <LinkTo @route="stockdetails" @tagName="li"><LinkTo @route="stockdetails">Stock Details</LinkTo></LinkTo>
-            <LinkTo @route="barcode" @tagName="li"><LinkTo @route="barcode">Barcode</LinkTo></LinkTo>
-            <LinkTo @route="pantsticker" @tagName="li"><LinkTo @route="pantsticker">Pant Sticker</LinkTo></LinkTo>
-            <LinkTo @route="purchase" @tagName="li"><LinkTo @route="purchase">Purchase</LinkTo></LinkTo>
-            <LinkTo @route="printsticker" @tagName="li"><LinkTo @route="printsticker">Print Sticker</LinkTo></LinkTo>
-            <LinkTo @route="plainsticker" @tagName="li"><LinkTo @route="plainsticker">Plain Sticker</LinkTo></LinkTo>
-            <LinkTo @route="packsticker" @tagName="li"><LinkTo @route="packsticker">Pack Sticker</LinkTo></LinkTo>
-            <LinkTo @route="addstock" @tagName="li"><LinkTo @route="addstock">Add Stock</LinkTo></LinkTo>
-          </ul>
-        </div>
-      {{else if session.isSale}}
+<nav class="hidden-print navbar-fixed-top navbar navbar-default">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#">{{session.org_name}}</a>
+    </div>
+    {{#if session.isAdmin}}
+      <div class="collapse navbar-collapse">
         <ul class="nav navbar-nav">
           <LinkTo @route="sales" @tagName="li"><LinkTo @route="sales">Sales</LinkTo></LinkTo>
           <LinkTo @route="editsales" @tagName="li"><LinkTo @route="editsales">Edit Sales</LinkTo></LinkTo>
           <LinkTo @route="returns" @tagName="li"><LinkTo @route="returns">Returns</LinkTo></LinkTo>
+          <LinkTo @route="payment" @tagName="li"><LinkTo @route="payment">Payment</LinkTo></LinkTo>
+          <LinkTo @route="purchase" @tagName="li"><LinkTo @route="purchase">Purchase</LinkTo></LinkTo>
+          <LinkTo @route="adjustitem" @tagName="li"><LinkTo @route="adjustitem">Adjust Item</LinkTo></LinkTo>
+          <LinkTo @route="stockdetails" @tagName="li"><LinkTo @route="stockdetails">Stock Details</LinkTo></LinkTo>
+          <LinkTo @route="barcode" @tagName="li"><LinkTo @route="barcode">Barcode</LinkTo></LinkTo>
+          <LinkTo @route="addstock" @tagName="li"><LinkTo @route="addstock">Add Stock</LinkTo></LinkTo>
+          <li class="dropdown">
+            <a class="dropdown-toggle" href="#"data-toggle="dropdown">
+              Other Stickers
+              <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu">
+              <LinkTo @route="pantsticker" @tagName="li"><LinkTo @route="pantsticker">Pant Sticker</LinkTo></LinkTo>
+              <LinkTo @route="printsticker" @tagName="li"><LinkTo @route="printsticker">Print Sticker</LinkTo></LinkTo>
+              <LinkTo @route="plainsticker" @tagName="li"><LinkTo @route="plainsticker">Plain Sticker</LinkTo></LinkTo>
+              <LinkTo @route="packsticker" @tagName="li"><LinkTo @route="packsticker">Pack Sticker</LinkTo></LinkTo>
+            </ul>
+          </li>
         </ul>
-      {{/if}}
-    </div>
-  </nav>
-</div>
-<div style="position:relative;top:{{if session.isAdmin "125" "60"}}px" class="show-print">
+      </div>
+    {{else if session.isSale}}
+      <ul class="nav navbar-nav">
+        <LinkTo @route="sales" @tagName="li"><LinkTo @route="sales">Sales</LinkTo></LinkTo>
+        <LinkTo @route="editsales" @tagName="li"><LinkTo @route="editsales">Edit Sales</LinkTo></LinkTo>
+        <LinkTo @route="returns" @tagName="li"><LinkTo @route="returns">Returns</LinkTo></LinkTo>
+      </ul>
+    {{/if}}
+  </div>
+</nav>
+<div style="position:relative;top:60px" class="show-print">
   {{outlet}}
 </div>
