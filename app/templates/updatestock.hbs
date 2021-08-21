@@ -1,0 +1,45 @@
+<h3 class="text-center hidden-print">Update Stock</h3>
+{{#if errorMessage}}
+  <div class="alert alert-danger hidden-print">
+    {{errorMessage}}
+  </div>
+{{else}}
+  <table class="table">
+    <thead>
+      <tr>
+        <th> S.No </th>
+        <th> SKU </th>
+        <th> Name </th>
+        <th> Sales Rate </th>
+        <th> Purchase Rate </th>
+        <th> Old Stock </th>
+        <th> Incoming Stock </th>
+        <th> New Stock </th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each model as |result index|}}
+        <tr>
+          <td> {{get-index index}} </td>
+          <td> {{result.SKU}} </td>
+          <td> {{result.[Item Name]}} </td>
+          <td> {{result.Rate}} </td>
+          <td> {{result.[Purchase Rate]}} </td>
+          <td> {{result.[Old Stock]}} </td>
+          <td> {{result.[Incoming Stock]}} </td>
+          <td> {{result.[Initial Stock]}} </td>
+        </tr>
+      {{/each}}
+      <tr>
+        <td colspan="6" align="center">Total</td>
+        <td>{{total}}</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="btn-toolbar">
+    <div class="btn-group">
+      <button type="button" disabled={{isSaving}} {{action "save"}} class="btn btn-primary">Save</button>
+    </div>
+  </div>
+{{/if}}

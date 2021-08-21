@@ -22,4 +22,5 @@ Router.map(function() {
   this.route('pantsticker');
   this.route('packsticker');
   this.route('addstock');
+  this.route('updatestock');
 });

@@ -2,6 +2,7 @@ import Route from '@ember/routing/route';
 import { inject as service } from '@ember/service';
 import { set } from '@ember/object';
 import getItemName from '../utils/get-item-name';
+import todayDate from '../utils/today-date';
 export default Route.extend({
   store: service(),
   session: service(),
@@ -53,7 +54,8 @@ export default Route.extend({
     save() {
       let controller = this.controller;
       let body = {
-        items: controller.items
+        items: controller.items,
+        date: todayDate()
       };
       controller.set('isSaving', true);
       controller.set('errorMessage', '');
