@@ -12,9 +12,18 @@
           <LinkTo @route="payment" @tagName="li"><LinkTo @route="payment">Payment</LinkTo></LinkTo>
           <LinkTo @route="purchase" @tagName="li"><LinkTo @route="purchase">Purchase</LinkTo></LinkTo>
           <LinkTo @route="adjustitem" @tagName="li"><LinkTo @route="adjustitem">Adjust Item</LinkTo></LinkTo>
-          <LinkTo @route="stockdetails" @tagName="li"><LinkTo @route="stockdetails">Stock Details</LinkTo></LinkTo>
+          <li class="dropdown">
+            <a class="dropdown-toggle" href="#"data-toggle="dropdown">
+              Stock
+              <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu">
+              <LinkTo @route="stockdetails" @tagName="li"><LinkTo @route="stockdetails">Stock Details</LinkTo></LinkTo>
+              <LinkTo @route="addstock" @tagName="li"><LinkTo @route="addstock">Transfer Stock</LinkTo></LinkTo>
+              <LinkTo @route="updatestock" @tagName="li"><LinkTo @route="updatestock">Update Stock</LinkTo></LinkTo>
+            </ul>
+          </li>
           <LinkTo @route="barcode" @tagName="li"><LinkTo @route="barcode">Barcode</LinkTo></LinkTo>
-          <LinkTo @route="addstock" @tagName="li"><LinkTo @route="addstock">Add Stock</LinkTo></LinkTo>
           <li class="dropdown">
             <a class="dropdown-toggle" href="#"data-toggle="dropdown">
               Other Stickers

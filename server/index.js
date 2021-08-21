@@ -519,6 +519,7 @@ module.exports = async function(app) {
   app.all('/api/adjustment', function(req, res) {
     var body = JSON.parse(req.body);
     var items = body.items;
+    var date = body.date;
     var newItems,newItemsCSV, currentItem, adjustmentsCSV, itemsPromise, adjustmentsPromise;
     newItemsCSV = fs.readFileSync('./csvs/newitem.csv', 'utf8');
     adjustmentsCSV = fs.readFileSync('./csvs/itemadjustment.csv', 'utf8');
@@ -542,13 +543,14 @@ module.exports = async function(app) {
     });
     adjustmentsPromise = json2CSVConverter.csv2jsonAsync(adjustmentsCSV).then((adjustments)=> {
       return new RSVP.Promise((resolve, reject) => {
-        var lastRefNumber = Number((adjustments[adjustments.length - 1] || {})['Reference Number'] || 0);
+        var lastRefNumber = Number((adjustments[adjustments.length - 1] || {})['Reference Number Int'] || 0);
         items.forEach(item => {
           adjustments.push({
-            'Date': '2021-08-17',
-            'Reference Number': lastRefNumber + 1,
+            'Date': date,
+            'Reference Number': `${date}-${lastRefNumber + 1}`,
+            'Reference Number Int': lastRefNumber + 1,
             'Reason': 'Moved to Royal Sarees & Readymades',
-            'Quantity Adjusted': item['Initial Stock'],
+            'Quantity Adjusted': -item['Initial Stock'],
             'Item Name': item['Item Name'],
             'SKU': item['SKU'],
             'Account': 'Royal Sarees & Readymade'
@@ -571,6 +573,69 @@ module.exports = async function(app) {
         error: err.message
       });
     })
+  });
+  app.all('/api/getnewstock', function(req, res) {
+    var items = app.itemslist;
+    var newItems,newItemsCSV, currentItem, oldStock, incomingStock, newStock;
+    try {
+      newItemsCSV = fs.readFileSync('./csvs/newitem.csv', 'utf8');
+    } catch {
+      res.json({
+        message: 'failure',
+        error: 'New Item CSV file not found'
+      });
+      return;
+    }
+    json2CSVConverter.csv2jsonAsync(newItemsCSV).then((result)=> {
+      return new RSVP.Promise((resolve, reject) => {
+        newItems = result || [];
+        newItems.forEach(item => {
+          oldStock = 0;
+          incomingStock = Number(item['Initial Stock']);
+          newStock = incomingStock;
+          currentItem = items.find(citem => citem.SKU === item.SKU);
+          if(currentItem) {
+            oldStock = Number(currentItem['Initial Stock']);
+            newStock = oldStock + incomingStock;
+          }
+          item['Old Stock'] = oldStock;
+          item['Incoming Stock'] = incomingStock;
+          item['Initial Stock'] = newStock;
+        });
+        resolve(newItems);
+      });
+    }).then((newItems) => {
+      res.json({
+        newItems: newItems,
+        message: 'success',
+      });
+    }).catch((err)=> {
+      res.json({
+        message: 'failure',
+        error: err.message
+      });
+    });
+  });
+  app.all('/api/updatestock', function(req, res) {
+    var body = JSON.parse(req.body);
+    var items = body.items;
+    json2CSVConverter.json2csvAsync(items).then((newItemsCSV) => {
+        new RSVP.Promise((resolve, reject) => {
+          fs.writeFileSync('./csvs/importitem.csv', newItemsCSV);
+          fs.unlinkSync('./csvs/newitem.csv');
+          resolve(newItems);
+        })
+    }).then((newItems)=> {
+      res.json({
+        newItems: newItems,
+        message: 'success',
+      });
+    }).catch((err)=> {
+      res.json({
+        message: 'failure',
+        error: err.message
+      });
+    });
   });
   // app.all('/api/invoicepdf', function(req, res) {
   //   var invoiceId = req.query.invoice_id;
