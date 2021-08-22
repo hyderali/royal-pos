@@ -1,4 +1,9 @@
 <h3 class="text-center hidden-print">Update Stock</h3>
+{{#if successMessage}}
+  <div class="alert alert-success hidden-print">
+    {{successMessage}}
+  </div>
+{{/if}}
 {{#if errorMessage}}
   <div class="alert alert-danger hidden-print">
     {{errorMessage}}
@@ -9,6 +14,7 @@
       <tr>
         <th> S.No </th>
         <th> SKU </th>
+        <th> Old SKU </th>
         <th> Name </th>
         <th> Sales Rate </th>
         <th> Purchase Rate </th>
@@ -22,6 +28,7 @@
         <tr>
           <td> {{get-index index}} </td>
           <td> {{result.SKU}} </td>
+          <td> {{result.oldSKU}} </td>
           <td> {{result.[Item Name]}} </td>
           <td> {{result.Rate}} </td>
           <td> {{result.[Purchase Rate]}} </td>
@@ -31,7 +38,7 @@
         </tr>
       {{/each}}
       <tr>
-        <td colspan="6" align="center">Total</td>
+        <td colspan="7" align="center">Total</td>
         <td>{{total}}</td>
         <td></td>
       </tr>

@@ -24,7 +24,7 @@ export default Route.extend({
       }
       let itemslist = this.get('session.itemslist');
       let newItem = itemslist.findBy('SKU', itemName);
-      //Item Name,SKU,Description,Rate,Product Type,Status,Purchase Rate,Purchase Account,Inventory Account,Initial Stock,Initial Stock Rate,Item Type,CF.Design,CF.Size,CF.Item Number,CF.Brand,CF.Colour,CF.Group,CF.Discount
+      //Item Name,SKU,Description,Rate,Product Type,Status,Purchase Rate,Purchase Account,Inventory Account,Initial Stock,Initial Stock Rate,Item Type,Design,Size,Brand,Colour,Group,Discount
       if (newItem) {
         let newLineItem = {
           'Item Name': newItem['Item Name'],
