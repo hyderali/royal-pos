@@ -521,8 +521,14 @@ module.exports = async function(app) {
     var items = body.items;
     var date = body.date;
     var newItems,newItemsCSV, currentItem, adjustmentsCSV, itemsPromise, adjustmentsPromise;
-    newItemsCSV = fs.readFileSync('./csvs/newitem.csv', 'utf8');
-    adjustmentsCSV = fs.readFileSync('./csvs/itemadjustment.csv', 'utf8');
+    newItemsCSV = 'Item Name,SKU,Description,Rate,Product Type,Status,Purchase Rate,Purchase Account,Inventory Account,Initial Stock,Initial Stock Rate,Item Type,Design,Size,Brand,Colour,Group,Discount';
+    if (fs.existsSync('./csvs/newitem.csv')) {
+      newItemsCSV = fs.readFileSync('./csvs/newitem.csv', 'utf8');
+    }
+    adjustmentsCSV = 'Date,Reference Number,Reference Number Int,Reason,Quantity Adjusted,Item Name,SKU,Account';
+    if (fs.existsSync('./csvs/itemadjustment.csv')) {
+      adjustmentsCSV = fs.readFileSync('./csvs/itemadjustment.csv', 'utf8');
+    }
     itemsPromise = json2CSVConverter.csv2jsonAsync(newItemsCSV).then((result)=> {
       return new RSVP.Promise((resolve, reject) => {
         newItems = result || [];
@@ -549,11 +555,11 @@ module.exports = async function(app) {
             'Date': date,
             'Reference Number': `${date}-${lastRefNumber + 1}`,
             'Reference Number Int': lastRefNumber + 1,
-            'Reason': 'Moved to Royal Sarees & Readymades',
+            'Reason': 'Moved to Royal',
             'Quantity Adjusted': -item['Initial Stock'],
             'Item Name': item['Item Name'],
             'SKU': item['SKU'],
-            'Account': 'Royal Sarees & Readymade'
+            'Account': 'Royal Transfer'
           });
         });
         resolve(adjustments);
@@ -589,24 +595,11 @@ module.exports = async function(app) {
     json2CSVConverter.csv2jsonAsync(newItemsCSV).then((result)=> {
       return new RSVP.Promise((resolve, reject) => {
         newItems = result || [];
-        newItems.forEach(item => {
-          oldStock = 0;
-          incomingStock = Number(item['Initial Stock']);
-          newStock = incomingStock;
-          currentItem = items.find(citem => citem.SKU === item.SKU);
-          if(currentItem) {
-            oldStock = Number(currentItem['Initial Stock']);
-            newStock = oldStock + incomingStock;
-          }
-          item['Old Stock'] = oldStock;
-          item['Incoming Stock'] = incomingStock;
-          item['Initial Stock'] = newStock;
-        });
         resolve(newItems);
       });
     }).then((newItems) => {
       res.json({
-        newItems: newItems,
+        items: newItems,
         message: 'success',
       });
     }).catch((err)=> {
@@ -619,13 +612,21 @@ module.exports = async function(app) {
   app.all('/api/updatestock', function(req, res) {
     var body = JSON.parse(req.body);
     var items = body.items;
-    json2CSVConverter.json2csvAsync(items).then((newItemsCSV) => {
+    var printItems = body.printItems;
+    var importItemsPromise = json2CSVConverter.json2csvAsync(items).then((newItemsCSV) => {
         new RSVP.Promise((resolve, reject) => {
           fs.writeFileSync('./csvs/importitem.csv', newItemsCSV);
           fs.unlinkSync('./csvs/newitem.csv');
           resolve(newItems);
         })
-    }).then((newItems)=> {
+    });
+    var printItemsPromise = json2CSVConverter.json2csvAsync(printItems).then((printItemsCSV) => {
+      new RSVP.Promise((resolve, reject) => {
+        fs.writeFileSync('./csvs/printitems.csv', printItemsCSV);
+        resolve(newItems);
+      })
+    });
+    RSVP.hash({importItemsPromise, printItemsPromise}).then((newItems)=> {
       res.json({
         newItems: newItems,
         message: 'success',
