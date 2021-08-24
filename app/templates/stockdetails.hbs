@@ -4,7 +4,7 @@
     <div class="col-md-3">
       <div>Group</div>
       <div>
-        <PowerSelect @class="form-control" @selected={{searchModel.group}} @options={{session.groups}} @onChange={{action "selectGroup"}} as |design|>
+        <PowerSelect @searchEnabled={{true}} @class="form-control" @selected={{searchModel.group}} @options={{session.groups}} @onChange={{action "selectGroup"}} as |design|>
           {{design}}
         </PowerSelect>
       </div>
@@ -12,7 +12,7 @@
     <div class="col-md-3">
       <div>Size</div>
       <div>
-        <PowerSelect @class="form-control" @selected={{searchModel.size}} @options={{session.sizes}} @onChange={{action "selectSize"}} as |size|>
+        <PowerSelect @searchEnabled={{true}} @class="form-control" @selected={{searchModel.size}} @options={{session.sizes}} @onChange={{action "selectSize"}} as |size|>
           {{size}}
         </PowerSelect>
       </div>
@@ -20,7 +20,7 @@
     <div class="col-md-3">
       <div>Design</div>
       <div>
-        <PowerSelect @class="form-control" @selected={{searchModel.design}} @options={{session.designs}} @onChange={{action "selectDesign"}} as |design|>
+        <PowerSelect @searchEnabled={{true}} @class="form-control" @selected={{searchModel.design}} @options={{session.designs}} @onChange={{action "selectDesign"}} as |design|>
           {{design}}
         </PowerSelect>
       </div>
@@ -28,7 +28,7 @@
     <div class="col-md-3">
       <div>Brand</div>
       <div>
-        <PowerSelect @class="form-control" @selected={{searchModel.brand}} @options={{session.brands}} @onChange={{action "selectBrand"}} as |design|>
+        <PowerSelect @searchEnabled={{true}} @class="form-control" @selected={{searchModel.brand}} @options={{session.brands}} @onChange={{action "selectBrand"}} as |design|>
           {{design}}
         </PowerSelect>
       </div>
