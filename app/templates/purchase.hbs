@@ -7,7 +7,7 @@
   <div class="form-group">
     <div class="col-md-3">Supplier</div>
     <div class="col-md-9">
-      <PowerSelect @selected={{model.vendor}} @options={{session.vendors}} @onChange={{action "selectVendor"}} @searchField="contact_name" as |vendor|>
+      <PowerSelect @searchEnabled={{true}} @selected={{model.vendor}} @options={{session.vendors}} @onChange={{action "selectVendor"}} @searchField="contact_name" as |vendor|>
         {{vendor.contact_name}}
       </PowerSelect>
     </div>
@@ -92,7 +92,7 @@
           <div class="col-md-4"><Input class="form-control" @value={{newItemModel.sku}} @disabled={{true}} /></div>
           <div class="col-md-2">Name</div>
           <div class="col-md-4">
-            <PowerSelect @class="form-control" @selected={{newItemModel.description}} @options={{session.names}} @onChange={{action "selectName"}} @onkeydown={{action "createNameOnEnter"}} as |name|>
+            <PowerSelect @searchEnabled={{true}} @class="form-control" @selected={{newItemModel.description}} @options={{session.names}} @onChange={{action "selectName"}} @onkeydown={{action "createNameOnEnter"}} as |name|>
               {{name}}
             </PowerSelect>
           </div>
@@ -100,7 +100,7 @@
         <div class="form-group">
           <div class="col-md-2">Group</div>
           <div class="col-md-4">
-            <PowerSelect @class="form-control" @selected={{newItemModel.group}} @options={{session.groups}} @onChange={{action "selectGroup"}} @onkeydown={{action "createGroupOnEnter"}} as |group|>
+            <PowerSelect @searchEnabled={{true}} @class="form-control" @selected={{newItemModel.group}} @options={{session.groups}} @onChange={{action "selectGroup"}} @onkeydown={{action "createGroupOnEnter"}} as |group|>
               {{group}}
             </PowerSelect>
           </div>
@@ -120,13 +120,13 @@
         <div class="form-group">
           <div class="col-md-2">Size</div>
           <div class="col-md-4">
-            <PowerSelect @class="form-control" @selected={{newItemModel.size}} @options={{session.sizes}} @onChange={{action "selectSize"}} @onkeydown={{action "createSizeOnEnter"}} as |size|>
+            <PowerSelect @searchEnabled={{true}} @class="form-control" @selected={{newItemModel.size}} @options={{session.sizes}} @onChange={{action "selectSize"}} @onkeydown={{action "createSizeOnEnter"}} as |size|>
               {{size}}
             </PowerSelect>
           </div>
           <div class="col-md-2">Design</div>
           <div class="col-md-4">
-            <PowerSelect @class="form-control" @selected={{newItemModel.design}} @options={{session.designs}} @onChange={{action "selectDesign"}} @onkeydown={{action "createDesignOnEnter"}} as |design|>
+            <PowerSelect @searchEnabled={{true}} @class="form-control" @selected={{newItemModel.design}} @options={{session.designs}} @onChange={{action "selectDesign"}} @onkeydown={{action "createDesignOnEnter"}} as |design|>
               {{design}}
             </PowerSelect>
           </div>
@@ -134,7 +134,7 @@
         <div class="form-group">
           <div class="col-md-2">Brand</div>
           <div class="col-md-4">
-            <PowerSelect @class="form-control" @selected={{newItemModel.brand}} @options={{session.brands}} @onChange={{action "selectBrand"}} @onkeydown={{action "createBrandOnEnter"}} as |brand|>
+            <PowerSelect @searchEnabled={{true}} @class="form-control" @selected={{newItemModel.brand}} @options={{session.brands}} @onChange={{action "selectBrand"}} @onkeydown={{action "createBrandOnEnter"}} as |brand|>
               {{brand}}
             </PowerSelect>
           </div>

@@ -3,7 +3,7 @@
     <div class="form-group">
       <div class="col-md-3">Sales Person</div>
       <div class="col-md-9">
-        <PowerSelect @selected={{model.salesperson}} @options={{session.salespersons}} @onChange={{action "selectSP"}} @searchField="salesperson_name" as |salesperson|>
+        <PowerSelect @searchEnabled={{true}} @selected={{model.salesperson}} @options={{session.salespersons}} @onChange={{action "selectSP"}} @searchField="salesperson_name" as |salesperson|>
           {{salesperson.salesperson_name}}
         </PowerSelect>
       </div>
@@ -35,7 +35,7 @@
           <td>{{lineItem.sku}}</td>
           <td>
             {{#if lineItem.isCustom}}
-              <PowerSelect @selected={{lineItem.description}} @options={{customItems}} @onfocus={{action "handleEPSFocus"}} @onChange={{action "selectCustomItem" lineItem}} @autofocus={{lineItem.canFocus}} as |customItem|>
+              <PowerSelect @searchEnabled={{true}} @selected={{lineItem.description}} @options={{customItems}} @onfocus={{action "handleEPSFocus"}} @onChange={{action "selectCustomItem" lineItem}} @autofocus={{lineItem.canFocus}} as |customItem|>
                 {{customItem}}
               </PowerSelect>
             {{else}}
