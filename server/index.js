@@ -456,18 +456,13 @@ module.exports = async function(app) {
     };
     app[attribute].push(searchText);
     var fileName = files[attribute];
-    fs.readFile(fileName, 'utf8', function(err, groups) {
-      if (err) {
-        return console.log(err);
-      }
-      var parsedData = JSON.parse(groups);
-      parsedData[attribute].push(searchText);
-      fs.writeFile(fileName, JSON.stringify(parsedData), (err) => {
-        if (err) {
-          return console.log(err);
-        }
-      });
-    });
+    groups = fs.readFileSync(fileName, 'utf8');
+    var parsedData = JSON.parse(groups);
+    parsedData[attribute].push(searchText);
+    fs.writeFileSync(fileName, JSON.stringify(parsedData));
+    res.json({
+      message: 'attribute added successfully'
+    })
   });
   app.all('/api/itemsupdate', function(req, res) {
     var body = JSON.parse(req.body);
