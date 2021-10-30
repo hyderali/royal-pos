@@ -32,6 +32,7 @@ export default Route.extend({
             groups: json.groups,
             sizes: json.sizes
           });
+          document.title = json.org_name;
           if (json.user.is_cash) {
             this.transitionTo('payment');
             return;
