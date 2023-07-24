@@ -633,6 +633,67 @@ module.exports = async function(app) {
       });
     });
   });
+  app.all('/api/allcount', function(req, res) {
+    fs.readFile('./count/allcount.json', 'utf8', function(err, allcount) {
+      if (err) {
+        return console.log(err);
+      }
+      var parsedCount = JSON.parse(allcount);
+      res.json({
+        count: parsedCount,
+        message: 'success',
+      });
+    }); 
+  });
+  app.all('/api/newcount', function(req, res) {
+    var body = JSON.parse(req.body);
+    var count_id = body.count_id;
+    var total = body.total;
+    fs.writeFileSync('./count/'+count_id+'.json', JSON.stringify(body));
+    allcount = fs.readFileSync('./count/allcount.json', 'utf8');
+    var parsedData = JSON.parse(allcount);
+    parsedData['counts'].push({
+      count_id,
+      qty: total.qty,
+      cost_value: total.cost_value,
+      sales_value: total.sales_value,
+    });
+    parsedData['next_count_id'] = parsedData['next_count_id'] + 1;
+    fs.writeFileSync('./count/allcount.json', JSON.stringify(parsedData));
+    res.json({
+      message: 'count added successfully'
+    })
+  });
+  app.all('/api/editcount', function(req, res) {
+    fs.readFile('./count/'+req.query.count_id+'.json', 'utf8', function(err, allcount) {
+      if (err) {
+        return console.log(err);
+      }
+      var parsedCount = JSON.parse(allcount);
+      res.json({
+        count: parsedCount,
+        message: 'success',
+      });
+    }); 
+  });
+  app.all('/api/updatecount', function(req, res) {
+    var body = JSON.parse(req.body);
+    var count_id = body.count_id;
+    var total = body.total;
+    allcount = fs.readFileSync('./count/allcount.json', 'utf8');
+    var parsedData = JSON.parse(allcount);
+    var oldCount = parsedData['counts'].find(count => count.count_id === count_id);
+    if(oldCount) {
+      oldCount.qty = total.qty;
+      oldCount.cost_value = total.cost_value;
+      oldCount.sales_value = total.sales_value;
+      fs.writeFileSync('./count/allcount.json', JSON.stringify(parsedData));
+      fs.writeFileSync('./count/'+count_id+'.json', JSON.stringify(body));
+      res.json({
+        message: 'count added successfully'
+      })
+    }
+  });
   // app.all('/api/invoicepdf', function(req, res) {
   //   var invoiceId = req.query.invoice_id;
   //   var url = 'https://books.zoho.com/api/v3/invoices/' + invoiceId + '?print=true&accept=pdf&organization_id=' + app.parsedData.organization_id + '&customer_id=' + app.parsedData.customer_id;
