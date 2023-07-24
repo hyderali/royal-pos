@@ -50,7 +50,7 @@
               {{lineItem.rate}}
             {{/if}}
           </td>
-          <td>{{lineItem.discount}}</td>
+          <td>{{lineItem.discount}}%<br>{{percent lineItem.rate lineItem.discount}}</td>
           <td>{{lineItem.total}}</td>
           <td {{action "removeLineItem" lineItem}}><button type="button" class="btn btn-danger pull-right">Delete</button></td>
         </tr>
@@ -67,19 +67,13 @@
     </tbody>
     <tfoot>
       <tr>
-        <td colspan="3" class="text-right">Subtotal</td>
-        <td colspan="3">{{model.qtyTotal}}</td>
-        <td>{{model.subtotal}}</td>
+        <td colspan="6" class="text-right">Total</td>
+        <td>{{model.total}}</td>
         <td></td>
       </tr>
       <tr>
         <td colspan="6" class="text-right">Discount</td>
         <td>{{model.discount}}</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td colspan="6" class="text-right">Total</td>
-        <td>{{model.total}}</td>
         <td></td>
       </tr>
     </tfoot>
