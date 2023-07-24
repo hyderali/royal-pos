@@ -5,17 +5,16 @@ export default Object.extend({
   line_items: null,
   subtotal: computed('line_items.@each.total', function() {
     let lineItems = this.line_items;
-    let subtotal = lineItems.reduce((sum, item)=> {
+    let total = lineItems.reduce((sum, item)=> {
       return sum + Number(item.get('total'));
     }, 0);
-    return subtotal;
+    return total;
   }),
-  discount: computed('line_items.@each.{discount,total}', function() {
+  discount: computed('line_items.@each.{discountAmount}', function() {
     let lineItems = this.line_items;
     let lineItemDiscount;
     let discount = lineItems.reduce((discount, item)=> {
-      lineItemDiscount = Number(item.get('total')) * (Number(item.get('discount') / 100));
-      return discount + lineItemDiscount;
+      return discount + item.discountAmount;
     }, 0);
     return Math.round(discount);
   }),
@@ -26,10 +25,10 @@ export default Object.extend({
     }, 0);
     return qtyTotal;
   }),
-  total: computed('subtotal', 'discount', function() {
+  total: computed('subtotal','discount', function() {
     let subtotal = this.subtotal;
     let discount = this.discount;
-    return subtotal - discount;
+    return subtotal-discount;
   }),
   date: computed(function() {
     let date =  new Date();

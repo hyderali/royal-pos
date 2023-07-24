@@ -1,4 +1,4 @@
-{{#if model.canShowPrint}}
+{{!-- {{#if model.canShowPrint}} --}}
   <div class="receipt-print">
     <div style="border: 1px solid #333;">
       <div style="border-bottom: 1px solid #333;">
@@ -26,40 +26,42 @@
       <table class="pcs-itemtable" style="border-collapse: collapse;">
         <thead>
           <tr style="height:32px;">
-            <td style="word-wrap: break-word;width: 5%;">S.No&nbsp;</td>
-            <td style="word-wrap: break-word;width: 45%;">Item&nbsp;</td>
-            <td style="word-wrap: break-word;width: 14%;" align="right">Rate</td>
-            <td style="word-wrap: break-word;width: 11%;" align="right">Qty</td>
-            <td style="word-wrap: break-word;width: 25%;" align="right">Amount</td>
+            <td style="word-wrap: break-word;width: 41%;">Item&nbsp;</td>
+            <td style="word-wrap: break-word;width: 8%;">Qty&nbsp;</td>
+            <td style="word-wrap: break-word;{{if model.discount "width: 17%;" "width: 25%;"}}" align="right">Rate</td>
+            <td style="word-wrap: break-word;{{if model.discount "width: 17%;" "width: 25%;"}}" align="right">Amount</td>
+            {{#if model.discount}}
+              <td style="word-wrap: break-word;width: 17%;" align="right">C&B Rate</td>
+              <td style="word-wrap: break-word;width: 17%;" align="right">C&B Amount</td>
+            {{/if}}
           </tr>
         </thead>
         <tbody style="font-weight: bold">
-          {{#each model.line_items as |lineItem index|}}
+          {{#each model.line_items as |lineItem|}}
             <tr>
-              <td valign="top">{{get-index index}}</td>
               <td valign="top"> <span style="word-wrap: break-word;" id="tmp_item_name">{{lineItem.description}}</span></td>
+              <td valign="top">{{lineItem.quantity}}</td>
               <td style="text-align:right;word-wrap: break-word;" valign="top"> <span id="tmp_item_rate">{{lineItem.rate}}</span> <br> </td>
-              <td style="text-align:right;word-wrap: break-word;" valign="top"> <span id="tmp_item_qty">{{lineItem.quantity}}</span> <br> </td>
               <td style="text-align:right;word-wrap: break-word;" valign="top">{{lineItem.total}} <br> </td>
+              {{#if model.discount}}
+                <td style="text-align:right;word-wrap: break-word;" valign="top"> <span>{{lineItem.discountedRate}}</span> <br> </td>
+                <td style="text-align:right;word-wrap: break-word;" valign="top"> <span>{{lineItem.discountedTotal}}</span> <br> </td>
+              {{/if}}
             </tr>
           {{/each}}
         </tbody>
         <tfoot>
           <tr style="height:32px;font-size:22px">
-            <td colspan="3" style="word-wrap: break-word;width: 5%;">Sub Total</td>
+            <td style="word-wrap: break-word;width: 5%;">Sub Total</td>
             <td style="word-wrap: break-word;width: 11%;" align="right">{{model.qtyTotal}}</td>
-            <td style="word-wrap: break-word;width: 25%;" align="right"><b>{{model.subtotal}}</b></td>
+            <td colspan="2" style="word-wrap: break-word;width: 25%;" align="right"><b>{{model.subtotal}}</b></td>
+            {{#if model.discount}}<td colspan="2" style="word-wrap: break-word;width: 25%;" align="right"><b>{{model.total}}</b></td>{{/if}}
           </tr>
-          {{#if model.discount}}
-            <tr style="height:32px;font-size:22px">
-              <td colspan="4" style="word-wrap: break-word;width: 5%;">Discount</td>
-              <td style="word-wrap: break-word;width: 25%;" align="right"><b> {{model.discount}}</b></td>
-            </tr>
-          {{/if}}
         </tfoot>
       </table>
       <div style="text-align: right;"><b><font size="5">Rs. {{model.total}}</font></b> <br> </div>
     </div>
+    {{#if model.discount}}<p class="text-center">You saved Rs.{{model.discount}} in this purchase</p>{{/if}}
     <p class="text-center">Thank You. Visit Again</p>
   </div>
-{{/if}}
+{{!-- {{/if}} --}}

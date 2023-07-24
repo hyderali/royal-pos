@@ -78,7 +78,8 @@ export default Route.extend({
       if (newItem) {
         let newLineItem = LineItem.create({
           discount: newItem.CF.Discount,
-          item_custom_fields: [{ label: 'Discount', value: newItem.CF.Discount }], rate: Number(newItem.Rate.split(' ')[1]),
+          item_custom_fields: [{ label: 'Discount', value: newItem.CF.Discount }], 
+          rate: Number(newItem.Rate.split(' ')[1]),
           quantity: 1,
           name: newItem['Item Name'],
           sku: newItem.SKU,
