@@ -6,9 +6,18 @@ export default Route.extend({
   session: service(),
   store: service(),
   model() {
-    return Object.create();
+    return Object.create({
+      username: 'admin',
+      password: 'admin'
+    });
+  },
+  setupController() {
+    this._super(...arguments);
   },
   actions: {
+    didTransition() {
+      this.send('login');
+    },
     login() {
       let model = this.get('controller.model');
       let { username, password } = model;
@@ -37,7 +46,7 @@ export default Route.extend({
             this.transitionTo('payment');
             return;
           }
-          this.transitionTo('sales');
+          this.transitionTo('counting');
         } else {
           model.set('error', json.message);
         }

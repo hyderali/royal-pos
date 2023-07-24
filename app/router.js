@@ -23,4 +23,7 @@ Router.map(function() {
   this.route('packsticker');
   this.route('addstock');
   this.route('updatestock');
+  this.route('newcount');
+  this.route('editcount', { path: 'editcount/:count_id'});
+  this.route('counting');
 });

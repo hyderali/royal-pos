@@ -28,5 +28,6 @@ server/item.csv
 /package.json.ember-try
 items/
 csvs/
+count/
 server/royalcottonland.json
 server/royalsarees.json
