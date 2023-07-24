@@ -7,12 +7,11 @@ export default Route.extend({
   session: service(),
   store: service(),
   postUrl: "/newcount",
-  countText: "New Counting",
   model() {
     return this.store.ajax("/allcount").then((json) => {
       let count_id = getItemName(`${json.count.next_count_id}`);
       return Count.create({
-        countText: this.countText,
+        isNew: true,
         count_id: `Count-${count_id}`,
         items: [],
       });
@@ -47,6 +46,10 @@ export default Route.extend({
       }
       controller.set("id", "");
     },
+    deleteItem(item) {
+      let items = this.controller.model.items;
+      items.removeObject(item);
+    },
     save() {
       let {
         controller: {
@@ -80,5 +83,14 @@ export default Route.extend({
     cancel() {
       this.transitionTo("counting");
     },
+    delete() {
+      let count_id = this.controller.model.count_id;
+      if(window.confirm(`Are you sure about deleting this counting ${count_id}`)) {
+        let body = { count_id };
+        this.store.ajax("/deletecount", { method: "DELETE", body }).then(() => {
+        this.transitionTo("counting");
+      });
+      }
+    }
   },
 });

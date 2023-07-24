@@ -5,10 +5,10 @@ import CountItem from "../models/countitem";
 export default NewCount.extend({
     templateName: 'newcount',
     postUrl: '/updatecount',
-    countText: 'Edit Counting',
     model(params) {
         return this.store.ajax('/editcount', { params }).then((json)=>{
             return Count.create({
+                isNew: false,
                 countText: this.countText,
                 count_id: json.count.count_id,
                 items: json.count.items.map(item => CountItem.create({

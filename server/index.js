@@ -694,6 +694,19 @@ module.exports = async function(app) {
       })
     }
   });
+  app.all('/api/deletecount', function(req, res) {
+    var body = JSON.parse(req.body);
+    var count_id = body.count_id;
+    allcount = fs.readFileSync('./count/allcount.json', 'utf8');
+    var parsedData = JSON.parse(allcount);
+    var newCounts = parsedData['counts'].filter(count => count.count_id !== count_id);
+    parsedData.counts = newCounts;
+    fs.unlinkSync('./count/'+count_id+'.json');
+    fs.writeFileSync('./count/allcount.json', JSON.stringify(parsedData));
+      res.json({
+        message: 'count added successfully'
+      })
+  });
   // app.all('/api/invoicepdf', function(req, res) {
   //   var invoiceId = req.query.invoice_id;
   //   var url = 'https://books.zoho.com/api/v3/invoices/' + invoiceId + '?print=true&accept=pdf&organization_id=' + app.parsedData.organization_id + '&customer_id=' + app.parsedData.customer_id;
