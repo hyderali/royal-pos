@@ -28,7 +28,7 @@ export default Route.extend({
       } = this;
       let existingItem = items.findBy("sku", itemName);
       if (existingItem) {
-        existingItem.set("qty", Number(existingItem.get("qty") + 1));
+        existingItem.set("qty", Number(existingItem.get("qty")) + 1);
         controller.set("id", "");
         return;
       }
