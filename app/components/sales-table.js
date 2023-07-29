@@ -50,6 +50,9 @@ export default Component.extend({
     selectCustomItem(lineItem, name) {
       set(lineItem, 'description', name);
     },
+    selectTag(lineItem, name) {
+      set(lineItem, 'tag', name);
+    },
     removeLineItem(lineItem) {
       this.sendAction('removeLineItem', lineItem);
     },
