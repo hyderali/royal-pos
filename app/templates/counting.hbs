@@ -1,35 +1,44 @@
 <h3>
-    <LinkTo class="btn btn-primary pull-right" @route="newcount">  New Counting </LinkTo>
-    All Counting
+  <LinkTo class="btn btn-primary pull-right" @route="newcount">
+    New Counting
+  </LinkTo>
+  All Counting
 </h3>
 <table class="table table-bordered">
-    <thead>
-        <tr>
-            <th> S.No </th>
-            <th> Count Number </th>
-            <th> Total Quantity </th>
-            <th> Cost Price </th>
-            <th> Sales Price </th>
-        </tr>
-    </thead>
-    <tbody>
-        {{#each model.count.counts as |count index|}}
-        <tr>
-            <td> {{get-index index}} </td>
-            <td> <LinkTo @route="editcount" @model={{count.count_id}}>{{count.count_id}}</LinkTo> </td>
-            <td class="text-right"> {{count.qty}} </td>
-            <td class="text-right"> {{format-currency count.cost_value}} </td>
-            <td class="text-right"> {{format-currency count.sales_value}} </td>
-        </tr>
-        {{/each}}
-    </tbody>
-    <tfoot>
-        <tr>
-            <td colspan="2" class="text-center"> Total </td>
-            <td class="text-right"> {{totalQty}} </td>
-            <td class="text-right"> {{format-currency totalCV}} </td>
-            <td class="text-right"> {{format-currency totalSV}} </td>
-        </tr>
-    </tfoot>
+  <thead>
+    <tr>
+      <th> S.No </th>
+      <th> Count Number </th>
+      <th> Total Quantity </th>
+      <th> Cost Price </th>
+      <th> Sales Price </th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each model.count.counts as |count index|}}
+      <tr>
+        <td> {{get-index index}} </td>
+        <td>
+          <LinkTo
+            @route="editcount"
+            @model={{count.count_id}}
+          >
+            {{count.count_id}}
+          </LinkTo>
+        </td>
+        <td class="text-right"> {{count.qty}} </td>
+        <td class="text-right"> {{format-currency count.cost_value}} </td>
+        <td class="text-right"> {{format-currency count.sales_value}} </td>
+      </tr>
+    {{/each}}
+  </tbody>
+  <tfoot>
+    <tr>
+      <td colspan="2" class="text-center"> Total </td>
+      <td class="text-right"> {{totalQty}} </td>
+      <td class="text-right"> {{format-currency totalCV}} </td>
+      <td class="text-right"> {{format-currency totalSV}} </td>
+    </tr>
+  </tfoot>
 </table>
 {{outlet}}

@@ -1,63 +1,103 @@
 <h3>
-    {{#if model.isNew}}New Counting{{else}}Edit Counting{{/if}} - {{model.count_id}}
+  {{#if model.isNew}}New Counting{{else}}Edit Counting{{/if}}
+  -
+  {{model.count_id}}
 </h3>
 <table class="table table-bordered">
-    <thead>
-        <tr>
-            <th> S.No </th>
-            <th> SKU </th>
-            <th> Item Name </th>
-            <th> Cost Price </th>
-            <th> Cost Value </th>
-            <th> Sales Price </th>
-            <th> Sales Value </th>
-            <th> Quantity </th>
-            <th>  </th>
-        </tr>
-    </thead>
-    <tbody>
-        {{#each model.items as |item index|}}
-        <tr>
-            <td> {{get-index index}} </td>
-            <td> {{item.sku}} </td>
-            <td> {{item.description}} </td>
-            <td> {{item.cost_price}} </td>
-            <td> {{format-currency item.cost_value}} </td>
-            <td> {{item.sales_price}} </td>
-            <td> {{format-currency item.sales_value}} </td>
-            <td> <Input class="form-control" @value={{item.qty}} /></td>
-            <td> <button type="button" {{action "deleteItem" item}} class="btn btn-danger">Delete</button></td>
-        </tr>
-        {{/each}}
-        <tr>
-            <td></td>
-            <td><Input class="form-control" @value={{id}} @enter="itemChanged" @autofocus={{true}} /></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-        </tr>
-    </tbody>
-    <tfoot>
-        <tr>
-            <td colspan="3" class="text-center"> Total </td>
-            <td colspan="2"> {{format-currency model.totalCV}} </td>
-            <td colspan="2"> {{format-currency model.totalSV}} </td>
-            <td> {{model.totalQty}}</td>
-        </tr>
-    </tfoot>
+  <thead>
+    <tr>
+      <th> S.No </th>
+      <th> SKU </th>
+      <th> Item Name </th>
+      <th> Cost Price </th>
+      <th> Cost Value </th>
+      <th> Sales Price </th>
+      <th> Sales Value </th>
+      <th> Quantity </th>
+      <th> </th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each model.items as |item index|}}
+      <tr>
+        <td> {{get-index index}} </td>
+        <td> {{item.sku}} </td>
+        <td> {{item.description}} </td>
+        <td> {{item.cost_price}} </td>
+        <td> {{format-currency item.cost_value}} </td>
+        <td> {{item.sales_price}} </td>
+        <td> {{format-currency item.sales_value}} </td>
+        <td> <Input class="form-control" @value={{item.qty}} /></td>
+        <td>
+          <button
+            type="button"
+            {{action "deleteItem" item}}
+            class="btn btn-danger"
+          >
+            Delete
+          </button>
+        </td>
+      </tr>
+    {{/each}}
+    <tr>
+      <td></td>
+      <td>
+        <Input
+          class="form-control"
+          @value={{id}}
+          @enter="itemChanged"
+          @autofocus={{true}}
+        />
+      </td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+  </tbody>
+  <tfoot>
+    <tr>
+      <td colspan="3" class="text-center"> Total </td>
+      <td colspan="2"> {{format-currency model.totalCV}} </td>
+      <td colspan="2"> {{format-currency model.totalSV}} </td>
+      <td> {{model.totalQty}}</td>
+    </tr>
+  </tfoot>
 </table>
-  <div class="btn-toolbar pull-right">
-    <div class="btn-group">
-      <button type="button" disabled= {{model.isSaving}} {{action "save"}} class="btn btn-primary">Save</button>
-    </div>
-    <div class="btn-group"><button type="button" {{action "cancel"}} class="btn btn-default">Cancel</button></div>
-    {{#unless model.isNew}}
-        <div class="btn-group"><button type="button" {{action "delete"}} class="btn btn-danger">Delete Counting</button></div>
-    {{/unless}}
+<div class="btn-toolbar pull-right">
+  <div class="btn-group">
+    <button
+      type="button"
+      disabled={{model.isSaving}}
+      {{action "save"}}
+      class="btn btn-primary"
+    >
+      Save
+    </button>
   </div>
+  <div class="btn-group">
+    <button
+      type="button"
+      {{action "cancel"}}
+      class="btn btn-default"
+    >
+      Cancel
+    </button>
+  </div>
+  {{#unless model.isNew}}
+    <div class="btn-group">
+      <button
+        type="button"
+        {{action "delete"}}
+        class="btn btn-danger"
+      >
+        Delete Counting
+      </button>
+    </div>
+  {{/unless}}
+</div>
 
 {{outlet}}
