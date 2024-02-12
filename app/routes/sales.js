@@ -39,6 +39,7 @@ export default Route.extend({
     let lineItems = model.get('line_items');
     let serializedItems = lineItems.map((item) => {
       return { item_id: item.get('item_id'), rate: item.get('rate'), quantity: item.get('quantity'), item_custom_fields: item.get('item_custom_fields'), description: item.get('description'), tags: [ { tag_id: '532992000000000333', tag_option_id: item.get('tag') === 'Yes' ? '532992000030809077' : '532992000030809079'} ] };
+      // return { item_id: item.get('item_id'), rate: item.get('rate'), quantity: item.get('quantity'), item_custom_fields: item.get('item_custom_fields'), description: item.get('description') };
     });
     body.line_items = serializedItems;
     model.set('isSaving', true);
