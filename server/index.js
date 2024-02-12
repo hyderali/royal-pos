@@ -82,7 +82,7 @@ module.exports = async function(app) {
     if(url.indexOf('?')!== -1) {
       appendSymbol = '&';
     }
-    url = `https://books.zoho.com/api/v3${url}${appendSymbol}organization_id=${app.parsedData.organization_id}`;
+    url = `https://www.zohoapis.com/books/v3${url}${appendSymbol}organization_id=${app.parsedData.organization_id}`;
     var method = options.method;
     var accessToken = getAccessToken(options.username);
     var headers = {
@@ -709,7 +709,7 @@ module.exports = async function(app) {
   });
   // app.all('/api/invoicepdf', function(req, res) {
   //   var invoiceId = req.query.invoice_id;
-  //   var url = 'https://books.zoho.com/api/v3/invoices/' + invoiceId + '?print=true&accept=pdf&organization_id=' + app.parsedData.organization_id + '&customer_id=' + app.parsedData.customer_id;
+  //   var url = 'https://www.zohoapis.com/books/v3/invoices/' + invoiceId + '?print=true&accept=pdf&organization_id=' + app.parsedData.organization_id + '&customer_id=' + app.parsedData.customer_id;
   //   var fileName = "pdf/invoice-" + invoiceId + ".pdf";
   //   var file = fs.createWriteStream(fileName);
   //   request
