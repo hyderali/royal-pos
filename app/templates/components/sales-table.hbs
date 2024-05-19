@@ -23,7 +23,6 @@
         <th style="width:15%">Name</th>
         <th style="width:14%">Qty</th>
         <th style="width:14%">Rate</th>
-        <th style="width:14%">Stock taken</th>
         <th style="width:14%">Discount</th>
         <th style="width:14%">Total</th>
         <th style="width:9%"></th>
@@ -51,11 +50,6 @@
               {{lineItem.rate}}
             {{/if}}
           </td>
-          <td>
-            <PowerSelect @searchEnabled={{true}} @selected={{lineItem.tag}} @options={{array "Yes" "No"}} @onChange={{action "selectTag" lineItem}} as |customItem|>
-              {{customItem}}
-            </PowerSelect>
-          </td>
           <td>{{lineItem.discount}}</td>
           <td>{{lineItem.total}}</td>
           <td {{action "removeLineItem" lineItem}}><button type="button" class="btn btn-danger pull-right">Delete</button></td>
@@ -69,24 +63,22 @@
         <td></td>
         <td></td>
         <td></td>
-        <td></td>
-        <td></td>
       </tr>
     </tbody>
     <tfoot>
       <tr>
         <td colspan="3" class="text-right">Subtotal</td>
-        <td colspan="4">{{model.qtyTotal}}</td>
+        <td colspan="3">{{model.qtyTotal}}</td>
         <td>{{model.subtotal}}</td>
+        <td></td>
       </tr>
       <tr>
-        <td colspan="7" class="text-right">Discount</td>
+        <td colspan="6" class="text-right">Discount</td>
         <td>{{model.discount}}</td>
         <td></td>
-        <td></td>
       </tr>
       <tr>
-        <td colspan="7" class="text-right">Total</td>
+        <td colspan="6" class="text-right">Total</td>
         <td>{{model.total}}</td>
         <td></td>
       </tr>
