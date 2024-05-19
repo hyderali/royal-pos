@@ -38,7 +38,7 @@ export default Route.extend({
     let body = { customer_id: `${customer_id}`, date, discount: `${model.get('discount')}`, discount_type: 'entity_level', is_discount_before_tax: false, salesperson_id: model.get('salesperson.salesperson_id'), custom_fields: [{ label: 'Phone Number', value: model.get('phone_number') }] };
     let lineItems = model.get('line_items');
     let serializedItems = lineItems.map((item) => {
-      return { item_id: item.get('item_id'), rate: item.get('rate'), quantity: item.get('quantity'), item_custom_fields: item.get('item_custom_fields'), description: item.get('description') };
+      return { item_id: item.get('item_id'), rate: item.get('rate'), quantity: item.get('quantity'), item_custom_fields: [{ label: 'Discount', value: item.discount }], description: item.get('description') };
     });
     body.line_items = serializedItems;
     model.set('isSaving', true);
@@ -77,8 +77,8 @@ export default Route.extend({
       let newItem = itemslist.findBy('SKU', itemName);
       if (newItem) {
         let newLineItem = LineItem.create({
-          discount: newItem.CF.Discount,
-          item_custom_fields: [{ label: 'Discount', value: newItem.CF.Discount }], rate: Number(newItem.Rate.split(' ')[1]),
+          discount: 0,
+          rate: Number(newItem.Rate.split(' ')[1]),
           quantity: 1,
           name: newItem['Item Name'],
           sku: newItem.SKU,

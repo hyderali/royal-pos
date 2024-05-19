@@ -50,7 +50,14 @@
               {{lineItem.rate}}
             {{/if}}
           </td>
-          <td>{{lineItem.discount}}</td>
+          <td>
+            <PowerSelect @searchEnabled={{true}} @selected={{lineItem.discount}} @options={{discounts}} @onfocus={{action "handleEPSFocus"}} @onChange={{action "discountChanged" lineItem}} as |discount|>
+              {{discount}}
+            </PowerSelect>
+            {{#if lineItem.discount}}
+              {{lineItem.discount_amount}}
+            {{/if}}
+          </td>
           <td>{{lineItem.total}}</td>
           <td {{action "removeLineItem" lineItem}}><button type="button" class="btn btn-danger pull-right">Delete</button></td>
         </tr>

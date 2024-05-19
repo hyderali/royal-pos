@@ -21,6 +21,19 @@ export default Component.extend({
     'Mens Inner',
     'Ladies Inner'
   ],
+  discounts: [
+    0,
+    5,
+    10,
+    15,
+    20,
+    25,
+    30,
+    35,
+    40,
+    45,
+    50,
+  ],
   focusComesFromOutside(e) {
     let blurredEl = e.relatedTarget;
     if (isBlank(blurredEl)) {
@@ -41,6 +54,9 @@ export default Component.extend({
       }
       this.sendAction('addNewItem', getItemName(itemName));
       this.set('id', '');
+    },
+    discountChanged(lineItem, discount) {
+      set(lineItem, 'discount', discount);
     },
     handleEPSFocus(select, e) {
       if (this.focusComesFromOutside(e)) {
