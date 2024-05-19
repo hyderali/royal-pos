@@ -14,7 +14,7 @@ export default Object.extend({
     let lineItems = this.line_items;
     let lineItemDiscount;
     let discount = lineItems.reduce((discount, item)=> {
-      lineItemDiscount = Number(item.get('total')) * (Number(item.get('discount') / 100));
+      lineItemDiscount = item.discount_amount;
       return discount + lineItemDiscount;
     }, 0);
     return Math.round(discount);
