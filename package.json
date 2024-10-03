@@ -51,7 +51,8 @@
     "loader.js": "^4.7.0",
     "morgan": "^1.7.0",
     "qunit-dom": "^0.9.0",
-    "yarn": "^0.17.10"
+    "yarn": "^0.17.10",
+    "chalk": "2.4.2"
   },
   "engines": {
     "node": "8.* || >= 10.*"
@@ -61,7 +62,7 @@
     "bootstrap": "^3.3.7",
     "csvtojson": "^1.0.3",
     "jsbarcode": "^3.5.9",
-    "json-2-csv": "^3.14.4",
-    "request": "^2.79.0"
+    "node-fetch": "2.6.1",
+    "json-2-csv": "^3.14.4"
   }
 }
