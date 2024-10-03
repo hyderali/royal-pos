@@ -1,13 +1,14 @@
 /* eslint-disable */
 var bodyParser = require('body-parser');
 var fs = require('fs');
-var request = require('request');
 var Converter = require("csvtojson").Converter;
 var converter = new Converter({
   checkType: false
 });
 var json2CSVConverter = require('json-2-csv');
 var RSVP = require('rsvp');
+var chalk = require('chalk');
+var fetch = require('node-fetch');
 var oauth = require('./oauth');
 // To use it create some files under `mocks/`
 // e.g. `server/mocks/ember-hamsters.js`
@@ -83,76 +84,26 @@ module.exports = async function(app) {
       appendSymbol = '&';
     }
     url = `https://www.zohoapis.com/books/v3${url}${appendSymbol}organization_id=${app.parsedData.organization_id}`;
-    var method = options.method;
     var accessToken = getAccessToken(options.username);
-    var headers = {
+    options.headers = {
       Authorization: 'Zoho-oauthtoken '+accessToken
     };
-    if (method === 'GET') {
-      return new RSVP.Promise((resolve, reject) => {
-        request.get({
-          url,
-          headers
-        }, function(err, httpResponse, response) {
-          try {
-            var parsedResponse = JSON.parse(response);
-            if (parsedResponse.code === 0) {
-              resolve(parsedResponse);
-            } else {
-              reject(parsedResponse.message);
-            }
-          } catch (e) {
-
-            console.log(`URL is ${url}`);
-            reject('Error in connection. Try again');
-          }
-        })
-      });
-    }
-    if (method === 'POST') {
-      return new RSVP.Promise((resolve, reject) => {
-        request.post({
-          url,
-          form: {
-            JSONString: options.body
-          },
-          headers
-        }, function(err, httpResponse, response) {
-          try {
-            var parsedResponse = JSON.parse(response);
-            if (parsedResponse.code === 0) {
-              resolve(parsedResponse);
-            } else {
-              reject(parsedResponse.message);
-            }
-          } catch (e) {
-            reject('Error in connection. Try again');
-          }
-        })
-      });
-    }
-    if (method === 'PUT') {
-      return new RSVP.Promise((resolve, reject) => {
-        request.put({
-          url,
-          form: {
-            JSONString: options.body
-          },
-          headers
-        }, function(err, httpResponse, response) {
-          try {
-            var parsedResponse = JSON.parse(response);
-            if (parsedResponse.code === 0) {
-              resolve(parsedResponse);
-            } else {
-              reject(parsedResponse.message);
-            }
-          } catch (e) {
-            reject('Error in connection. Try again');
-          }
-        })
-      });
-    }
+    
+    return new RSVP.Promise(async (resolve, reject) => {
+      try {
+        var response = await fetch(url, options);
+        var parsedResponse = await response.json();
+        if (parsedResponse.code === 0) {
+          resolve(parsedResponse);
+        } else {
+          reject(parsedResponse.message);
+        }
+        resolve(parsedResponse);
+      } catch(e) {
+        console.log(chalk.red(`Error in URL ${url}`, e));
+        reject('Error in connection');
+      }
+    });
   };
   app.all('/api/itemslist', function(req, res) {
     res.json({
@@ -193,196 +144,206 @@ module.exports = async function(app) {
       message: 'invalid credentials'
     });
   });
-  app.all('/api/salespersons', function(req, res) {
+  app.all('/api/salespersons', async function(req, res) {
     var url = '/invoices/editpage';
-    makeRequest(url, {
-      method: 'GET',
-      username: req.query.username
-    }).then(function(json) {
+    try {
+      var json = await makeRequest(url,  {
+        method: 'GET',
+        username: req.query.username
+      });
       res.json({
         message: 'success',
         salespersons: json.salespersons
       });
-    }).catch(function(message) {
+    } catch(message) {
       res.json({
         message: 'failure',
         error: message
       });
-    });
+    }
   });
-  app.all('/api/invoices', function(req, res) {
+  app.all('/api/invoices', async function(req, res) {
     var url = '/invoices?is_quick_create=true';
-    makeRequest(url, {
-      method: 'POST',
-      body: req.body,
-      username: req.query.username
-    }).then(function(json) {
+    try {
+      var json = await makeRequest(url,  {
+        method: 'POST',
+        body: req.body,
+        username: req.query.username
+      });
       res.json({
         message: 'success',
         entity_number: json.invoice.invoice_number
       });
-    }).catch(function(message) {
+    } catch(message) {
       res.json({
         message: 'failure',
         error: message
       });
-    });
+    }
   });
-  app.all('/api/updateinvoice', function(req, res) {
+  app.all('/api/updateinvoice', async function(req, res) {
     var url = `/invoices/${req.query.invoice_id}`;
-    makeRequest(url, {
-      method: 'PUT',
-      body: req.body,
-      username: req.query.username
-    }).then(function(json) {
+    try {
+      var json = await makeRequest(url,  {
+        method: 'PUT',
+        body: req.body,
+        username: req.query.username
+      });
       res.json({
         message: 'success',
         entity_number: json.invoice.invoice_number
       });
-    }).catch(function(message) {
+    } catch(message) {
       res.json({
         message: 'failure',
         error: message
       });
-    });
+    }
   });
-  app.all('/api/creditnotes', function(req, res) {
+  app.all('/api/creditnotes', async function(req, res) {
     var url = '/creditnotes';
-    makeRequest(url, {
-      method: 'POST',
-      body: req.body,
-      username: req.query.username
-    }).then(function(json) {
+    try {
+      var json = await makeRequest(url,  {
+        method: 'POST',
+        body: req.body,
+        username: req.query.username
+      });
       res.json({
         message: 'success',
         entity_number: json.creditnote.creditnote_number
       });
-    }).catch(function(message) {
+    } catch(message) {
       res.json({
         message: 'failure',
         error: message
       });
-    });
+    }
   });
-  app.all('/api/invoiceslist', function(req, res) {
+  app.all('/api/invoiceslist', async function(req, res) {
     var url = `/invoices?status=unpaid&page=1&per_page=200&customer_id=${app.parsedData.customer_id}`;
-    makeRequest(url, {
-      method: 'GET',
-      username: req.query.username
-    }).then(function(json) {
+    try {
+      var json = await makeRequest(url,  {
+        method: 'GET',
+        username: req.query.username
+      });
       res.json(json);
-    }).catch(function(message) {
+    } catch(message) {
       res.json({
         message: 'failure',
         error: message
       });
-    });
+    }
   });
-  app.all('/api/creditnoteslist', function(req, res) {
+  app.all('/api/creditnoteslist', async function(req, res) {
     //var url = `/creditnotes?status=open&page=1&per_page=200&customer_id=${app.parsedData.customer_id}&formatneeded=true`;
     var url = '/creditnotes?filter_by=Status.Open&page=1&per_page=200&formatneeded=true';
-    makeRequest(url, {
-      method: 'GET',
-      username: req.query.username
-    }).then(function(json) {
+    try {
+      var json = await makeRequest(url,  {
+        method: 'GET',
+        username: req.query.username
+      });
       res.json(json);
-    }).catch(function(message) {
+    } catch(message) {
       res.json({
         message: 'failure',
         error: message
       });
-    });
+    }
   });
-  app.all('/api/payments', function(req, res) {
+  app.all('/api/payments', async function(req, res) {
     var url = '/customerpayments';
-    makeRequest(url, {
-      method: 'POST',
-      body: req.body,
-      username: req.query.username
-    }).then(function(json) {
+    try {
+      var json = await makeRequest(url,  {
+        method: 'POST',
+        body: req.body,
+        username: req.query.username
+      });
       res.json({
         message: 'success',
         payment_id: json.payment.payment_id
       });
-    }).catch(function(message) {
+    } catch(message) {
       res.json({
         message: 'failure',
         error: message
       });
-    });
+    }
   });
-  app.all('/api/applycredits', function(req, res) {
+  app.all('/api/applycredits', async function(req, res) {
     var url = `/creditnotes/${req.query.creditnote_id}/invoices`;
-    makeRequest(url, {
-      method: 'POST',
-      body: req.body,
-      username: req.query.username
-    }).then(function(json) {
+    try {
+      var json = await makeRequest(url,  {
+        method: 'POST',
+        body: req.body,
+        username: req.query.username
+      });
       res.json({
         message: 'success'
       });
-    }).catch(function(message) {
+    } catch(message) {
       res.json({
         message: 'failure',
         error: message
       });
-    });
+    }
   });
-  app.all('/api/searchinvoice', function(req, res) {
+  app.all('/api/searchinvoice', async function(req, res) {
     var url = `/invoices?status=unpaid&invoice_number_contains=${req.query.invoice_number}`;
-    makeRequest(url, {
-      method: 'GET',
-      username: req.query.username
-    }).then(function(json) {
-      var url = '/invoices/' + json.invoices[0].invoice_id;
-      makeRequest(url, {
+    try {
+      var json = await makeRequest(url,  {
         method: 'GET',
         username: req.query.username
-      }).then(function(secondJson) {
-        res.json(secondJson);
       });
-    }).catch(function(message) {
+      url = '/invoices/' + json.invoices[0].invoice_id;
+      var secondJson = await makeRequest(url,  {
+        method: 'GET',
+        username: req.query.username
+      });
+      res.json(secondJson);
+    } catch(message) {
       res.json({
         message: 'failure',
         error: message
       });
-    });
+    }
   });
-  app.all('/api/vendors', function(req, res) {
+  app.all('/api/vendors', async function(req, res) {
     var url = '/contacts?filter_by=Status.ActiveVendors';
-    makeRequest(url, {
-      method: 'GET',
-      username: req.query.username
-    }).then(function(json) {
+    try {
+      var json = await makeRequest(url,  {
+        method: 'GET',
+        username: req.query.username
+      });
       res.json({
         message: 'success',
         contacts: json.contacts
       });
-    }).catch(function(message) {
+    } catch(message) {
       res.json({
         message: 'failure',
         error: message
       });
-    });
+    }
   });
-  app.all('/api/itemcustomfields', function(req, res) {
+  app.all('/api/itemcustomfields', async function(req, res) {
     var url = '/settings/preferences/customfields?entity=item&is_entity_edit=true';
-    makeRequest(url, {
-      method: 'GET',
-      username: req.query.username
-    }).then(function(json) {
+    try {
+      var json = await makeRequest(url,  {
+        method: 'GET',
+        username: req.query.username
+      });
       res.json({
         message: 'success',
         custom_fields: json.customfields
       });
-    }).catch(function(message) {
+    } catch(message) {
       res.json({
         message: 'failure',
         error: message
       });
-    });
+    }
   });
-  app.all('/api/items', function(req, res) {
+  app.all('/api/items', async function(req, res) {
     var cfParams = req.query.cf_params;
     var cfParamString = '';
     for (var key in cfParams) {
@@ -391,57 +352,60 @@ module.exports = async function(app) {
       }
     }
     var url = `/items?${cfParamString}page=${req.query.page}`;
-    makeRequest(url, {
-      method: 'GET',
-      username: req.query.username
-    }).then(function(json) {
+    try {
+      var json = await makeRequest(url,  {
+        method: 'GET',
+        username: req.query.username
+      });
       res.json({
         message: 'success',
         items: json.items,
         has_more_page: json.page_context.has_more_page
       });
-    }).catch(function(message) {
+    } catch(message) {
       res.json({
         message: 'failure',
         error: message
       });
-    });
+    }
   });
-  app.all('/api/newitem', function(req, res) {
+  app.all('/api/newitem', async function(req, res) {
     var url = '/items';
-    makeRequest(url, {
-      method: 'POST',
-      body: req.body,
-      username: req.query.username
-    }).then(function(json) {
+    try {
+      var json = await makeRequest(url,  {
+        method: 'POST',
+        body: req.body,
+        username: req.query.username
+      });
       res.json({
         message: 'success',
         item: json.item
       });
-    }).catch(function(message) {
+    } catch(message) {
       res.json({
         message: 'failure',
         error: message
       });
-    });
+    }
   });
-  app.all('/api/newbill', function(req, res) {
+  app.all('/api/newbill', async function(req, res) {
     var url = '/bills';
-    makeRequest(url, {
-      method: 'POST',
-      body: req.body,
-      username: req.query.username
-    }).then(function(json) {
+    try {
+      var json = await makeRequest(url,  {
+        method: 'POST',
+        body: req.body,
+        username: req.query.username
+      });
       res.json({
         message: 'success',
         bill: json.bill
       });
-    }).catch(function(message) {
+    } catch(message) {
       res.json({
         message: 'failure',
         error: message
       });
-    });
+    }
   });
   app.all('/api/newattribute', function(req, res) {
     var body = JSON.parse(req.body);
@@ -464,23 +428,24 @@ module.exports = async function(app) {
       message: 'attribute added successfully'
     })
   });
-  app.all('/api/itemsupdate', function(req, res) {
+  app.all('/api/itemsupdate', async function(req, res) {
     var body = JSON.parse(req.body);
     var items = body.items || [];
     var promises = items.map(function(item) {
       var apiurl = `/items/${item['Item ID']}`;
-      return new RSVP.Promise((resolve, reject) => {
-        makeRequest(apiurl, {
-          method: 'PUT',
-          body: JSON.stringify({
-            rate: item.printRate
-          }),
-          username: req.query.username
-        }).then(function(json) {
+      return new RSVP.Promise(async (resolve, reject) => {
+        try {
+          var json = await makeRequest(apiurl,  {
+            method: 'PUT',
+            body: JSON.stringify({
+              rate: item.printRate
+            }),
+            username: req.query.username
+          });
           resolve({
             message: 'success'
           });
-        }).catch(function(message) {
+        } catch(message) {
           resolve({
             message: 'failure',
             error: {
@@ -488,10 +453,11 @@ module.exports = async function(app) {
               sku: item.SKU
             }
           });
-        });
+        }
       });
     });
-    RSVP.all(promises).then(function(results) {
+    try {
+      var results = RSVP.all(promises);
       var failedItems = results.filter(function(failedItem) {
         return failedItem.message === 'failure';
       });
@@ -505,11 +471,11 @@ module.exports = async function(app) {
       res.json({
         message: 'success'
       })
-    }).catch(function(reason) {
+    } catch(message) {
       res.json({
         message: reason.message
       })
-    });
+    }
   });
   app.all('/api/adjustment', function(req, res) {
     var body = JSON.parse(req.body);
