@@ -24,11 +24,17 @@ module.exports = {
         return;
       }
       var url = `https://accounts.zoho.com/oauth/v2/token?refresh_token=${user.refresh_token}&client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}&redirect_uri=${REDIRECT_URI}&grant_type=refresh_token`
+      console.log('Going to generate access token for user ', user.username);
       request.post({
         url: url
       }, function(err, httpResponse, response) {
         try {
           var parsedResponse = JSON.parse(response);
+          if(!parsedResponse.access_token) {
+            console.log('\n Access token not generated for user ', user.username);
+            return self.generateAccessToken(user, shouldRegenerate);
+          }
+          console.log('\n Access token generated for user ', user.username);
           user.access_token = parsedResponse.access_token;
           console.log(`Access token generated for user - ${user.username} - ${parsedResponse.access_token}\n\n`);
           if(shouldRegenerate) {
