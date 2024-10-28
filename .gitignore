@@ -18,7 +18,7 @@
 /npm-debug.log*
 /testem.log
 pdf/
-server/royal.json
+server/*.json
 server/item.csv
 /yarn-error.log
 
@@ -29,5 +29,3 @@ server/item.csv
 items/
 csvs/
 count/
-server/royalcottonland.json
-server/royalsarees.json
