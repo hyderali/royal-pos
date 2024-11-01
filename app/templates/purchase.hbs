@@ -1,13 +1,13 @@
 <div class="form-horizontal hidden-print" style="margin:20px">
-  {{#if errorMessage}}
+  {{#if this.errorMessage}}
     <div class="alert alert-danger">
-      {{errorMessage}}
+      {{this.errorMessage}}
     </div>
   {{/if}}
   <div class="form-group">
     <div class="col-md-3">Supplier</div>
     <div class="col-md-9">
-      <PowerSelect @searchEnabled={{true}} @selected={{model.vendor}} @options={{session.vendors}} @onChange={{action "selectVendor"}} @searchField="contact_name" as |vendor|>
+      <PowerSelect @searchEnabled={{true}} @selected={{this.model.vendor}} @options={{this.session.vendors}} @onChange={{this.selectVendor}} @searchField="contact_name" as |vendor|>
         {{vendor.contact_name}}
       </PowerSelect>
     </div>
@@ -15,7 +15,7 @@
   <div class="form-group">
     <div class="col-md-3">Bill Number</div>
     <div class="col-md-9">
-      <Input class="form-control" @value={{model.bill_number}} />
+      <Input class="form-control" @value={{this.model.bill_number}} />
     </div>
   </div>
   <table class="table">
@@ -36,7 +36,7 @@
       </tr>
     </thead>
     <tbody>
-      {{#each model.line_items as |lineItem index|}}
+      {{#each this.model.line_items as |lineItem index|}}
         <tr>
           <td> {{get-index index}} </td>
           <td> {{lineItem.SKU}} </td>
@@ -47,19 +47,19 @@
           <td> {{lineItem.CF.Brand}} </td>
           <td> {{lineItem.CF.Design}} </td>
           <td> {{lineItem.CF.Size}} </td>
-          <td> <Input class="form-control" @value={{lineItem.quantity}} @autofocus={{true}} /> </td>
+          <td> <Input class="form-control" @value={{lineItem.quantity}} {{autofocus}} /> </td>
           <td> <Input class="form-control" @value={{lineItem.sticker}} /> </td>
           <td>
-            <button type="button" class="btn btn-danger pull-right" {{action "removeLineItem" lineItem}}>Delete</button> <br>
-            <a href="#" {{action "addItem" lineItem}}>Clone</a>
+            <button type="button" class="btn btn-danger pull-right" {{on "click" (fn this.removeLineItem lineItem)}}>Delete</button> <br>
+            <a href="#" {{on "click" (fn this.addItem lineItem)}}>Clone</a>
           </td>
         </tr>
       {{/each}}
       <tr>
         <td></td>
         <td>
-          <Input class="form-control" @autofocus={{true}} @enter="addNewItem" />
-          <a href="#" {{action "addItem"}}>Add Item</a>
+          <Input class="form-control" {{autofocus}} @enter={{this.addNewItem}} />
+          <a href="#" {{on "click" this.addItem}}>Add Item</a>
         </td>
         <td colspan="10"></td>
       </tr>
@@ -67,32 +67,32 @@
         <td></td>
         <td> Total </td>
         <td></td>
-        <td> {{purchaseTotal}} </td>
-        <td> {{salesTotal}} </td>
+        <td> {{this.purchaseTotal}} </td>
+        <td> {{this.salesTotal}} </td>
         <td></td>
         <td></td>
         <td></td>
         <td></td>
-        <td>{{qtyTotal}}</td>
-        <td>{{stickerTotal}}</td>
+        <td>{{this.qtyTotal}}</td>
+        <td>{{this.stickerTotal}}</td>
       </tr>
     </tbody>
   </table>
   <div class="btn btn-toolbar">
-    <button disabled={{model.isSaving}} class="btn btn-primary" type="button" {{action "save"}}>Save</button>
-    <button class="btn btn-default" type="button" {{action "reload"}}>New</button>
+    <button disabled={{this.model.isSaving}} class="btn btn-primary" type="button" {{on "click" this.save}}>Save</button>
+    <button class="btn btn-default" type="button" {{on "click" this.reloadC}}>New</button>
   </div>
 </div>
-{{#if isShowingModal}}
+{{#if this.isShowingModal}}
   <ModalDialog @container-class="new-item" @close="closeModal" @translucentOverlay={{true}}>
     <div class="hidden-print">
       <div class="form-horizontal">
         <div class="form-group">
           <div class="col-md-2">SKU</div>
-          <div class="col-md-4"><Input class="form-control" @value={{newItemModel.sku}} @disabled={{true}} /></div>
+          <div class="col-md-4"><Input class="form-control" @value={{this.newItemModel.sku}} disabled={{true}} /></div>
           <div class="col-md-2">Name</div>
           <div class="col-md-4">
-            <PowerSelect @searchEnabled={{true}} @class="form-control" @selected={{newItemModel.description}} @options={{session.names}} @onChange={{action "selectName"}} @onKeydown={{action "createNameOnEnter"}} as |name|>
+            <PowerSelect @searchEnabled={{true}} @class="form-control" @selected={{this.newItemModel.description}} @options={{this.session.names}} @onChange={{this.selectName}} @onKeydown={{this.createNameOnEnter}} as |name|>
               {{name}}
             </PowerSelect>
           </div>
@@ -100,33 +100,33 @@
         <div class="form-group">
           <div class="col-md-2">Group</div>
           <div class="col-md-4">
-            <PowerSelect @searchEnabled={{true}} @class="form-control" @selected={{newItemModel.group}} @options={{session.groups}} @onChange={{action "selectGroup"}} @onKeydown={{action "createGroupOnEnter"}} as |group|>
+            <PowerSelect @searchEnabled={{true}} @class="form-control" @selected={{this.newItemModel.group}} @options={{this.session.groups}} @onChange={{this.selectGroup}} @onKeydown={{this.createGroupOnEnter}} as |group|>
               {{group}}
             </PowerSelect>
           </div>
         </div>
         <div class="form-group">
           <div class="col-md-2">Purchase Rate</div>
-          <div class="col-md-4"><Input class="form-control" @value={{newItemModel.purchase_rate}} @focus-out="purchaseRateChanged" /></div>
+          <div class="col-md-4"><Input class="form-control" @value={{this.newItemModel.purchase_rate}}  {{on "focusout" this.purchaseRateChanged}} /></div>
           <div class="col-md-2">Profit</div>
-          <div class="col-md-4"><Input class="form-control" @value={{newItemModel.profit}} @focus-out="profitChanged" /></div>
+          <div class="col-md-4"><Input class="form-control" @value={{this.newItemModel.profit}}  {{on "focusout" this.profitChanged}} /></div>
         </div>
         <div class="form-group">
           <div class="col-md-2">Sales Rate</div>
-          <div class="col-md-4"><Input class="form-control" @value={{newItemModel.rate}} /></div>
+          <div class="col-md-4"><Input class="form-control" @value={{this.newItemModel.rate}} /></div>
           <div class="col-md-2">Discount</div>
-          <div class="col-md-4"><Input class="form-control" @value={{newItemModel.discount}} /></div>
+          <div class="col-md-4"><Input class="form-control" @value={{this.newItemModel.discount}} /></div>
         </div>
         <div class="form-group">
           <div class="col-md-2">Size</div>
           <div class="col-md-4">
-            <PowerSelect @searchEnabled={{true}} @class="form-control" @selected={{newItemModel.size}} @options={{session.sizes}} @onChange={{action "selectSize"}} @onKeydown={{action "createSizeOnEnter"}} as |size|>
+            <PowerSelect @searchEnabled={{true}} @class="form-control" @selected={{this.newItemModel.size}} @options={{this.session.sizes}} @onChange={{this.selectSize}} @onKeydown={{this.createSizeOnEnter}} as |size|>
               {{size}}
             </PowerSelect>
           </div>
           <div class="col-md-2">Design</div>
           <div class="col-md-4">
-            <PowerSelect @searchEnabled={{true}} @class="form-control" @selected={{newItemModel.design}} @options={{session.designs}} @onChange={{action "selectDesign"}} @onKeydown={{action "createDesignOnEnter"}} as |design|>
+            <PowerSelect @searchEnabled={{true}} @class="form-control" @selected={{this.newItemModel.design}} @options={{this.session.designs}} @onChange={{this.selectDesign}} @onKeydown={{this.createDesignOnEnter}} as |design|>
               {{design}}
             </PowerSelect>
           </div>
@@ -134,19 +134,19 @@
         <div class="form-group">
           <div class="col-md-2">Brand</div>
           <div class="col-md-4">
-            <PowerSelect @searchEnabled={{true}} @class="form-control" @selected={{newItemModel.brand}} @options={{session.brands}} @onChange={{action "selectBrand"}} @onKeydown={{action "createBrandOnEnter"}} as |brand|>
+            <PowerSelect @searchEnabled={{true}} @class="form-control" @selected={{this.newItemModel.brand}} @options={{this.session.brands}} @onChange={{this.selectBrand}} @onKeydown={{this.createBrandOnEnter}} as |brand|>
               {{brand}}
             </PowerSelect>
           </div>
           <div class="col-md-2">Colour</div>
-          <div class="col-md-4"><Input class="form-control" @value={{newItemModel.colour}} /></div>
+          <div class="col-md-4"><Input class="form-control" @value={{this.newItemModel.colour}} /></div>
         </div>
         <div class="btn btn-toolbar">
-          <button disabled={{newItemModel.isSaving}} class="btn btn-primary" type="button" {{action "saveItem"}}>Save</button>
-          <button class="btn btn-default" type="button" {{action "closeModal"}}>Close</button>
+          <button disabled={{this.newItemModel.isSaving}} class="btn btn-primary" type="button" {{on "click" this.saveItem}}>Save</button>
+          <button class="btn btn-default" type="button" {{on "click" this.closeModal}}>Close</button>
         </div>
       </div>
     </div>
   </ModalDialog>
 {{/if}}
-<BarcodeList @items={{printItems}} />
+<BarcodeList @items={{this.printItems}} />

@@ -1,28 +1,45 @@
+import { action } from '@ember/object';
 import { inject as service } from '@ember/service';
 import Route from '@ember/routing/route';
-export default Route.extend({
-  session: service(),
-  store: service(),
+
+export default class PaymentRoute extends Route {
+  @service
+  session;
+
+  @service
+  store;
+
+  @service router;
+
   model() {
     return this.store.ajax('/invoiceslist').then((json) => {
       return json.invoices;
     });
-  },
+  }
+
   setupController(controller) {
-    this._super(...arguments);
+    super.setupController(...arguments);
     this.store.ajax('/creditnoteslist').then((json) => {
       controller.set('creditnotes', json.creditnotes);
     });
-  },
-  actions: {
-    recordPayment(invoiceId) {
-      this.transitionTo('payment.new', { queryParams: { invoiceids: [invoiceId] } });
-    },
-    recordPayments(invoiceIds) {
-      this.transitionTo('payment.new', { queryParams: { invoiceids: invoiceIds } });
-    },
-    reload() {
-      this.refresh();
-    }
   }
-});
+
+  @action
+  recordPayment(invoiceId) {
+    this.router.transitionTo('payment.new', {
+      queryParams: { invoiceids: [invoiceId] },
+    });
+  }
+
+  @action
+  recordPayments(invoiceIds) {
+    this.router.transitionTo('payment.new', {
+      queryParams: { invoiceids: invoiceIds },
+    });
+  }
+
+  @action
+  reload() {
+    this.refresh();
+  }
+}

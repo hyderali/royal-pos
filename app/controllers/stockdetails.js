@@ -1,81 +1,120 @@
+import { action, computed } from '@ember/object';
 import { inject as service } from '@ember/service';
-import { computed } from '@ember/object';
 import Controller from '@ember/controller';
-export default Controller.extend({
-  session: service(),
-  searchModel: null,
-  init() {
-    this._super(...arguments);
+
+export default class StockdetailsController extends Controller {
+  @service
+  session;
+
+  searchModel = null;
+
+  constructor() {
+    super(...arguments);
     this.set('searchModel', {});
-  },
-  groupCFID: computed('model.[]', function() {
+  }
+
+  @computed('model.[]')
+  get groupCFID() {
     let model = this.model || [];
     let groupCF = model.findBy('label', 'Group');
     return groupCF.customfield_id;
-  }),
-  groupCFIDLabeL: computed('groupCFID', function() {
+  }
+
+  @computed('groupCFID')
+  get groupCFIDLabeL() {
     let groupCFID = this.groupCFID;
     return `cf_${groupCFID}`;
-  }),
-  sizeCFID: computed('model.[]', function() {
+  }
+
+  @computed('model.[]')
+  get sizeCFID() {
     let model = this.model || [];
     let groupCF = model.findBy('label', 'Size');
     return groupCF.customfield_id;
-  }),
-  sizeCFIDLabeL: computed('sizeCFID', function() {
+  }
+
+  @computed('sizeCFID')
+  get sizeCFIDLabeL() {
     let groupCFID = this.sizeCFID;
     return `cf_${groupCFID}`;
-  }),
-  designCFID: computed('model.[]', function() {
+  }
+
+  @computed('model.[]')
+  get designCFID() {
     let model = this.model || [];
     let groupCF = model.findBy('label', 'Design');
     return groupCF.customfield_id;
-  }),
-  designCFIDLabeL: computed('designCFID', function() {
+  }
+
+  @computed('designCFID')
+  get designCFIDLabeL() {
     let groupCFID = this.designCFID;
     return `cf_${groupCFID}`;
-  }),
-  brandCFID: computed('model.[]', function() {
+  }
+
+  @computed('model.[]')
+  get brandCFID() {
     let model = this.model || [];
     let groupCF = model.findBy('label', 'Brand');
     return groupCF.customfield_id;
-  }),
-  brandCFIDLabeL: computed('brandCFID', function() {
+  }
+
+  @computed('brandCFID')
+  get brandCFIDLabeL() {
     let groupCFID = this.brandCFID;
     return `cf_${groupCFID}`;
-  }),
-  totalQty: computed('results.[]', function() {
+  }
+
+  @computed('results.[]')
+  get totalQty() {
     let results = this.results || [];
     let totalQty = results.reduce((first, next) => {
       return first + next.stock_on_hand;
     }, 0);
     return totalQty;
-  }),
-  totalAmount: computed('results.[]', function() {
-    let results = this.get('results') || [];
+  }
+
+  @computed('results.[]')
+  get totalAmount() {
+    let results = this.results || [];
     let totalQty = results.reduce((first, next) => {
-      return first + (next.purchase_rate * next.stock_on_hand);
+      return first + next.purchase_rate * next.stock_on_hand;
     }, 0);
     return totalQty;
-  }),
-  actions: {
-    selectGroup(group) {
-      this.set('searchModel.group', group);
-    },
-    selectSize(size) {
-      this.set('searchModel.size', size);
-    },
-    selectDesign(design) {
-      this.set('searchModel.design', design);
-    },
-    selectBrand(brand) {
-      this.set('searchModel.brand', brand);
-    },
-    loadMore() {
-      this.send('searchItems', this.page + 1);
-    },
-    clearAll() {
-      this.setProperties({ searchModel: {}, results: [] });
-    }
   }
-});
+
+  @action
+  selectGroup(group) {
+    this.set('searchModel.group', group);
+  }
+
+  @action
+  selectSize(size) {
+    this.set('searchModel.size', size);
+  }
+
+  @action
+  selectDesign(design) {
+    this.set('searchModel.design', design);
+  }
+
+  @action
+  selectBrand(brand) {
+    this.set('searchModel.brand', brand);
+  }
+
+  @action
+  loadMore() {
+    this.send('searchItems', this.page + 1);
+  }
+
+  @action
+  searchItemsC() {
+    this.send('searchItems');
+  }
+
+  @action
+  clearAll() {
+    this.setProperties({ searchModel: {}, results: [] });
+  }
+}

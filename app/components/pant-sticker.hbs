@@ -1,0 +1,24 @@
+<div
+  class='pant-sticker
+    {{if this.isFirstRow "first-row"}}
+    {{if this.isLastRow "last-row"}}'
+>
+  <div class='text-center' style='font-size:22px;font-weight:bold'>Men & Smart</div>
+  <div style='margin-top:15px'>
+    <div style='display:inline-block;width:40%'>Size</div>
+    <div style='display:inline-block;width:55%'>: {{@item.size}}</div>
+  </div>
+  <div style='margin-top:10px'>
+    <div style='display:inline-block;width:40%'>Fit</div>
+    <div style='display:inline-block;width:55%'>: {{@item.fit}}</div>
+  </div>
+  <div style='margin-top:10px'>
+    <div style='display:inline-block;width:40%'>M.R.P</div>
+    <div style='display:inline-block;width:55%'>: Rs.{{@item.price}}/-</div>
+  </div>
+  <div class='text-center' style='margin-top:15px'><BarCode
+      @sku='123456'
+      @displayValue={{false}}
+    /></div>
+  <div style='font-size:19px;font-weight:bold;margin-top:10px'>Royal Garments</div>
+</div>
