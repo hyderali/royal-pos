@@ -1,5 +1,5 @@
 <div class="btn btn-toolbar hidden-print" style="margin-top:30px">
-  <button class="btn btn-primary" type="button" {{action "print"}}>Print</button>
+  <button class="btn btn-primary" type="button" {{on "click" this.print}}>Print</button>
 </div>
 <table class="table hidden-print">
   <thead>
@@ -9,22 +9,22 @@
       <th> Old Price </th>
       <th> New Price </th>
       <th> Quantity </th>
-      <th style="width:9%"> </th>
+      <th style="width:9%"></th>
     </tr>
   </thead>
   <tbody>
-    {{#each items as |item|}}
+    {{#each this.items as |item|}}
       <tr>
         <td>{{item.SKU}}</td>
         <td>{{item.Description}}</td>
         <td>{{item.Rate}}</td>
-        <td><Input @value={{item.printRate}} class="form-control" @autofocus={{true}} /></td>
+        <td><Input @value={{item.printRate}} class="form-control" {{autofocus}} /></td>
         <td><Input @value={{item.qty}} class="form-control" /></td>
-        <td {{action "removeLineItem" item}}><button type="button" class="btn btn-danger pull-right">Delete</button></td>
+        <td {{on "click" (fn this.removeLineItem item)}}><button type="button" class="btn btn-danger pull-right">Delete</button></td>
       </tr>
     {{/each}}
     <tr>
-      <td> <Input class="form-control" @autofocus={{true}} @enter="addNewItem" /></td>
+      <td> <Input class="form-control" {{autofocus}} @enter={{this.addNewItem}} /></td>
       <td></td>
       <td></td>
       <td></td>
@@ -32,8 +32,8 @@
     </tr>
   </tbody>
 </table>
-<BarcodeList @items={{printitems}} />
-{{#if isShowingModal}}
+<BarcodeList @items={{this.printitems}} />
+{{#if this.isShowingModal}}
   <ModalDialog @close="toggleTranslucent" @translucentOverlay={{true}}>
     <div class="hidden-print">
       <h1>Prices Not Updated</h1>
@@ -46,7 +46,7 @@
           </tr>
         </thead>
         <tbody>
-          {{#each failedItems as |item|}}
+          {{#each this.failedItems as |item|}}
             <tr>
               <th>{{item.error.sku}} </th>
               <th>{{item.error.message}}</th>
@@ -54,7 +54,7 @@
           {{/each}}
         </tbody>
       </table>
-      <button class="btn btn-primary" type="button" {{action "toggleTranslucent"}}>Close</button>
+      <button class="btn btn-primary" type="button" {{on "click" this.toggleTranslucent}}>Close</button>
     </div>
   </ModalDialog>
 {{/if}}

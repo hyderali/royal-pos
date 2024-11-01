@@ -15,7 +15,7 @@
     </tr>
   </thead>
   <tbody>
-    {{#each model.count.counts as |count index|}}
+    {{#each this.model.count.counts as |count index|}}
       <tr>
         <td> {{get-index index}} </td>
         <td>
@@ -35,9 +35,9 @@
   <tfoot>
     <tr>
       <td colspan="2" class="text-center"> Total </td>
-      <td class="text-right"> {{totalQty}} </td>
-      <td class="text-right"> {{format-currency totalCV}} </td>
-      <td class="text-right"> {{format-currency totalSV}} </td>
+      <td class="text-right"> {{this.totalQty}} </td>
+      <td class="text-right"> {{format-currency this.totalCV}} </td>
+      <td class="text-right"> {{format-currency this.totalSV}} </td>
     </tr>
   </tfoot>
 </table>
