@@ -1,13 +1,21 @@
 import { inject as service } from '@ember/service';
 import Route from '@ember/routing/route';
-export default Route.extend({
-  store: service(),
-  session: service(),
+
+export default class ApplicationRoute extends Route {
+  @service
+  store;
+
+  @service
+  session;
+
+  @service router;
+
   beforeModel() {
     if (!this.get('session.isLoggedIn')) {
-      this.transitionTo('login');
+      this.router.transitionTo('login');
     }
-  },
+  }
+
   afterModel() {
     if (!this.get('session.itemslist')) {
       return this.store.ajax('/itemslist').then((json) => {
@@ -15,4 +23,4 @@ export default Route.extend({
       });
     }
   }
-});
+}

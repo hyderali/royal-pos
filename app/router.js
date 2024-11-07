@@ -1,14 +1,15 @@
 import EmberRouter from '@ember/routing/router';
-import config from './config/environment';
+import config from 'royal-pos/config/environment';
+
 export default class Router extends EmberRouter {
   location = config.locationType;
   rootURL = config.rootURL;
 }
 
-Router.map(function() {
+Router.map(function () {
   this.route('login');
   this.route('sales');
-  this.route('payment', function() {
+  this.route('payment', function () {
     this.route('new');
   });
   this.route('adjustitem');
@@ -24,6 +25,6 @@ Router.map(function() {
   this.route('addstock');
   this.route('updatestock');
   this.route('newcount');
-  this.route('editcount', { path: 'editcount/:count_id'});
+  this.route('editcount', { path: 'editcount/:count_id' });
   this.route('counting');
 });

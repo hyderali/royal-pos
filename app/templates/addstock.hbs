@@ -1,7 +1,7 @@
 <h3 class="text-center hidden-print">Transfer Stock</h3>
-{{#if errorMessage}}
+{{#if this.errorMessage}}
   <div class="alert alert-danger hidden-print">
-    {{errorMessage}}
+    {{this.errorMessage}}
   </div>
 {{/if}}
 <table class="table">
@@ -17,26 +17,26 @@
     </tr>
   </thead>
   <tbody>
-    {{#each items as |result index|}}
+    {{#each this.items as |result index|}}
       <tr>
         <td> {{get-index index}} </td>
         <td> {{result.SKU}} </td>
         <td> {{result.[Item Name]}} </td>
         <td> {{result.Rate}} </td>
         <td> {{result.[Purchase Rate]}} </td>
-        <td> <Input class="form-control" @value={{result.[Initial Stock]}} @focus-out="computeTotal"/> </td>
+        <td> <Input class="form-control" @value={{result.[Initial Stock]}} {{on "focusout" this.computeTotal}}/> </td>
         {{!-- <td> {{result.[Initial Stock]}} </td> --}}
-        <td {{action "removeLineItem" result}}><button type="button" class="btn btn-danger pull-right">Delete</button></td>
+        <td {{on "click" (fn this.removeLineItemC result)}}><button type="button" class="btn btn-danger pull-right">Delete</button></td>
       </tr>
     {{/each}}
     <tr>
       <td colspan="5" align="center">Total</td>
-      <td>{{total}}</td>
+      <td>{{this.total}}</td>
       <td></td>
     </tr>
     <tr>
       <td></td>
-      <td><Input class="form-control" @value={{id}} @enter="itemChanged" @autofocus={{true}} /></td>
+      <td><Input class="form-control" @enter={{this.itemChangedC}} {{autofocus}} /></td>
       <td></td>
       <td></td>
       <td></td>
@@ -47,6 +47,6 @@
 </table>
 <div class="btn-toolbar">
   <div class="btn-group">
-    <button type="button" disabled={{isSaving}} {{action "save"}} class="btn btn-primary">Save</button>
+    <button type="button" disabled={{this.isSaving}} {{on "click" this.saveC}} class="btn btn-primary">Save</button>
   </div>
 </div>

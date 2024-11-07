@@ -1,19 +1,20 @@
 import { inject as service } from '@ember/service';
-import { computed } from '@ember/object';
-import Component from '@ember/component';
-export default Component.extend({
-  session: service(),
-  classNames: ['item-sticker'],
-  classNameBindings: ['isFirstRow:first-row', 'isLastRow:last-row'],
-  isFirstRow: computed('index', function() {
-    let isFirstRow = (this.index / 3) < 1;
+import Component from '@glimmer/component';
+
+export default class ItemSticker extends Component {
+  @service
+  session;
+
+  get isFirstRow() {
+    let isFirstRow = this.args.index / 3 < 1;
     return isFirstRow;
-  }),
-  isLastRow: computed('index', function() {
-    let length = this.length;
-    let index = this.index + 1;
+  }
+
+  get isLastRow() {
+    let length = this.args.length;
+    let index = this.args.index + 1;
     let maxlen = (parseInt(length / 3) + 1) * 3;
     let isLastRow = maxlen - index < 3;
     return isLastRow;
-  })
-});
+  }
+}

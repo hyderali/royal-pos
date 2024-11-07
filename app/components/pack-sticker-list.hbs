@@ -1,6 +1,6 @@
 <div style="display:flex;flex-wrap: wrap;flex-direction: row;width:519px" class="show-print">
   {{! Set label preferences as 4.15in width and 1.95in height}}
-  {{#each items as |item index|}}
-    <PantSticker @item={{item}} @index={{index}} @length={{items.length}} />
+  {{#each @items as |item index|}}
+    <PackSticker @item={{item}} @index={{index}} @length={{@items.length}} />
   {{/each}}
 </div>

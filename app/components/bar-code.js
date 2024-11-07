@@ -1,24 +1,24 @@
-/* eslint new-cap: "off" */
-import Component from '@ember/component';
-
+import Component from '@glimmer/component';
+import { action } from '@ember/object';
 import { schedule } from '@ember/runloop';
-export default Component.extend({
-  tagName: 'svg',
-  sku: '',
-  classNames: ['text-center'],
-  displayValue: true,
-  didInsertElement() {
-    let sku = this.sku;
-    let displayValue = this.displayValue;
-    this._super();
+
+export default class BarCode extends Component {
+  sku = '';
+  displayValue = true;
+
+  @action
+  addBarCode(element) {
+    let sku = this.args.sku;
+    let displayValue =
+      this.args.displayValue === undefined ? true : this.args.displayValue;
     schedule('afterRender', this, () => {
-      this.$().JsBarcode(sku, {
+      JsBarcode(element, sku, {
         width: 1.5,
         height: 22.5,
         fontSize: 13,
         margin: 0,
-        displayValue
+        displayValue,
       });
     });
   }
-});
+}
