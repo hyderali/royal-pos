@@ -1,5 +1,5 @@
 <div  style="background-color:#F3F307">
   <h3 class="text-center hidden-print">Returns</h3>
-  <SalesTable @model={{model}} @isSales={{false}} />
-  <SalesReceipt @model={{model}} @numberLabel="Credit No" @isSales={{false}} />
+  <SalesTable @model={{this.model}} @isSales={{false}} @addNewItem={{this.addNewItemC}} @addTempItem={{this.addTempItemC}} @removeLineItem={{this.removeLineItemC}} @saveAndPrint={{this.saveAndPrintC}} @newSale={{this.newSaleC}}/>
+  <SalesReceipt @model={{this.model}} @numberLabel="Credit No" @isSales={{false}} />
 </div>

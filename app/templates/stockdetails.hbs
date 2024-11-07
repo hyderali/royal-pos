@@ -4,7 +4,7 @@
     <div class="col-md-3">
       <div>Group</div>
       <div>
-        <PowerSelect @searchEnabled={{true}} @class="form-control" @selected={{searchModel.group}} @options={{session.groups}} @onChange={{action "selectGroup"}} as |design|>
+        <PowerSelect @searchEnabled={{true}} @class="form-control" @selected={{this.searchModel.group}} @options={{this.session.groups}} @onChange={{this.selectGroup}} as |design|>
           {{design}}
         </PowerSelect>
       </div>
@@ -12,7 +12,7 @@
     <div class="col-md-3">
       <div>Size</div>
       <div>
-        <PowerSelect @searchEnabled={{true}} @class="form-control" @selected={{searchModel.size}} @options={{session.sizes}} @onChange={{action "selectSize"}} as |size|>
+        <PowerSelect @searchEnabled={{true}} @class="form-control" @selected={{this.searchModel.size}} @options={{this.session.sizes}} @onChange={{this.selectSize}} as |size|>
           {{size}}
         </PowerSelect>
       </div>
@@ -20,7 +20,7 @@
     <div class="col-md-3">
       <div>Design</div>
       <div>
-        <PowerSelect @searchEnabled={{true}} @class="form-control" @selected={{searchModel.design}} @options={{session.designs}} @onChange={{action "selectDesign"}} as |design|>
+        <PowerSelect @searchEnabled={{true}} @class="form-control" @selected={{this.searchModel.design}} @options={{this.session.designs}} @onChange={{this.selectDesign}} as |design|>
           {{design}}
         </PowerSelect>
       </div>
@@ -28,7 +28,7 @@
     <div class="col-md-3">
       <div>Brand</div>
       <div>
-        <PowerSelect @searchEnabled={{true}} @class="form-control" @selected={{searchModel.brand}} @options={{session.brands}} @onChange={{action "selectBrand"}} as |design|>
+        <PowerSelect @searchEnabled={{true}} @class="form-control" @selected={{this.searchModel.brand}} @options={{this.session.brands}} @onChange={{this.selectBrand}} as |design|>
           {{design}}
         </PowerSelect>
       </div>
@@ -36,8 +36,8 @@
   </div>
   <div class="form-group row">
     <div class="col-md-2">
-      <button class="btn btn-primary" type="button" {{action "searchItems"}}>Search</button>
-      <button class="btn btn-default" type="button" {{action "clearAll"}}>Clear All</button>
+      <button class="btn btn-primary" type="button" {{on "click" this.searchItemsC}}>Search</button>
+      <button class="btn btn-default" type="button" {{on "click" this.clearAll}}>Clear All</button>
     </div>
   </div>
   <hr>
@@ -58,20 +58,20 @@
       </tr>
     </thead>
     <tbody>
-      {{#if isLoading}}
+      {{#if this.isLoading}}
         <tr>
           <td colspan="10" align="center">Loading</td>
         </tr>
       {{else}}
-        {{#each results as |result index|}}
+        {{#each this.results as |result index|}}
           <tr>
             <td> {{get-index index}} </td>
             <td> {{result.sku}} </td>
             <td> {{result.description}} </td>
-            <td> {{get result groupCFIDLabeL}} </td>
-            <td> {{get result sizeCFIDLabeL}} </td>
-            <td> {{get result designCFIDLabeL}} </td>
-            <td> {{get result brandCFIDLabeL}} </td>
+            <td> {{get result this.groupCFIDLabeL}} </td>
+            <td> {{get result this.sizeCFIDLabeL}} </td>
+            <td> {{get result this.designCFIDLabeL}} </td>
+            <td> {{get result this.brandCFIDLabeL}} </td>
             <td> {{result.rate}} </td>
             <td> {{result.purchase_rate}} </td>
             <td> {{result.stock_on_hand}} </td>
@@ -80,15 +80,15 @@
         {{/each}}
       {{/if}}
     </tbody>
-    {{#unless isLoading}}
+    {{#unless this.isLoading}}
       <tfoot>
         <tr>
-          {{#if hasMore}}
-            <td colspan="10" align="center" {{action "loadMore"}}><a href="#">Load More</a></td>
-          {{else if results}}
+          {{#if this.hasMore}}
+            <td colspan="10" align="center" {{on "click" this.loadMore}}><a href="#">Load More</a></td>
+          {{else if this.results}}
             <td colspan="9" align="right">Total</td>
-            <td>{{totalQty}}</td>
-            <td>{{totalAmount}}</td>
+            <td>{{this.totalQty}}</td>
+            <td>{{this.totalAmount}}</td>
           {{/if}}
         </tr>
       </tfoot>

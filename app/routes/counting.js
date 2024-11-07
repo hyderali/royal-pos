@@ -1,8 +1,11 @@
-import Route from '@ember/routing/route';
 import { inject as service } from '@ember/service';
-export default Route.extend({
-    store: service(),
-    model(){
-        return this.store.ajax('/allcount'); 
-    },    
-});
+import Route from '@ember/routing/route';
+
+export default class CountingRoute extends Route {
+  @service
+  store;
+
+  model() {
+    return this.store.ajax('/allcount');
+  }
+}

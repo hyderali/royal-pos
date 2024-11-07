@@ -1,26 +1,31 @@
 /* eslint-disable */
-var bodyParser = require('body-parser');
-var fs = require('fs');
-var request = require('request');
-var Converter = require("csvtojson").Converter;
-var converter = new Converter({
+const bodyParser = require('body-parser');
+const fs = require('fs');
+const Converter = require("csvtojson").Converter;
+const converter = new Converter({
   checkType: false
 });
-var json2CSVConverter = require('json-2-csv');
-var RSVP = require('rsvp');
-var oauth = require('./oauth');
+const json2CSVConverter = require('json-2-csv');
+const RSVP = require('rsvp');
+const chalk = require('chalk');
+const fetch = require('node-fetch');
+const oauth = require('./oauth');
+const nocache = require('nocache');
+
 // To use it create some files under `mocks/`
 // e.g. `server/mocks/ember-hamsters.js`
 //
 module.exports = async function(app) {
   app.use(bodyParser.text());
+  app.use(nocache());
+  app.set('etag', false);
   fs.readFile('./server/royal.json', 'utf8', async function(err, data) {
     if (err) {
       return console.log(err);
     }
-    var parsedData = JSON.parse(data);
-    for (var i = 0, l = parsedData.users.length; i < l; i++) {
-      var usr = parsedData.users[i];
+    const parsedData = JSON.parse(data);
+    for (let i = 0, l = parsedData.users.length; i < l; i++) {
+      const usr = parsedData.users[i];
       if(usr.refresh_token) {
         await oauth.generateAccessToken(usr, true);
       }
@@ -31,45 +36,45 @@ module.exports = async function(app) {
     if (err) {
       return console.log(err);
     }
-    var parsedNames = JSON.parse(names);
+    const parsedNames = JSON.parse(names);
     app.names = parsedNames.names;
   });
   fs.readFile('./items/brands.json', 'utf8', function(err, brands) {
     if (err) {
       return console.log(err);
     }
-    var parsedBrands = JSON.parse(brands);
+    const parsedBrands = JSON.parse(brands);
     app.brands = parsedBrands.brands;
   });
   fs.readFile('./items/designs.json', 'utf8', function(err, designs) {
     if (err) {
       return console.log(err);
     }
-    var parsedDesigns = JSON.parse(designs);
+    const parsedDesigns = JSON.parse(designs);
     app.designs = parsedDesigns.designs;
   });
   fs.readFile('./items/groups.json', 'utf8', function(err, groups) {
     if (err) {
       return console.log(err);
     }
-    var parsedGroups = JSON.parse(groups);
+    const parsedGroups = JSON.parse(groups);
     app.groups = parsedGroups.groups;
   });
   fs.readFile('./items/sizes.json', 'utf8', function(err, sizes) {
     if (err) {
       return console.log(err);
     }
-    var parsedSizes = JSON.parse(sizes);
+    const parsedSizes = JSON.parse(sizes);
     app.sizes = parsedSizes.sizes;
   });
   converter.fromFile("./server/item.csv", function(err, result) {
     app.itemslist = result;
   });
   function getAccessToken(username) {
-    var users = app.parsedData.users;
-    var selectedUser;
-    for (var i = 0, l = users.length; i < l; i++) {
-      var usr = users[i];
+    const users = app.parsedData.users;
+    let selectedUser;
+    for (let i = 0, l = users.length; i < l; i++) {
+      const usr = users[i];
       if(usr.username === username) {
         selectedUser = usr;
         break;
@@ -78,81 +83,32 @@ module.exports = async function(app) {
     return selectedUser.access_token;
   };
   function makeRequest(url, options) {
-    var appendSymbol = '?';
+    let appendSymbol = '?';
     if(url.indexOf('?')!== -1) {
       appendSymbol = '&';
     }
     url = `https://www.zohoapis.com/books/v3${url}${appendSymbol}organization_id=${app.parsedData.organization_id}`;
-    var method = options.method;
-    var accessToken = getAccessToken(options.username);
-    var headers = {
+    const accessToken = getAccessToken(options.username);
+    options.headers = {
       Authorization: 'Zoho-oauthtoken '+accessToken
     };
-    if (method === 'GET') {
-      return new RSVP.Promise((resolve, reject) => {
-        request.get({
-          url,
-          headers
-        }, function(err, httpResponse, response) {
-          try {
-            var parsedResponse = JSON.parse(response);
-            if (parsedResponse.code === 0) {
-              resolve(parsedResponse);
-            } else {
-              reject(parsedResponse.message);
-            }
-          } catch (e) {
-
-            console.log(`URL is ${url}`);
-            reject('Error in connection. Try again');
-          }
-        })
-      });
-    }
-    if (method === 'POST') {
-      return new RSVP.Promise((resolve, reject) => {
-        request.post({
-          url,
-          form: {
-            JSONString: options.body
-          },
-          headers
-        }, function(err, httpResponse, response) {
-          try {
-            var parsedResponse = JSON.parse(response);
-            if (parsedResponse.code === 0) {
-              resolve(parsedResponse);
-            } else {
-              reject(parsedResponse.message);
-            }
-          } catch (e) {
-            reject('Error in connection. Try again');
-          }
-        })
-      });
-    }
-    if (method === 'PUT') {
-      return new RSVP.Promise((resolve, reject) => {
-        request.put({
-          url,
-          form: {
-            JSONString: options.body
-          },
-          headers
-        }, function(err, httpResponse, response) {
-          try {
-            var parsedResponse = JSON.parse(response);
-            if (parsedResponse.code === 0) {
-              resolve(parsedResponse);
-            } else {
-              reject(parsedResponse.message);
-            }
-          } catch (e) {
-            reject('Error in connection. Try again');
-          }
-        })
-      });
-    }
+    
+    return new RSVP.Promise(async (resolve, reject) => {
+      try {
+        const response = await fetch(url, options);
+        const parsedResponse = await response.json();
+        if (parsedResponse.code === 0) {
+          resolve(parsedResponse);
+        } else {
+          console.log(chalk.red(`Error in URL ${url}`, parsedResponse.message));
+          reject(parsedResponse.message);
+        }
+        resolve(parsedResponse);
+      } catch(e) {
+        console.log(chalk.red(`Error in URL ${url}`, e));
+        reject('Error in connection');
+      }
+    });
   };
   app.all('/api/itemslist', function(req, res) {
     res.json({
@@ -160,11 +116,11 @@ module.exports = async function(app) {
     });
   });
   app.all('/api/login', function(req, res) {
-    var users = app.parsedData.users;
-    var body = JSON.parse(req.body);
-    var user;
-    for (var i = 0, l = users.length; i < l; i++) {
-      var usr = users[i];
+    const users = app.parsedData.users;
+    const body = JSON.parse(req.body);
+    let user;
+    for (let i = 0, l = users.length; i < l; i++) {
+      const usr = users[i];
       if (body.username === usr.username && body.password === usr.password) {
         user = usr;
         break;
@@ -193,261 +149,274 @@ module.exports = async function(app) {
       message: 'invalid credentials'
     });
   });
-  app.all('/api/salespersons', function(req, res) {
-    var url = '/invoices/editpage';
-    makeRequest(url, {
-      method: 'GET',
-      username: req.query.username
-    }).then(function(json) {
+  app.all('/api/salespersons', async function(req, res) {
+    const url = '/invoices/editpage';
+    try {
+      const json = await makeRequest(url,  {
+        method: 'GET',
+        username: req.query.username
+      });
       res.json({
         message: 'success',
         salespersons: json.salespersons
       });
-    }).catch(function(message) {
+    } catch(message) {
       res.json({
         message: 'failure',
         error: message
       });
-    });
+    }
   });
-  app.all('/api/invoices', function(req, res) {
-    var url = '/invoices?is_quick_create=true';
-    makeRequest(url, {
-      method: 'POST',
-      body: req.body,
-      username: req.query.username
-    }).then(function(json) {
+  app.all('/api/invoices', async function(req, res) {
+    const url = '/invoices?is_quick_create=true';
+    try {
+      const json = await makeRequest(url,  {
+        method: 'POST',
+        body: req.body,
+        username: req.query.username
+      });
       res.json({
         message: 'success',
         entity_number: json.invoice.invoice_number
       });
-    }).catch(function(message) {
+    } catch(message) {
       res.json({
         message: 'failure',
         error: message
       });
-    });
+    }
   });
-  app.all('/api/updateinvoice', function(req, res) {
-    var url = `/invoices/${req.query.invoice_id}`;
-    makeRequest(url, {
-      method: 'PUT',
-      body: req.body,
-      username: req.query.username
-    }).then(function(json) {
+  app.all('/api/updateinvoice', async function(req, res) {
+    const url = `/invoices/${req.query.invoice_id}`;
+    try {
+      const json = await makeRequest(url,  {
+        method: 'PUT',
+        body: req.body,
+        username: req.query.username
+      });
       res.json({
         message: 'success',
         entity_number: json.invoice.invoice_number
       });
-    }).catch(function(message) {
+    } catch(message) {
       res.json({
         message: 'failure',
         error: message
       });
-    });
+    }
   });
-  app.all('/api/creditnotes', function(req, res) {
-    var url = '/creditnotes';
-    makeRequest(url, {
-      method: 'POST',
-      body: req.body,
-      username: req.query.username
-    }).then(function(json) {
+  app.all('/api/creditnotes', async function(req, res) {
+    const url = '/creditnotes';
+    try {
+      const json = await makeRequest(url,  {
+        method: 'POST',
+        body: req.body,
+        username: req.query.username
+      });
       res.json({
         message: 'success',
         entity_number: json.creditnote.creditnote_number
       });
-    }).catch(function(message) {
+    } catch(message) {
       res.json({
         message: 'failure',
         error: message
       });
-    });
+    }
   });
-  app.all('/api/invoiceslist', function(req, res) {
-    var url = `/invoices?status=unpaid&page=1&per_page=200&customer_id=${app.parsedData.customer_id}`;
-    makeRequest(url, {
-      method: 'GET',
-      username: req.query.username
-    }).then(function(json) {
+  app.all('/api/invoiceslist', async function(req, res) {
+    const url = `/invoices?status=unpaid&page=1&per_page=200&customer_id=${app.parsedData.customer_id}`;
+    try {
+      const json = await makeRequest(url,  {
+        method: 'GET',
+        username: req.query.username
+      });
       res.json(json);
-    }).catch(function(message) {
+    } catch(message) {
       res.json({
         message: 'failure',
         error: message
       });
-    });
+    }
   });
-  app.all('/api/creditnoteslist', function(req, res) {
-    //var url = `/creditnotes?status=open&page=1&per_page=200&customer_id=${app.parsedData.customer_id}&formatneeded=true`;
-    var url = '/creditnotes?filter_by=Status.Open&page=1&per_page=200&formatneeded=true';
-    makeRequest(url, {
-      method: 'GET',
-      username: req.query.username
-    }).then(function(json) {
+  app.all('/api/creditnoteslist', async function(req, res) {
+    //const url = `/creditnotes?status=open&page=1&per_page=200&customer_id=${app.parsedData.customer_id}&formatneeded=true`;
+    const url = '/creditnotes?filter_by=Status.Open&page=1&per_page=200&formatneeded=true';
+    try {
+      const json = await makeRequest(url,  {
+        method: 'GET',
+        username: req.query.username
+      });
       res.json(json);
-    }).catch(function(message) {
+    } catch(message) {
       res.json({
         message: 'failure',
         error: message
       });
-    });
+    }
   });
-  app.all('/api/payments', function(req, res) {
-    var url = '/customerpayments';
-    makeRequest(url, {
-      method: 'POST',
-      body: req.body,
-      username: req.query.username
-    }).then(function(json) {
+  app.all('/api/payments', async function(req, res) {
+    const url = '/customerpayments';
+    try {
+      const json = await makeRequest(url,  {
+        method: 'POST',
+        body: req.body,
+        username: req.query.username
+      });
       res.json({
         message: 'success',
         payment_id: json.payment.payment_id
       });
-    }).catch(function(message) {
+    } catch(message) {
       res.json({
         message: 'failure',
         error: message
       });
-    });
+    }
   });
-  app.all('/api/applycredits', function(req, res) {
-    var url = `/creditnotes/${req.query.creditnote_id}/invoices`;
-    makeRequest(url, {
-      method: 'POST',
-      body: req.body,
-      username: req.query.username
-    }).then(function(json) {
+  app.all('/api/applycredits', async function(req, res) {
+    const url = `/creditnotes/${req.query.creditnote_id}/invoices`;
+    try {
+      const json = await makeRequest(url,  {
+        method: 'POST',
+        body: req.body,
+        username: req.query.username
+      });
       res.json({
         message: 'success'
       });
-    }).catch(function(message) {
+    } catch(message) {
       res.json({
         message: 'failure',
         error: message
       });
-    });
+    }
   });
-  app.all('/api/searchinvoice', function(req, res) {
-    var url = `/invoices?status=unpaid&invoice_number_contains=${req.query.invoice_number}`;
-    makeRequest(url, {
-      method: 'GET',
-      username: req.query.username
-    }).then(function(json) {
-      var url = '/invoices/' + json.invoices[0].invoice_id;
-      makeRequest(url, {
+  app.all('/api/searchinvoice', async function(req, res) {
+    let url = `/invoices?status=unpaid&invoice_number_contains=${req.query.invoice_number}`;
+    try {
+      const json = await makeRequest(url,  {
         method: 'GET',
         username: req.query.username
-      }).then(function(secondJson) {
-        res.json(secondJson);
       });
-    }).catch(function(message) {
+      url = '/invoices/' + json.invoices[0].invoice_id;
+      const secondJson = await makeRequest(url,  {
+        method: 'GET',
+        username: req.query.username
+      });
+      res.json(secondJson);
+    } catch(message) {
       res.json({
         message: 'failure',
         error: message
       });
-    });
+    }
   });
-  app.all('/api/vendors', function(req, res) {
-    var url = '/contacts?filter_by=Status.ActiveVendors';
-    makeRequest(url, {
-      method: 'GET',
-      username: req.query.username
-    }).then(function(json) {
+  app.all('/api/vendors', async function(req, res) {
+    const url = '/contacts?filter_by=Status.ActiveVendors';
+    try {
+      const json = await makeRequest(url,  {
+        method: 'GET',
+        username: req.query.username
+      });
       res.json({
         message: 'success',
         contacts: json.contacts
       });
-    }).catch(function(message) {
+    } catch(message) {
       res.json({
         message: 'failure',
         error: message
       });
-    });
+    }
   });
-  app.all('/api/itemcustomfields', function(req, res) {
-    var url = '/settings/preferences/customfields?entity=item&is_entity_edit=true';
-    makeRequest(url, {
-      method: 'GET',
-      username: req.query.username
-    }).then(function(json) {
+  app.all('/api/itemcustomfields', async function(req, res) {
+    const url = '/settings/preferences/customfields?entity=item&is_entity_edit=true';
+    try {
+      const json = await makeRequest(url,  {
+        method: 'GET',
+        username: req.query.username
+      });
       res.json({
         message: 'success',
         custom_fields: json.customfields
       });
-    }).catch(function(message) {
+    } catch(message) {
       res.json({
         message: 'failure',
         error: message
       });
-    });
+    }
   });
-  app.all('/api/items', function(req, res) {
-    var cfParams = req.query.cf_params;
-    var cfParamString = '';
-    for (var key in cfParams) {
+  app.all('/api/items', async function(req, res) {
+    const cfParams = req.query.cf_params;
+    let cfParamString = '';
+    for (let key in cfParams) {
       if (cfParams.hasOwnProperty(key)) {
         cfParamString = `${cfParamString}${key}=${cfParams[key]}&`
       }
     }
-    var url = `/items?${cfParamString}page=${req.query.page}`;
-    makeRequest(url, {
-      method: 'GET',
-      username: req.query.username
-    }).then(function(json) {
+    const url = `/items?${cfParamString}page=${req.query.page}`;
+    try {
+      const json = await makeRequest(url,  {
+        method: 'GET',
+        username: req.query.username
+      });
       res.json({
         message: 'success',
         items: json.items,
         has_more_page: json.page_context.has_more_page
       });
-    }).catch(function(message) {
+    } catch(message) {
       res.json({
         message: 'failure',
         error: message
       });
-    });
+    }
   });
-  app.all('/api/newitem', function(req, res) {
-    var url = '/items';
-    makeRequest(url, {
-      method: 'POST',
-      body: req.body,
-      username: req.query.username
-    }).then(function(json) {
+  app.all('/api/newitem', async function(req, res) {
+    const url = '/items';
+    try {
+      const json = await makeRequest(url,  {
+        method: 'POST',
+        body: req.body,
+        username: req.query.username
+      });
       res.json({
         message: 'success',
         item: json.item
       });
-    }).catch(function(message) {
+    } catch(message) {
       res.json({
         message: 'failure',
         error: message
       });
-    });
+    }
   });
-  app.all('/api/newbill', function(req, res) {
-    var url = '/bills';
-    makeRequest(url, {
-      method: 'POST',
-      body: req.body,
-      username: req.query.username
-    }).then(function(json) {
+  app.all('/api/newbill', async function(req, res) {
+    const url = '/bills';
+    try {
+      const json = await makeRequest(url,  {
+        method: 'POST',
+        body: req.body,
+        username: req.query.username
+      });
       res.json({
         message: 'success',
         bill: json.bill
       });
-    }).catch(function(message) {
+    } catch(message) {
       res.json({
         message: 'failure',
         error: message
       });
-    });
+    }
   });
   app.all('/api/newattribute', function(req, res) {
-    var body = JSON.parse(req.body);
-    var attribute = body.attribute;
-    var searchText = body.searchText;
-    var files = {
+    const body = JSON.parse(req.body);
+    const attribute = body.attribute;
+    const searchText = body.searchText;
+    const files = {
       names: './items/names.json',
       groups: './items/groups.json',
       sizes: './items/sizes.json',
@@ -455,32 +424,33 @@ module.exports = async function(app) {
       brands: './items/brands.json'
     };
     app[attribute].push(searchText);
-    var fileName = files[attribute];
+    const fileName = files[attribute];
     groups = fs.readFileSync(fileName, 'utf8');
-    var parsedData = JSON.parse(groups);
+    const parsedData = JSON.parse(groups);
     parsedData[attribute].push(searchText);
     fs.writeFileSync(fileName, JSON.stringify(parsedData));
     res.json({
       message: 'attribute added successfully'
     })
   });
-  app.all('/api/itemsupdate', function(req, res) {
-    var body = JSON.parse(req.body);
-    var items = body.items || [];
-    var promises = items.map(function(item) {
-      var apiurl = `/items/${item['Item ID']}`;
-      return new RSVP.Promise((resolve, reject) => {
-        makeRequest(apiurl, {
-          method: 'PUT',
-          body: JSON.stringify({
-            rate: item.printRate
-          }),
-          username: req.query.username
-        }).then(function(json) {
+  app.all('/api/itemsupdate', async function(req, res) {
+    const body = JSON.parse(req.body);
+    const items = body.items || [];
+    const promises = items.map(function(item) {
+      const apiurl = `/items/${item['Item ID']}`;
+      return new RSVP.Promise(async (resolve, reject) => {
+        try {
+          const json = await makeRequest(apiurl,  {
+            method: 'PUT',
+            body: JSON.stringify({
+              rate: item.printRate
+            }),
+            username: req.query.username
+          });
           resolve({
             message: 'success'
           });
-        }).catch(function(message) {
+        } catch(message) {
           resolve({
             message: 'failure',
             error: {
@@ -488,11 +458,12 @@ module.exports = async function(app) {
               sku: item.SKU
             }
           });
-        });
+        }
       });
     });
-    RSVP.all(promises).then(function(results) {
-      var failedItems = results.filter(function(failedItem) {
+    try {
+      const results = RSVP.all(promises);
+      const failedItems = results.filter(function(failedItem) {
         return failedItem.message === 'failure';
       });
       if (failedItems) {
@@ -505,17 +476,17 @@ module.exports = async function(app) {
       res.json({
         message: 'success'
       })
-    }).catch(function(reason) {
+    } catch(message) {
       res.json({
         message: reason.message
       })
-    });
+    }
   });
   app.all('/api/adjustment', function(req, res) {
-    var body = JSON.parse(req.body);
-    var items = body.items;
-    var date = body.date;
-    var newItems,newItemsCSV, currentItem, adjustmentsCSV, itemsPromise, adjustmentsPromise;
+    const body = JSON.parse(req.body);
+    const items = body.items;
+    const date = body.date;
+    let newItems,newItemsCSV, currentItem, adjustmentsCSV, itemsPromise, adjustmentsPromise;
     newItemsCSV = 'Item Name,SKU,Description,Rate,Product Type,Status,Purchase Rate,Purchase Account,Inventory Account,Initial Stock,Initial Stock Rate,Item Type,Design,Size,Brand,Colour,Group,Discount';
     if (fs.existsSync('./csvs/newitem.csv')) {
       newItemsCSV = fs.readFileSync('./csvs/newitem.csv', 'utf8');
@@ -544,7 +515,7 @@ module.exports = async function(app) {
     });
     adjustmentsPromise = json2CSVConverter.csv2jsonAsync(adjustmentsCSV).then((adjustments)=> {
       return new RSVP.Promise((resolve, reject) => {
-        var lastRefNumber = Number((adjustments[adjustments.length - 1] || {})['Reference Number Int'] || 0);
+        const lastRefNumber = Number((adjustments[adjustments.length - 1] || {})['Reference Number Int'] || 0);
         items.forEach(item => {
           adjustments.push({
             'Date': date,
@@ -576,8 +547,8 @@ module.exports = async function(app) {
     })
   });
   app.all('/api/getnewstock', function(req, res) {
-    var items = app.itemslist;
-    var newItems,newItemsCSV, currentItem, oldStock, incomingStock, newStock;
+    const items = app.itemslist;
+    let newItems,newItemsCSV, currentItem, oldStock, incomingStock, newStock;
     try {
       newItemsCSV = fs.readFileSync('./csvs/newitem.csv', 'utf8');
     } catch {
@@ -605,17 +576,17 @@ module.exports = async function(app) {
     });
   });
   app.all('/api/updatestock', function(req, res) {
-    var body = JSON.parse(req.body);
-    var items = body.items;
-    var printItems = body.printItems;
-    var importItemsPromise = json2CSVConverter.json2csvAsync(items).then((newItemsCSV) => {
+    const body = JSON.parse(req.body);
+    const items = body.items;
+    const printItems = body.printItems;
+    const importItemsPromise = json2CSVConverter.json2csvAsync(items).then((newItemsCSV) => {
         new RSVP.Promise((resolve, reject) => {
           fs.writeFileSync('./csvs/importitem.csv', newItemsCSV);
           fs.unlinkSync('./csvs/newitem.csv');
           resolve(newItems);
         })
     });
-    var printItemsPromise = json2CSVConverter.json2csvAsync(printItems).then((printItemsCSV) => {
+    const printItemsPromise = json2CSVConverter.json2csvAsync(printItems).then((printItemsCSV) => {
       new RSVP.Promise((resolve, reject) => {
         fs.writeFileSync('./csvs/printitems.csv', printItemsCSV);
         resolve(newItems);
@@ -638,7 +609,7 @@ module.exports = async function(app) {
       if (err) {
         return console.log(err);
       }
-      var parsedCount = JSON.parse(allcount);
+      const parsedCount = JSON.parse(allcount);
       res.json({
         count: parsedCount,
         message: 'success',
@@ -646,12 +617,12 @@ module.exports = async function(app) {
     }); 
   });
   app.all('/api/newcount', function(req, res) {
-    var body = JSON.parse(req.body);
-    var count_id = body.count_id;
-    var total = body.total;
+    const body = JSON.parse(req.body);
+    const count_id = body.count_id;
+    const total = body.total;
     fs.writeFileSync('./count/'+count_id+'.json', JSON.stringify(body));
-    allcount = fs.readFileSync('./count/allcount.json', 'utf8');
-    var parsedData = JSON.parse(allcount);
+    const allcount = fs.readFileSync('./count/allcount.json', 'utf8');
+    const parsedData = JSON.parse(allcount);
     parsedData['counts'].push({
       count_id,
       qty: total.qty,
@@ -669,7 +640,7 @@ module.exports = async function(app) {
       if (err) {
         return console.log(err);
       }
-      var parsedCount = JSON.parse(allcount);
+      const parsedCount = JSON.parse(allcount);
       res.json({
         count: parsedCount,
         message: 'success',
@@ -677,12 +648,12 @@ module.exports = async function(app) {
     }); 
   });
   app.all('/api/updatecount', function(req, res) {
-    var body = JSON.parse(req.body);
-    var count_id = body.count_id;
-    var total = body.total;
-    allcount = fs.readFileSync('./count/allcount.json', 'utf8');
-    var parsedData = JSON.parse(allcount);
-    var oldCount = parsedData['counts'].find(count => count.count_id === count_id);
+    const body = JSON.parse(req.body);
+    const count_id = body.count_id;
+    const total = body.total;
+    const allcount = fs.readFileSync('./count/allcount.json', 'utf8');
+    const parsedData = JSON.parse(allcount);
+    const oldCount = parsedData['counts'].find(count => count.count_id === count_id);
     if(oldCount) {
       oldCount.qty = total.qty;
       oldCount.cost_value = total.cost_value;
@@ -695,11 +666,11 @@ module.exports = async function(app) {
     }
   });
   app.all('/api/deletecount', function(req, res) {
-    var body = JSON.parse(req.body);
-    var count_id = body.count_id;
-    allcount = fs.readFileSync('./count/allcount.json', 'utf8');
-    var parsedData = JSON.parse(allcount);
-    var newCounts = parsedData['counts'].filter(count => count.count_id !== count_id);
+    const body = JSON.parse(req.body);
+    const count_id = body.count_id;
+    const allcount = fs.readFileSync('./count/allcount.json', 'utf8');
+    const parsedData = JSON.parse(allcount);
+    const newCounts = parsedData['counts'].filter(count => count.count_id !== count_id);
     parsedData.counts = newCounts;
     fs.unlinkSync('./count/'+count_id+'.json');
     fs.writeFileSync('./count/allcount.json', JSON.stringify(parsedData));
@@ -708,10 +679,10 @@ module.exports = async function(app) {
       })
   });
   // app.all('/api/invoicepdf', function(req, res) {
-  //   var invoiceId = req.query.invoice_id;
-  //   var url = 'https://www.zohoapis.com/books/v3/invoices/' + invoiceId + '?print=true&accept=pdf&organization_id=' + app.parsedData.organization_id + '&customer_id=' + app.parsedData.customer_id;
-  //   var fileName = "pdf/invoice-" + invoiceId + ".pdf";
-  //   var file = fs.createWriteStream(fileName);
+  //   const invoiceId = req.query.invoice_id;
+  //   const url = 'https://www.zohoapis.com/books/v3/invoices/' + invoiceId + '?print=true&accept=pdf&organization_id=' + app.parsedData.organization_id + '&customer_id=' + app.parsedData.customer_id;
+  //   const fileName = "pdf/invoice-" + invoiceId + ".pdf";
+  //   const file = fs.createWriteStream(fileName);
   //   request
   //     .get({
         //   url,

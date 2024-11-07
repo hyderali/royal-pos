@@ -1,12 +1,12 @@
-{{#if model.canShowPrint}}
+{{#if @model.canShowPrint}}
   <div class="receipt-print">
     <div style="border: 1px solid #333;">
       <div style="border-bottom: 1px solid #333;">
-        {{#if isSales}}
-          <div style="text-align: center;"><b><font size="6">{{session.org_name}}</font></b></div>
-          <div style="text-align: center;font-size:20px">{{session.org_address}}</div>
+        {{#if this.isSales}}
+          <div style="text-align: center;"><b><font size="6">{{this.session.org_name}}</font></b></div>
+          <div style="text-align: center;font-size:20px">{{this.session.org_address}}</div>
           <div style="text-align: center;font-size:20px">Madurai</div>
-          <div style="text-align: center;font-size:20px">Ph: {{session.org_phone}}<br><br></div>
+          <div style="text-align: center;font-size:20px">Ph: {{this.session.org_phone}}<br><br></div>
         {{else}}
           <div style="text-align: center;"><b><font size="6">Sales Return</font></b></div>
         {{/if}}
@@ -14,12 +14,12 @@
       <table style="width:100%">
         <tbody>
           <tr style="border-bottom: 1px solid #333;font-size: 18px;">
-            <td>{{numberLabel}}:</td>
-            <td style="border-left: 1px solid #333;padding-left:5px">{{model.entity_number}}</td>
+            <td>{{this.numberLabel}}:</td>
+            <td style="border-left: 1px solid #333;padding-left:5px">{{@model.entity_number}}</td>
           </tr>
           <tr style="font-size: 18px;">
             <td>Date: </td>
-            <td style="border-left: 1px solid #333;padding-left:5px">{{model.date}} <span class="pull-right" style="margin-right: 10px">{{model.time}}</span></td>
+            <td style="border-left: 1px solid #333;padding-left:5px">{{@model.date}} <span class="pull-right" style="margin-right: 10px">{{@model.time}}</span></td>
           </tr>
         </tbody>
       </table>
@@ -30,20 +30,20 @@
             <td style="word-wrap: break-word;width: 45%;">Item&nbsp;</td>
             <td style="word-wrap: break-word;width: 14%;" align="right">Rate</td>
             <td style="word-wrap: break-word;width: 11%;" align="right">Qty</td>
-            {{#if model.discount}}
+            {{#if @model.discount}}
               <td style="word-wrap: break-word;width: 11%;" align="right">Disc</td>
             {{/if}}
             <td style="word-wrap: break-word;width: 25%;" align="right">Amount</td>
           </tr>
         </thead>
         <tbody style="font-weight: bold">
-          {{#each model.line_items as |lineItem index|}}
+          {{#each @model.line_items as |lineItem index|}}
             <tr>
               <td valign="top">{{get-index index}}</td>
               <td valign="top"> <span style="word-wrap: break-word;" id="tmp_item_name">{{lineItem.description}}</span></td>
               <td style="text-align:right;word-wrap: break-word;" valign="top"> <span id="tmp_item_rate">{{lineItem.rate}}</span> <br> </td>
               <td style="text-align:right;word-wrap: break-word;" valign="top"> <span id="tmp_item_qty">{{lineItem.quantity}}</span> <br> </td>
-              {{#if model.discount}}
+              {{#if @model.discount}}
                 <td style="word-wrap: break-word;width: 11%;" align="right">
                   {{#if lineItem.discount}}
                     {{lineItem.discount_amount}}<br><div style="font-size: 50%;">{{lineItem.discount}}%</div>
@@ -57,24 +57,24 @@
         <tfoot>
           <tr style="height:32px;font-size:22px">
             <td colspan="3" style="word-wrap: break-word;width: 5%;">Sub Total</td>
-            <td style="word-wrap: break-word;width: 11%;" align="right">{{model.qtyTotal}}</td>
-            {{#if model.discount}}
+            <td style="word-wrap: break-word;width: 11%;" align="right">{{@model.qtyTotal}}</td>
+            {{#if @model.discount}}
               <td></td>
             {{/if}}
-            <td style="word-wrap: break-word;width: 25%;" align="right"><b>{{model.subtotal}}</b></td>
+            <td style="word-wrap: break-word;width: 25%;" align="right"><b>{{@model.subtotal}}</b></td>
           </tr>
-          {{#if model.discount}}
+          {{#if @model.discount}}
             <tr style="height:32px;font-size:22px">
               <td colspan="4" style="word-wrap: break-word;width: 5%;">Discount</td>
-              {{#if model.discount}}
-              <td></td>
-            {{/if}}
-              <td style="word-wrap: break-word;width: 25%;" align="right"><b> {{model.discount}}</b></td>
+              {{#if @model.discount}}
+                <td></td>
+              {{/if}}
+              <td style="word-wrap: break-word;width: 25%;" align="right"><b> {{@model.discount}}</b></td>
             </tr>
           {{/if}}
         </tfoot>
       </table>
-      <div style="text-align: right;"><b><font size="5">Rs. {{model.total}}</font></b> <br> </div>
+      <div style="text-align: right;"><b><font size="5">Rs. {{@model.total}}</font></b> <br> </div>
     </div>
     <p class="text-center">Thank You. Visit Again</p>
   </div>
