@@ -15,7 +15,7 @@ export default class ApplicationRoute extends Route {
   async afterModel() {
     if (!this.session.itemslist) {
       const response = await this.store.ajax('/itemslist');
-      this.session.itemslist = response.items.filter(item => item.Status === 'Active');
+      this.session.itemslist = response.items?.filter(item => item.Status === 'Active');
     }
   }
 }

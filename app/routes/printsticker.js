@@ -1,5 +1,4 @@
 import Route from '@ember/routing/route';
-import { action } from '@ember/object';
 
 export default class PrintStickerRoute extends Route {
   model() {
@@ -8,10 +7,5 @@ export default class PrintStickerRoute extends Route {
       { SKU: 'print' },
       { SKU: 'print' }
     ];
-  }
-
-  @action
-  print() {
-    window.print();
   }
 }

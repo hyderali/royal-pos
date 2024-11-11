@@ -1,6 +1,11 @@
-import Controller from '@ember/controller';
-import { inject as service } from '@ember/service';
+import SalesController from './sales';
 
-export default class ReturnsController extends Controller {
+export default class ReturnsController extends SalesController {
   @service session;
+  postUrl = '/creditnotes';
+
+  @action
+  printReceipt() {
+    window.print();
+  }
 }

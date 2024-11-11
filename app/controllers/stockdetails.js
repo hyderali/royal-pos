@@ -6,6 +6,7 @@ import { computed } from '@ember/object';
 
 export default class StockDetailsController extends Controller {
   @service session;
+  @service store;
   
   @tracked searchModel = {};
   @tracked results = [];
@@ -83,6 +84,48 @@ export default class StockDetailsController extends Controller {
   @action
   selectBrand(brand) {
     this.searchModel.brand = brand;
+  }
+
+  @action
+  async searchItems(page = 1) {
+    const cfParams = {};
+    const { group, size, design, brand } = this.searchModel;
+
+    if (group) {
+      cfParams[`custom_field_${this.groupCFID}`] = group;
+    }
+    if (size) {
+      cfParams[`custom_field_${this.sizeCFID}`] = size;
+    }
+    if (design) {
+      cfParams[`custom_field_${this.designCFID}`] = design;
+    }
+    if (brand) {
+      cfParams[`custom_field_${this.brandCFID}`] = brand;
+    }
+
+    this.isLoading = true;
+
+    try {
+      const json = await this.store.ajax('/items', { 
+        params: { cf_params: cfParams, page } 
+      });
+
+      const items = json.items.filter(item => item.stock_on_hand);
+
+      if (page === 1) {
+        this.results = items;
+      } else {
+        this.results = [...this.results, ...items];
+      }
+
+      this.hasMore = json.has_more_page;
+      this.page = page;
+    } catch (error) {
+      console.error('Error searching items:', error);
+    } finally {
+      this.isLoading = false;
+    }
   }
 
   @action

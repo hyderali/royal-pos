@@ -1,6 +1,5 @@
 import Route from '@ember/routing/route';
 import { inject as service } from '@ember/service';
-import { isPresent } from '@ember/utils';
 import getItemName from '../utils/get-item-name';
 
 export default class UpdateStockRoute extends Route {
@@ -68,37 +67,5 @@ export default class UpdateStockRoute extends Route {
       controller.errorMessage = stock.error;
     }
     controller.successMessage = '';
-  }
-
-  @action
-  async save() {
-    const controller = this.controller;
-    const body = {
-      items: controller.model,
-      printItems: controller.printItems
-    };
-
-    controller.isSaving = true;
-    controller.errorMessage = '';
-
-    try {
-      const json = await this.store.ajax('/updatestock', { 
-        method: 'POST', 
-        body 
-      });
-
-      if (json.message === 'success') {
-        controller.model = [];
-        if (isPresent(controller.printItems)) {
-          controller.successMessage = 'Print Items found. Import importitem csv file into Zoho Books and print sticker from Barcode option';
-        }
-      } else if (json.message === 'failure') {
-        controller.errorMessage = json.error;
-      }
-    } catch (error) {
-      controller.errorMessage = error.message;
-    } finally {
-      controller.isSaving = false;
-    }
   }
 }
