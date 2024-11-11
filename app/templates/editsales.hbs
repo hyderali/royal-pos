@@ -1,22 +1,49 @@
 <h3 class="text-center hidden-print">Sales Edit</h3>
+
 <div style="margin:20px" class="hidden-print">
-  {{#if msg}}
+  {{#if this.msg}}
     <div class="alert alert-danger">
-      {{msg}}
+      {{this.msg}}
     </div>
   {{/if}}
+
   <div class="form-group">
     <label class="col-md-3">Bill No: </label>
     <div class="col-md-6">
-      <Input class="form-control" @enter="searchInvoice" @value={{invoiceNumber}} @autofocus={{true}} />
+      <Input 
+        class="form-control"
+        @enter={{this.searchInvoice}}
+        @value={{this.invoiceNumber}}
+        @autofocus={{true}}
+      />
     </div>
     <div class="col-md-3">
-      <button disabled={{isSearching}} class="btn btn-primary" type="button" {{action "searchInvoice" invoiceNumber}}>Search</button>
+      <button 
+        disabled={{this.isSearching}}
+        class="btn btn-primary"
+        type="button"
+        {{on "click" (fn this.searchInvoice this.invoiceNumber)}}
+      >
+        Search
+      </button>
     </div>
   </div>
   <br><br><br>
 </div>
-{{#if canShowDetails}}
-  <SalesTable @model={{model}} />
+
+{{#if this.canShowDetails}}
+  <SalesTable 
+    @model={{this.model}}
+    @addNewItem={{this.addNewItem}}
+    @addTempItem={{this.addTempItem}}
+    @removeLineItem={{this.removeLineItem}}
+    @saveAndPrint={{this.saveAndPrint}}
+    @newSale={{this.newSale}}
+  />
 {{/if}}
-<SalesReceipt @model={{model}} />
+
+<SalesReceipt 
+  @model={{this.model}}
+  @numberLabel="Bill No"
+  @isSales={{true}}
+/>

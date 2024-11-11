@@ -1,122 +1,171 @@
-/* eslint camelcase: "off" */
-import { inject as service } from '@ember/service';
-
 import Route from '@ember/routing/route';
+import { inject as service } from '@ember/service';
+import { action } from '@ember/object';
 import { schedule } from '@ember/runloop';
 import todayDate from '../utils/today-date';
-import LineItem from '../models/lineitem';
+import LineItem from '../models/line-item';
 import Invoice from '../models/invoice';
-export default Route.extend({
-  session: service(),
-  store: service(),
-  postUrl: '/invoices',
-  beforeModel() {
-    if (!this.get('session.salespersons')) {
-      this.store.ajax('/salespersons').then((json) => {
-        this.set('session.salespersons', json.salespersons);
-      });
+
+export default class SalesRoute extends Route {
+  @service session;
+  @service store;
+
+  postUrl = '/invoices';
+
+  async beforeModel() {
+    if (!this.session.salespersons) {
+      const response = await this.store.ajax('/salespersons');
+      this.session.salespersons = response.salespersons;
     }
-    if (!this.get('session.itemslist')) {
-      return this.store.ajax('/itemslist').then((json) => {
-        this.set('session.itemslist', json.items.filterBy('Status', 'Active'));
-        this.set('session.customer_id', json.customer_id);
-        this.set('session.organization_id', json.organization_id);
-      });
+
+    if (!this.session.itemslist) {
+      const response = await this.store.ajax('/itemslist');
+      this.session.itemslist = response.items.filter(item => item.Status === 'Active');
+      this.session.customer_id = response.customer_id;
+      this.session.organization_id = response.organization_id;
     }
-  },
+  }
+
   model() {
     return Invoice.create({ line_items: [] });
-  },
+  }
+
   setupController(controller) {
-    this._super(...arguments);
-    controller.set('errorMessage', '');
-  },
+    super.setupController(...arguments);
+    controller.errorMessage = '';
+  }
+
   processedBody() {
-    let model = this.get('controller.model');
-    let customer_id = this.get('session.customer_id');
-    let date = todayDate();
-    let body = { customer_id: `${customer_id}`, date, discount: `${model.get('discount')}`, discount_type: 'entity_level', is_discount_before_tax: false, salesperson_id: model.get('salesperson.salesperson_id'), custom_fields: [{ label: 'Phone Number', value: model.get('phone_number') }] };
-    let lineItems = model.get('line_items');
-    let serializedItems = lineItems.map((item) => {
-      return { item_id: item.get('item_id'), rate: item.get('rate'), quantity: item.get('quantity'), item_custom_fields: [{ label: 'Discount', value: item.discount }], description: item.get('description') };
-    });
+    const model = this.controller.model;
+    const customer_id = this.session.customer_id;
+    const date = todayDate();
+    
+    const body = {
+      customer_id: `${customer_id}`,
+      date,
+      discount: `${model.discount}`,
+      discount_type: 'entity_level',
+      is_discount_before_tax: false,
+      salesperson_id: model.salesperson?.salesperson_id,
+      custom_fields: [{ 
+        label: 'Phone Number', 
+        value: model.phone_number 
+      }]
+    };
+
+    const serializedItems = model.line_items.map(item => ({
+      item_id: item.item_id,
+      rate: item.rate,
+      quantity: item.quantity,
+      item_custom_fields: [{ 
+        label: 'Discount', 
+        value: item.discount 
+      }],
+      description: item.description
+    }));
+
     body.line_items = serializedItems;
-    model.set('isSaving', true);
+    model.isSaving = true;
+
     return body;
-  },
+  }
+
   postResponse(json, skipPrint) {
-    let model = this.get('controller.model');
+    const model = this.controller.model;
+    
     if (json.message === 'success') {
       if (skipPrint) {
         this.send('newSale');
         return;
       }
+
       model.setProperties({
         entity_number: json.entity_number,
         canShowPrint: true,
         isSaving: false
       });
+
       schedule('afterRender', this, () => {
         this.send('printReceipt');
         this.send('newSale');
       });
     } else {
-      this.set('controller.errorMessage', json.error);
-      model.set('isSaving', false);
-    }
-  },
-  actions: {
-    addNewItem(itemName) {
-      let lineItems = this.get('controller.model.line_items');
-      let existingLineItem = lineItems.findBy('sku', itemName);
-      let itemslist = this.get('session.itemslist');
-      if (existingLineItem) {
-        existingLineItem.set('quantity', existingLineItem.get('quantity') + 1);
-        return;
-      }
-      let newItem = itemslist.findBy('SKU', itemName);
-      if (newItem) {
-        let newLineItem = LineItem.create({
-          discount: 0,
-          rate: Number(newItem.Rate.split(' ')[1]),
-          quantity: 1,
-          name: newItem['Item Name'],
-          sku: newItem.SKU,
-          item_id: newItem['Item ID'],
-          description: newItem.Description
-        });
-        lineItems.pushObject(newLineItem);
-      }
-    },
-    addTempItem() {
-      let lineItems = this.get('controller.model.line_items');
-      let newLineItem = LineItem.create({
-        description: 'Others',
-        isCustom: true,
-        canFocus: true,
-        quantity: 1,
-        rate: 0,
-        discount: 0
-      });
-      lineItems.pushObject(newLineItem);
-    },
-    removeLineItem(lineItem) {
-      let lineItems = this.get('controller.model.line_items');
-      lineItems.removeObject(lineItem);
-    },
-    saveAndPrint(skipPrint) {
-      this.set('controller.errorMessage', '');
-      let body = this.processedBody();
-      this.store.ajax(this.postUrl, { method: 'POST', body }).then((json) => {
-        this.postResponse(json, skipPrint);
-      });
-    },
-    printReceipt() {
-      window.print();
-      window.print();
-    },
-    newSale() {
-      this.refresh();
+      this.controller.errorMessage = json.error;
+      model.isSaving = false;
     }
   }
-});
+
+  @action
+  addNewItem(itemName) {
+    const lineItems = this.controller.model.line_items;
+    const existingLineItem = lineItems.findBy('sku', itemName);
+    const itemslist = this.session.itemslist;
+
+    if (existingLineItem) {
+      existingLineItem.quantity = existingLineItem.quantity + 1;
+      return;
+    }
+
+    const newItem = itemslist.findBy('SKU', itemName);
+    if (newItem) {
+      const newLineItem = LineItem.create({
+        discount: 0,
+        rate: Number(newItem.Rate.split(' ')[1]),
+        quantity: 1,
+        name: newItem['Item Name'],
+        sku: newItem.SKU,
+        item_id: newItem['Item ID'],
+        description: newItem.Description
+      });
+      lineItems.pushObject(newLineItem);
+    }
+  }
+
+  @action
+  addTempItem() {
+    const lineItems = this.controller.model.line_items;
+    const newLineItem = LineItem.create({
+      description: 'Others',
+      isCustom: true,
+      canFocus: true,
+      quantity: 1,
+      rate: 0,
+      discount: 0
+    });
+    lineItems.pushObject(newLineItem);
+  }
+
+  @action
+  removeLineItem(lineItem) {
+    const lineItems = this.controller.model.line_items;
+    lineItems.removeObject(lineItem);
+  }
+
+  @action
+  async saveAndPrint(skipPrint) {
+    this.controller.errorMessage = '';
+    const body = this.processedBody();
+    
+    try {
+      const json = await this.store.ajax(this.postUrl, { 
+        method: 'POST', 
+        body 
+      });
+      this.postResponse(json, skipPrint);
+    } catch (error) {
+      this.controller.errorMessage = error.message;
+      this.controller.model.isSaving = false;
+    }
+  }
+
+  @action
+  printReceipt() {
+    window.print();
+    window.print();
+  }
+
+  @action
+  newSale() {
+    this.refresh();
+  }
+}

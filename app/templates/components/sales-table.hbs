@@ -1,9 +1,16 @@
 <div class="hidden-print">
-  {{#if isSales}}
+  {{#if @isSales}}
     <div class="form-group">
       <div class="col-md-3">Sales Person</div>
       <div class="col-md-9">
-        <PowerSelect @searchEnabled={{true}} @selected={{model.salesperson}} @options={{session.salespersons}} @onChange={{action "selectSP"}} @searchField="salesperson_name" as |salesperson|>
+        <PowerSelect 
+          @searchEnabled={{true}} 
+          @selected={{@model.salesperson}} 
+          @options={{this.session.salespersons}} 
+          @onChange={{this.selectSP}} 
+          @searchField="salesperson_name" 
+          as |salesperson|
+        >
           {{salesperson.salesperson_name}}
         </PowerSelect>
       </div>
@@ -11,10 +18,12 @@
     <div class="form-group">
       <div class="col-md-3">Phone Number</div>
       <div class="col-md-9">
-        <Input class="form-control" @value={{model.phone_number}} />
+        <Input class="form-control" @value={{@model.phone_number}} />
       </div>
-    </div><br><br>
+    </div>
+    <br><br>
   {{/if}}
+
   <table class="table table-bordered">
     <thead>
       <tr>
@@ -29,29 +38,44 @@
       </tr>
     </thead>
     <tbody>
-      {{#each model.line_items as |lineItem index|}}
+      {{#each @model.line_items as |lineItem index|}}
         <tr>
           <td>{{get-index index}}</td>
           <td>{{lineItem.sku}}</td>
           <td>
             {{#if lineItem.isCustom}}
-              <PowerSelect @searchEnabled={{true}} @selected={{lineItem.description}} @options={{customItems}} @onfocus={{action "handleEPSFocus"}} @onChange={{action "selectCustomItem" lineItem}} @autofocus={{lineItem.canFocus}} as |customItem|>
+              <PowerSelect 
+                @searchEnabled={{true}} 
+                @selected={{lineItem.description}} 
+                @options={{this.customItems}} 
+                @onfocus={{this.handleEPSFocus}} 
+                @onChange={{fn this.selectCustomItem lineItem}} 
+                @autofocus={{lineItem.canFocus}} 
+                as |customItem|
+              >
                 {{customItem}}
               </PowerSelect>
             {{else}}
               {{lineItem.name}}
             {{/if}}
           </td>
-          <td><Input class="form-control" @value={{lineItem.quantity}} @disabled={{model.isSaving}} /></td>
+          <td><Input class="form-control" @value={{lineItem.quantity}} @disabled={{@model.isSaving}} /></td>
           <td>
             {{#if lineItem.isCustom}}
-              <td><Input class="form-control" @value={{lineItem.rate}} @disabled={{model.isSaving}} /></td>
+              <Input class="form-control" @value={{lineItem.rate}} @disabled={{@model.isSaving}} />
             {{else}}
               {{lineItem.rate}}
             {{/if}}
           </td>
           <td>
-            <PowerSelect @searchEnabled={{true}} @selected={{lineItem.discount}} @options={{discounts}} @onfocus={{action "handleEPSFocus"}} @onChange={{action "discountChanged" lineItem}} as |discount|>
+            <PowerSelect 
+              @searchEnabled={{true}} 
+              @selected={{lineItem.discount}} 
+              @options={{this.discounts}} 
+              @onfocus={{this.handleEPSFocus}} 
+              @onChange={{fn this.discountChanged lineItem}} 
+              as |discount|
+            >
               {{discount}}
             </PowerSelect>
             {{#if lineItem.discount}}
@@ -59,45 +83,79 @@
             {{/if}}
           </td>
           <td>{{lineItem.total}}</td>
-          <td {{action "removeLineItem" lineItem}}><button type="button" class="btn btn-danger pull-right">Delete</button></td>
+          <td>
+            <button 
+              type="button" 
+              class="btn btn-danger pull-right" 
+              {{on "click" (fn @removeLineItem lineItem)}}
+            >
+              Delete
+            </button>
+          </td>
         </tr>
       {{/each}}
       <tr>
         <td></td>
-        <td><Input class="form-control" @value={{id}} @enter="itemChanged" @autofocus={{true}} /></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
+        <td>
+          <Input 
+            class="form-control" 
+            @value={{this.id}} 
+            @enter={{this.itemChanged}} 
+            @autofocus={{true}} 
+          />
+        </td>
+        <td colspan="6"></td>
       </tr>
     </tbody>
     <tfoot>
       <tr>
         <td colspan="3" class="text-right">Subtotal</td>
-        <td colspan="3">{{model.qtyTotal}}</td>
-        <td>{{model.subtotal}}</td>
+        <td colspan="3">{{@model.qtyTotal}}</td>
+        <td>{{@model.subtotal}}</td>
         <td></td>
       </tr>
       <tr>
         <td colspan="6" class="text-right">Discount</td>
-        <td>{{model.discount}}</td>
+        <td>{{@model.discount}}</td>
         <td></td>
       </tr>
       <tr>
         <td colspan="6" class="text-right">Total</td>
-        <td>{{model.total}}</td>
+        <td>{{@model.total}}</td>
         <td></td>
       </tr>
     </tfoot>
   </table>
+
   <div class="btn-toolbar pull-right">
     <div class="btn-group">
-      <button type="button" disabled= {{model.isSaving}} {{action "saveAndPrint" true}} class="btn btn-default">Save & New</button>
+      <button 
+        type="button" 
+        disabled={{@model.isSaving}} 
+        {{on "click" (fn @saveAndPrint true)}} 
+        class="btn btn-default"
+      >
+        Save & New
+      </button>
     </div>
     <div class="btn-group">
-      <button type="button" disabled= {{model.isSaving}} {{action "saveAndPrint" false}} class="btn btn-primary">Save & Print</button>
+      <button 
+        type="button" 
+        disabled={{@model.isSaving}} 
+        {{on "click" (fn @saveAndPrint false)}} 
+        class="btn btn-primary"
+      >
+        Save & Print
+      </button>
     </div>
-    <div class="btn-group"><button type="button" {{action "newSale"}} class="btn btn-default">New Sale</button></div>
+    <div class="btn-group">
+      <button 
+        type="button" 
+        {{on "click" @newSale}} 
+        class="btn btn-default"
+      >
+        New Sale
+      </button>
+    </div>
   </div>
 </div>

@@ -1,5 +1,8 @@
-import { inject as service } from '@ember/service';
 import Controller from '@ember/controller';
-export default Controller.extend({
-  session: service()
-});
+import { inject as service } from '@ember/service';
+import { tracked } from '@glimmer/tracking';
+
+export default class SalesController extends Controller {
+  @service session;
+  @tracked errorMessage = '';
+}

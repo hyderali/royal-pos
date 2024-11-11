@@ -1,6 +1,7 @@
 export default function getItemName(name) {
+  let paddedName = name;
   for (let i = name.length; i < 8; i++) {
-    name = `0${name}`;
+    paddedName = `0${paddedName}`;
   }
-  return name;
+  return paddedName;
 }

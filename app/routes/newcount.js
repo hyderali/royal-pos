@@ -1,96 +1,106 @@
-import Route from "@ember/routing/route";
-import getItemName from "../utils/get-item-name";
-import Count from "../models/count";
-import CountItem from "../models/countitem";
-import { inject as service } from "@ember/service";
-export default Route.extend({
-  session: service(),
-  store: service(),
-  postUrl: "/newcount",
-  model() {
-    return this.store.ajax("/allcount").then((json) => {
-      let count_id = getItemName(`${json.count.next_count_id}`);
-      return Count.create({
-        isNew: true,
-        count_id: `Count-${count_id}`,
-        items: [],
-      });
+import Route from '@ember/routing/route';
+import { inject as service } from '@ember/service';
+import { action } from '@ember/object';
+import getItemName from '../utils/get-item-name';
+import Count from '../models/count';
+import CountItem from '../models/count-item';
+
+export default class NewCountRoute extends Route {
+  @service session;
+  @service store;
+  postUrl = '/newcount';
+
+  async model() {
+    const json = await this.store.ajax('/allcount');
+    const count_id = getItemName(`${json.count.next_count_id}`);
+    
+    return Count.create({
+      isNew: true,
+      count_id: `Count-${count_id}`,
+      items: []
     });
-  },
-  actions: {
-    itemChanged(itemName) {
-      itemName = getItemName(itemName);
-      let {
-        controller,
-        controller: {
-          model: { items },
-        },
-      } = this;
-      let existingItem = items.findBy("sku", itemName);
-      if (existingItem) {
-        existingItem.set("qty", Number(existingItem.get("qty")) + 1);
-        controller.set("id", "");
-        return;
-      }
-      let itemslist = this.get("session.itemslist");
-      let newItem = itemslist.findBy("SKU", itemName);
-      if (newItem) {
-        let newLineItem = CountItem.create({
-          qty: 1,
-          sku: newItem.SKU,
-          cost_price: Number(newItem["Purchase Rate"].split(" ")[1]),
-          sales_price: Number(newItem.Rate.split(" ")[1]),
-          description: newItem.Description,
-        });
-        items.pushObject(newLineItem);
-      }
-      controller.set("id", "");
-    },
-    deleteItem(item) {
-      let items = this.controller.model.items;
-      items.removeObject(item);
-    },
-    save() {
-      let {
-        controller: {
-          model,
-          model: { items },
-        },
-      } = this;
-      let body = {
-        count_id: model.count_id,
-        items: items.map((item) => {
-          return {
-            qty: item.qty,
-            sku: item.sku,
-            cost_price: item.cost_price,
-            cost_value: item.cost_value,
-            sales_price: item.sales_price,
-            sales_value: item.sales_value,
-            description: item.description,
-          };
-        }),
-        total: {
-          qty: model.totalQty,
-          cost_value: model.totalCV,
-          sales_value: model.totalSV,
-        },
-      };
-      this.store.ajax(this.postUrl, { method: "POST", body }).then(() => {
-        this.transitionTo("counting");
+  }
+
+  @action
+  itemChanged(itemName) {
+    itemName = getItemName(itemName);
+    const { controller, controller: { model: { items } } } = this;
+    const existingItem = items.findBy('sku', itemName);
+
+    if (existingItem) {
+      existingItem.qty = Number(existingItem.qty) + 1;
+      controller.id = '';
+      return;
+    }
+
+    const itemslist = this.session.itemslist;
+    const newItem = itemslist.findBy('SKU', itemName);
+
+    if (newItem) {
+      const newLineItem = CountItem.create({
+        qty: 1,
+        sku: newItem.SKU,
+        cost_price: Number(newItem['Purchase Rate'].split(' ')[1]),
+        sales_price: Number(newItem.Rate.split(' ')[1]),
+        description: newItem.Description
       });
-    },
-    cancel() {
-      this.transitionTo("counting");
-    },
-    delete() {
-      let count_id = this.controller.model.count_id;
-      if(window.confirm(`Are you sure about deleting this counting ${count_id}`)) {
-        let body = { count_id };
-        this.store.ajax("/deletecount", { method: "DELETE", body }).then(() => {
-        this.transitionTo("counting");
-      });
+      items.pushObject(newLineItem);
+    }
+    controller.id = '';
+  }
+
+  @action
+  deleteItem(item) {
+    this.controller.model.items.removeObject(item);
+  }
+
+  @action
+  async save() {
+    const { model, model: { items } } = this.controller;
+    
+    const body = {
+      count_id: model.count_id,
+      items: items.map(item => ({
+        qty: item.qty,
+        sku: item.sku,
+        cost_price: item.cost_price,
+        cost_value: item.cost_value,
+        sales_price: item.sales_price,
+        sales_value: item.sales_value,
+        description: item.description
+      })),
+      total: {
+        qty: model.totalQty,
+        cost_value: model.totalCV,
+        sales_value: model.totalSV
+      }
+    };
+
+    try {
+      await this.store.ajax(this.postUrl, { method: 'POST', body });
+      this.transitionTo('counting');
+    } catch (error) {
+      console.error('Error saving count:', error);
+    }
+  }
+
+  @action
+  cancel() {
+    this.transitionTo('counting');
+  }
+
+  @action
+  async delete() {
+    const count_id = this.controller.model.count_id;
+    
+    if (window.confirm(`Are you sure about deleting this counting ${count_id}`)) {
+      const body = { count_id };
+      try {
+        await this.store.ajax('/deletecount', { method: 'DELETE', body });
+        this.transitionTo('counting');
+      } catch (error) {
+        console.error('Error deleting count:', error);
       }
     }
-  },
-});
+  }
+}

@@ -1,18 +1,14 @@
+import Component from '@glimmer/component';
 import { inject as service } from '@ember/service';
-import Component from '@ember/component';
-import { isBlank } from '@ember/utils';
+import { action } from '@ember/object';
+import { tracked } from '@glimmer/tracking';
 import getItemName from '../utils/get-item-name';
-import { set } from '@ember/object';
-export default Component.extend({
-  session: service(),
-  isSales: true,
-  model: null,
-  addNewItem: 'addNewItem',
-  addTempItem: 'addTempItem',
-  removeLineItem: 'removeLineItem',
-  saveAndPrint: 'saveAndPrint',
-  newSale: 'newSale',
-  customItems: [
+
+export default class SalesTableComponent extends Component {
+  @service session;
+  @tracked id = '';
+
+  customItems = [
     'Others',
     'China Item',
     'Cotton Pant',
@@ -20,63 +16,52 @@ export default Component.extend({
     'Boys Pant',
     'Mens Inner',
     'Ladies Inner'
-  ],
-  discounts: [
-    0,
-    5,
-    10,
-    15,
-    20,
-    25,
-    30,
-    35,
-    40,
-    45,
-    50,
-  ],
+  ];
+
+  discounts = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50];
+
   focusComesFromOutside(e) {
-    let blurredEl = e.relatedTarget;
-    if (isBlank(blurredEl)) {
-      return false;
+    const blurredEl = e.relatedTarget;
+    return !blurredEl?.classList.contains('ember-power-select-search-input');
+  }
+
+  @action
+  itemChanged(itemName) {
+    if (itemName === 'print') {
+      this.args.saveAndPrint(false);
+      return;
     }
-    return !blurredEl.classList.contains('ember-power-select-search-input');
-  },
-  actions: {
-    itemChanged(itemName) {
-      if (itemName === 'print') {
-        this.sendAction('saveAndPrint', false);
-      }
-      if (itemName === 'save') {
-        this.sendAction('saveAndPrint', true);
-      }
-      if (itemName === '0000') {
-        this.sendAction('addTempItem');
-      }
-      this.sendAction('addNewItem', getItemName(itemName));
-      this.set('id', '');
-    },
-    discountChanged(lineItem, discount) {
-      set(lineItem, 'discount', discount);
-    },
-    handleEPSFocus(select, e) {
-      if (this.focusComesFromOutside(e)) {
-        select.actions.open();
-      }
-    },
-    selectCustomItem(lineItem, name) {
-      set(lineItem, 'description', name);
-    },
-    removeLineItem(lineItem) {
-      this.sendAction('removeLineItem', lineItem);
-    },
-    saveAndPrint(skipPrint) {
-      this.sendAction('saveAndPrint', skipPrint);
-    },
-    newSale() {
-      this.sendAction('newSale');
-    },
-    selectSP(salesperson) {
-      this.set('model.salesperson', salesperson);
+    if (itemName === 'save') {
+      this.args.saveAndPrint(true);
+      return;
+    }
+    if (itemName === '0000') {
+      this.args.addTempItem();
+      return;
+    }
+    this.args.addNewItem(getItemName(itemName));
+    this.id = '';
+  }
+
+  @action
+  discountChanged(lineItem, discount) {
+    lineItem.discount = discount;
+  }
+
+  @action
+  handleEPSFocus(select, e) {
+    if (this.focusComesFromOutside(e)) {
+      select.actions.open();
     }
   }
-});
+
+  @action
+  selectCustomItem(lineItem, name) {
+    lineItem.description = name;
+  }
+
+  @action
+  selectSP(salesperson) {
+    this.args.model.salesperson = salesperson;
+  }
+}

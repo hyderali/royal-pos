@@ -13,6 +13,7 @@
 # misc
 /coverage/
 !.*
+/fastboot-dist
 
 # ember-try
 /.node_modules.ember-try/

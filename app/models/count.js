@@ -1,24 +1,30 @@
-import Object, { computed } from '@ember/object';
-export default Object.extend({
-    totalQty: computed('items.@each.qty', function() {
-        let lineItems = this.items;
-        let total = lineItems.reduce((sum, item)=> {
-          return sum + Number(item.get('qty'));
-        }, 0);
-        return total;
-    }),
-    totalCV: computed('items.@each.cost_value', function() {
-        let lineItems = this.items;
-        let total = lineItems.reduce((sum, item)=> {
-          return sum + Number(item.get('cost_value'));
-        }, 0);
-        return total;
-    }),
-    totalSV: computed('items.@each.sales_value', function() {
-        let lineItems = this.items;
-        let total = lineItems.reduce((sum, item)=> {
-          return sum + Number(item.get('sales_value'));
-        }, 0);
-        return total;
-    }),
-});
+import EmberObject from '@ember/object';
+import { tracked } from '@glimmer/tracking';
+import { computed } from '@ember/object';
+
+export default class Count extends EmberObject {
+  @tracked items = [];
+  @tracked count_id = '';
+  @tracked isNew = true;
+
+  @computed('items.@each.qty')
+  get totalQty() {
+    return this.items.reduce((sum, item) => {
+      return sum + Number(item.qty);
+    }, 0);
+  }
+
+  @computed('items.@each.cost_value')
+  get totalCV() {
+    return this.items.reduce((sum, item) => {
+      return sum + Number(item.cost_value);
+    }, 0);
+  }
+
+  @computed('items.@each.sales_value')
+  get totalSV() {
+    return this.items.reduce((sum, item) => {
+      return sum + Number(item.sales_value);
+    }, 0);
+  }
+}

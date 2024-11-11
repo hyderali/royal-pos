@@ -1,81 +1,98 @@
-import { inject as service } from '@ember/service';
-import { computed } from '@ember/object';
 import Controller from '@ember/controller';
-export default Controller.extend({
-  session: service(),
-  searchModel: null,
-  init() {
-    this._super(...arguments);
-    this.set('searchModel', {});
-  },
-  groupCFID: computed('model.[]', function() {
-    let model = this.model || [];
-    let groupCF = model.findBy('label', 'Group');
-    return groupCF.customfield_id;
-  }),
-  groupCFIDLabeL: computed('groupCFID', function() {
-    let groupCFID = this.groupCFID;
-    return `cf_${groupCFID}`;
-  }),
-  sizeCFID: computed('model.[]', function() {
-    let model = this.model || [];
-    let groupCF = model.findBy('label', 'Size');
-    return groupCF.customfield_id;
-  }),
-  sizeCFIDLabeL: computed('sizeCFID', function() {
-    let groupCFID = this.sizeCFID;
-    return `cf_${groupCFID}`;
-  }),
-  designCFID: computed('model.[]', function() {
-    let model = this.model || [];
-    let groupCF = model.findBy('label', 'Design');
-    return groupCF.customfield_id;
-  }),
-  designCFIDLabeL: computed('designCFID', function() {
-    let groupCFID = this.designCFID;
-    return `cf_${groupCFID}`;
-  }),
-  brandCFID: computed('model.[]', function() {
-    let model = this.model || [];
-    let groupCF = model.findBy('label', 'Brand');
-    return groupCF.customfield_id;
-  }),
-  brandCFIDLabeL: computed('brandCFID', function() {
-    let groupCFID = this.brandCFID;
-    return `cf_${groupCFID}`;
-  }),
-  totalQty: computed('results.[]', function() {
-    let results = this.results || [];
-    let totalQty = results.reduce((first, next) => {
-      return first + next.stock_on_hand;
-    }, 0);
-    return totalQty;
-  }),
-  totalAmount: computed('results.[]', function() {
-    let results = this.get('results') || [];
-    let totalQty = results.reduce((first, next) => {
-      return first + (next.purchase_rate * next.stock_on_hand);
-    }, 0);
-    return totalQty;
-  }),
-  actions: {
-    selectGroup(group) {
-      this.set('searchModel.group', group);
-    },
-    selectSize(size) {
-      this.set('searchModel.size', size);
-    },
-    selectDesign(design) {
-      this.set('searchModel.design', design);
-    },
-    selectBrand(brand) {
-      this.set('searchModel.brand', brand);
-    },
-    loadMore() {
-      this.send('searchItems', this.page + 1);
-    },
-    clearAll() {
-      this.setProperties({ searchModel: {}, results: [] });
-    }
+import { inject as service } from '@ember/service';
+import { tracked } from '@glimmer/tracking';
+import { action } from '@ember/object';
+import { computed } from '@ember/object';
+
+export default class StockDetailsController extends Controller {
+  @service session;
+  
+  @tracked searchModel = {};
+  @tracked results = [];
+  @tracked hasMore = false;
+  @tracked isLoading = false;
+  @tracked page = 1;
+
+  @computed('model.[]')
+  get groupCFID() {
+    return this.model?.findBy('label', 'Group')?.customfield_id;
   }
-});
+
+  @computed('groupCFID')
+  get groupCFIDLabel() {
+    return `cf_${this.groupCFID}`;
+  }
+
+  @computed('model.[]')
+  get sizeCFID() {
+    return this.model?.findBy('label', 'Size')?.customfield_id;
+  }
+
+  @computed('sizeCFID')
+  get sizeCFIDLabel() {
+    return `cf_${this.sizeCFID}`;
+  }
+
+  @computed('model.[]')
+  get designCFID() {
+    return this.model?.findBy('label', 'Design')?.customfield_id;
+  }
+
+  @computed('designCFID')
+  get designCFIDLabel() {
+    return `cf_${this.designCFID}`;
+  }
+
+  @computed('model.[]')
+  get brandCFID() {
+    return this.model?.findBy('label', 'Brand')?.customfield_id;
+  }
+
+  @computed('brandCFID')
+  get brandCFIDLabel() {
+    return `cf_${this.brandCFID}`;
+  }
+
+  @computed('results.[]')
+  get totalQty() {
+    return this.results?.reduce((sum, item) => sum + item.stock_on_hand, 0) || 0;
+  }
+
+  @computed('results.[]')
+  get totalAmount() {
+    return this.results?.reduce((sum, item) => {
+      return sum + (item.purchase_rate * item.stock_on_hand);
+    }, 0) || 0;
+  }
+
+  @action
+  selectGroup(group) {
+    this.searchModel.group = group;
+  }
+
+  @action
+  selectSize(size) {
+    this.searchModel.size = size;
+  }
+
+  @action
+  selectDesign(design) {
+    this.searchModel.design = design;
+  }
+
+  @action
+  selectBrand(brand) {
+    this.searchModel.brand = brand;
+  }
+
+  @action
+  loadMore() {
+    this.searchItems(this.page + 1);
+  }
+
+  @action
+  clearAll() {
+    this.searchModel = {};
+    this.results = [];
+  }
+}

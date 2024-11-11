@@ -1,55 +1,70 @@
-import { inject as service } from '@ember/service';
 import Controller from '@ember/controller';
+import { inject as service } from '@ember/service';
+import { tracked } from '@glimmer/tracking';
+import { action } from '@ember/object';
 import { next, schedule } from '@ember/runloop';
-export default Controller.extend({
-  items: [],
-  printitems: [],
-  failedItems: [],
-  isShowingModal: false,
-  store: service(),
-  session: service(),
-  actions: {
-    toggleTranslucent() {
-      this.toggleProperty('isShowingModal');
-    },
-    print() {
-      this.set('failedItems', []);
-      let items = this.items;
-      let printitems = this.printitems;
-      let body = {};
-      items.forEach((item) => {
-        for (let i = 0; i < Number(item.qty); i++) {
-          printitems.pushObject(item);
-        }
-      });
-      body.items = items;
-      this.store.ajax('/itemsupdate', {
+
+export default class AdjustItemController extends Controller {
+  @service store;
+  @service session;
+  
+  @tracked items = [];
+  @tracked printitems = [];
+  @tracked failedItems = [];
+  @tracked isShowingModal = false;
+
+  @action
+  toggleTranslucent() {
+    this.isShowingModal = !this.isShowingModal;
+  }
+
+  @action
+  async print() {
+    this.failedItems = [];
+    const items = this.items;
+    const printitems = this.printitems;
+    const body = { items };
+
+    items.forEach((item) => {
+      for (let i = 0; i < Number(item.qty); i++) {
+        printitems.pushObject(item);
+      }
+    });
+
+    try {
+      const json = await this.store.ajax('/itemsupdate', {
         method: 'POST',
         body
-      }).then((json) => {
-        if (json.message === 'failure') {
-          this.set('failedItems', json.failed_items);
-          this.set('isShowingModal', true);
-        }
-        next(this, () => {
-          schedule('afterRender', this, () => {
-            window.print();
-          });
+      });
+
+      if (json.message === 'failure') {
+        this.failedItems = json.failed_items;
+        this.isShowingModal = true;
+      }
+
+      next(() => {
+        schedule('afterRender', () => {
+          window.print();
         });
       });
-    },
-    addNewItem(itemName) {
-      let itemslist = this.get('session.itemslist');
-      let items = this.items;
-      let newItem = itemslist.findBy('SKU', itemName);
-      if (newItem) {
-        items.pushObject(newItem);
-      }
-    },
-    removeLineItem(lineItem) {
-      let lineItems = this.items;
-      lineItems.removeObject(lineItem);
-    },
-
+    } catch (error) {
+      console.error('Error updating items:', error);
+    }
   }
-});
+
+  @action
+  addNewItem(itemName) {
+    const itemslist = this.session.itemslist;
+    const items = this.items;
+    const newItem = itemslist.findBy('SKU', itemName);
+    
+    if (newItem) {
+      items.pushObject(newItem);
+    }
+  }
+
+  @action
+  removeLineItem(lineItem) {
+    this.items.removeObject(lineItem);
+  }
+}

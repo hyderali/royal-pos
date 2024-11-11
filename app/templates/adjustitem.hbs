@@ -1,30 +1,63 @@
 <div class="btn btn-toolbar hidden-print" style="margin-top:30px">
-  <button class="btn btn-primary" type="button" {{action "print"}}>Print</button>
+  <button 
+    class="btn btn-primary" 
+    type="button" 
+    {{on "click" this.print}}
+  >
+    Print
+  </button>
 </div>
+
 <table class="table hidden-print">
   <thead>
     <tr>
-      <th> Item Code </th>
-      <th> Item Name </th>
-      <th> Old Price </th>
-      <th> New Price </th>
-      <th> Quantity </th>
-      <th style="width:9%"> </th>
+      <th>Item Code</th>
+      <th>Item Name</th>
+      <th>Old Price</th>
+      <th>New Price</th>
+      <th>Quantity</th>
+      <th style="width:9%"></th>
     </tr>
   </thead>
   <tbody>
-    {{#each items as |item|}}
+    {{#each this.items as |item|}}
       <tr>
         <td>{{item.SKU}}</td>
         <td>{{item.Description}}</td>
         <td>{{item.Rate}}</td>
-        <td><Input @value={{item.printRate}} class="form-control" @autofocus={{true}} /></td>
-        <td><Input @value={{item.qty}} class="form-control" /></td>
-        <td {{action "removeLineItem" item}}><button type="button" class="btn btn-danger pull-right">Delete</button></td>
+        <td>
+          <Input 
+            @value={{item.printRate}} 
+            class="form-control" 
+            {{autofocus}}
+          />
+        </td>
+        <td>
+          <Input 
+            @value={{item.qty}} 
+            class="form-control" 
+          />
+        </td>
+        <td>
+          <button 
+            type="button" 
+            class="btn btn-danger pull-right"
+            {{on "click" (fn this.removeLineItem item)}}
+          >
+            Delete
+          </button>
+        </td>
       </tr>
     {{/each}}
     <tr>
-      <td> <Input class="form-control" @autofocus={{true}} @enter="addNewItem" /></td>
+      <td>
+        <Input 
+          class="form-control" 
+          {{autofocus}}
+          {{on "enter" this.addNewItem}}
+        />
+      </td>
+      <td></td>
       <td></td>
       <td></td>
       <td></td>
@@ -32,29 +65,43 @@
     </tr>
   </tbody>
 </table>
-<BarcodeList @items={{printitems}} />
-{{#if isShowingModal}}
-  <ModalDialog @close="toggleTranslucent" @translucentOverlay={{true}}>
+
+<BarcodeList @items={{this.printitems}} />
+
+{{#if this.isShowingModal}}
+  <ModalDialog 
+    @containerClass="new-item" 
+    @close={{this.toggleTranslucent}} 
+    @translucentOverlay={{true}}
+  >
     <div class="hidden-print">
       <h1>Prices Not Updated</h1>
       <p>The following's items prices are not updated</p>
+      
       <table class="table">
         <thead>
           <tr>
-            <th>SKU </th>
+            <th>SKU</th>
             <th>Reason</th>
           </tr>
         </thead>
         <tbody>
-          {{#each failedItems as |item|}}
+          {{#each this.failedItems as |item|}}
             <tr>
-              <th>{{item.error.sku}} </th>
-              <th>{{item.error.message}}</th>
+              <td>{{item.error.sku}}</td>
+              <td>{{item.error.message}}</td>
             </tr>
           {{/each}}
         </tbody>
       </table>
-      <button class="btn btn-primary" type="button" {{action "toggleTranslucent"}}>Close</button>
+
+      <button 
+        type="button"
+        class="btn btn-primary" 
+        {{on "click" this.toggleTranslucent}}
+      >
+        Close
+      </button>
     </div>
   </ModalDialog>
 {{/if}}

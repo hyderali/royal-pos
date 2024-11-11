@@ -1,9 +1,10 @@
 import SalesRoute from './sales';
-export default SalesRoute.extend({
-  postUrl: '/creditnotes',
-  actions: {
-    printReceipt() {
-      window.print();
-    }
+
+export default class ReturnsRoute extends SalesRoute {
+  postUrl = '/creditnotes';
+
+  @action
+  printReceipt() {
+    window.print();
   }
-});
+}

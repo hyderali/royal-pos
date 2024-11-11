@@ -1,150 +1,196 @@
-/* eslint camelcase: "off" */
-import { set, get } from '@ember/object';
-
-import { inject as service } from '@ember/service';
 import Route from '@ember/routing/route';
-import { schedule } from '@ember/runloop';
+import { inject as service } from '@ember/service';
+import { action } from '@ember/object';
 import todayDate from '../../utils/today-date';
 
-export default Route.extend({
-  session: service(),
-  store: service(),
+export default class PaymentNewRoute extends Route {
+  @service session;
+  @service store;
+
+  queryParams = {
+    invoiceids: {
+      refreshModel: true
+    }
+  };
+
   serializeQueryParam(value, urlKey, defaultValueType) {
     if (urlKey === 'invoiceids' && value) {
       return value.join(',');
     }
-    return this._super(value, urlKey, defaultValueType);
-  },
+    return super.serializeQueryParam(value, urlKey, defaultValueType);
+  }
+
   deserializeQueryParam(value, urlKey, defaultValueType) {
     if (urlKey === 'invoiceids') {
       return value.split(',');
     }
-    return this._super(value, urlKey, defaultValueType);
-  },
+    return super.deserializeQueryParam(value, urlKey, defaultValueType);
+  }
+
   model(params) {
-    let parentModel = this.modelFor('payment');
+    const parentModel = this.modelFor('payment');
     let index = 0;
     return parentModel.filter((invoice) => {
       if (params.invoiceids.includes(invoice.invoice_id)) {
-        set(invoice, 'discount', 0);
-        set(invoice, 'credits_applied', 0);
+        invoice.discount = 0;
+        invoice.credits_applied = 0;
         if (index === 0) {
-          set(invoice, 'autofocus', true);
+          invoice.autofocus = true;
         }
         index++;
         return true;
       }
+      return false;
     });
-  },
+  }
+
   setupController(controller) {
-    this._super(...arguments);
-    controller.set('credits', 0);
-  },
-  actions: {
-    queryParamsDidChange() {
-      this.refresh();
-    },
-    saveAndRecordPayment() {
-      let controller = this.controller;
-      let invoices = controller.model;
-      let credits = controller.credits;
-      let customer_id = this.get('session.customer_id');
-      let date = todayDate();
-      let body = {
-        customer_id: `${customer_id}`,
-        date
-      };
-      let amount = 0;
-      let serializedInvoices = [];
-      invoices.forEach((invoice) => {
-        let balance = get(invoice, 'balance');
-        let credits_applied = get(invoice, 'credits_applied') || 0;
-        if (balance - credits_applied === 0) {
-          return;
-        }
-        let discount_amount = get(invoice, 'discount') || 0;
-        let amount_applied = balance - discount_amount - credits_applied;
-        amount += amount_applied;
-        serializedInvoices.push({
-          invoice_id: get(invoice, 'invoice_id'),
-          amount_applied,
-          discount_amount
-        });
-      });
-      if (credits && !amount) {
-        controller.set('canShowPrint', true);
-        schedule('afterRender', this, ()=> {
-          this.send('printReceipt');
-          this.send('goToList');
-        });
+    super.setupController(...arguments);
+    controller.credits = 0;
+  }
+
+  @action
+  async saveAndRecordPayment() {
+    const controller = this.controller;
+    const invoices = controller.model;
+    const credits = controller.credits;
+    const customer_id = this.session.customer_id;
+    const date = todayDate();
+
+    const body = {
+      customer_id: `${customer_id}`,
+      date
+    };
+
+    let amount = 0;
+    const serializedInvoices = [];
+
+    invoices.forEach((invoice) => {
+      const balance = invoice.balance;
+      const credits_applied = invoice.credits_applied || 0;
+      
+      if (balance - credits_applied === 0) {
         return;
       }
-      body.invoices = serializedInvoices;
-      body.amount = amount;
-      this.set('controller.isSaving', true);
-      this.store.ajax('/payments', {
+
+      const discount_amount = invoice.discount || 0;
+      const amount_applied = balance - discount_amount - credits_applied;
+      amount += amount_applied;
+
+      serializedInvoices.push({
+        invoice_id: invoice.invoice_id,
+        amount_applied,
+        discount_amount
+      });
+    });
+
+    if (credits && !amount) {
+      controller.canShowPrint = true;
+      this.printReceipt();
+      this.goToList();
+      return;
+    }
+
+    body.invoices = serializedInvoices;
+    body.amount = amount;
+    controller.isSaving = true;
+
+    try {
+      const json = await this.store.ajax('/payments', {
         method: 'POST',
         body
-      }).then((json) => {
-        if (json.message === 'success') {
-          controller.setProperties({ isSaving: false, canShowPrint: true });
-          schedule('afterRender', this, ()=> {
-            this.send('printReceipt');
-            this.send('goToList');
-          });
-        }
       });
-    },
-    applyCredits() {
-      let controller = this.controller;
-      let selectedCreditNote = controller.selectedCreditNote;
-      let model = controller.model;
-      let { balance, creditnote_id } = selectedCreditNote;
-      let invoices = [];
-      controller.send('closeConfirmModal');
-      controller.setProperties({ isApplyingCredits: true, applyCreditsError: '' });
-      for (let i = 0, l = model.length; i < l; i++) {
-        let invoice = model[i];
-        let { balance: invbalance, invoice_id } = invoice;
-        if (invbalance >= balance) {
-          invoices.push({ invoice_id, amount_applied: balance, apply_date: todayDate() });
-          balance -= balance;
-          break;
-        }
-        invoices.push({ invoice_id, amount_applied: invbalance, apply_date: todayDate() });
-        balance -= invbalance;
+
+      if (json.message === 'success') {
+        controller.isSaving = false;
+        controller.canShowPrint = true;
+        this.printReceipt();
+        this.goToList();
       }
-      if (balance) {
-        controller.setProperties({ isApplyingCredits: true, applyCreditsError: 'Enough Invoices Not Selected' });
-        return;
+    } catch (error) {
+      controller.isSaving = false;
+      console.error('Payment error:', error);
+    }
+  }
+
+  @action
+  async applyCredits() {
+    const controller = this.controller;
+    const selectedCreditNote = controller.selectedCreditNote;
+    const model = controller.model;
+    const { balance, creditnote_id } = selectedCreditNote;
+    const invoices = [];
+
+    controller.closeConfirmModal();
+    controller.isApplyingCredits = true;
+    controller.applyCreditsError = '';
+
+    let remainingBalance = balance;
+
+    for (const invoice of model) {
+      const { balance: invbalance, invoice_id } = invoice;
+      
+      if (invbalance >= remainingBalance) {
+        invoices.push({ 
+          invoice_id, 
+          amount_applied: remainingBalance, 
+          apply_date: todayDate() 
+        });
+        remainingBalance = 0;
+        break;
       }
-      let body = { invoices };
-      let params = { creditnote_id };
-      this.store.ajax('/applycredits', {
+
+      invoices.push({ 
+        invoice_id, 
+        amount_applied: invbalance, 
+        apply_date: todayDate() 
+      });
+      remainingBalance -= invbalance;
+    }
+
+    if (remainingBalance) {
+      controller.isApplyingCredits = false;
+      controller.applyCreditsError = 'Enough Invoices Not Selected';
+      return;
+    }
+
+    const body = { invoices };
+    const params = { creditnote_id };
+
+    try {
+      const json = await this.store.ajax('/applycredits', {
         method: 'POST',
         body,
         params
-      }).then((json) => {
-        if (json.message === 'success') {
-          invoices.forEach((invoice) => {
-            let moInvoice = model.findBy('invoice_id', invoice.invoice_id);
-            set(moInvoice, 'credits_applied', invoice.amount_applied);
-          });
-          controller.set('credits', selectedCreditNote.balance);
-          controller.set('isApplyingCredits', false);
-          controller.send('closeModal');
-        } else {
-          controller.setProperties('applyCreditsError', json.message);
-        }
       });
-    },
-    printReceipt() {
-      window.print();
-    },
-    goToList() {
-      this.transitionTo('payment');
-      this.send('reload');
-      this.set('controller.canShowPrint', false);
+
+      if (json.message === 'success') {
+        invoices.forEach((invoice) => {
+          const moInvoice = model.findBy('invoice_id', invoice.invoice_id);
+          moInvoice.credits_applied = invoice.amount_applied;
+        });
+
+        controller.credits = selectedCreditNote.balance;
+        controller.isApplyingCredits = false;
+        controller.closeModal();
+      } else {
+        controller.applyCreditsError = json.message;
+      }
+    } catch (error) {
+      controller.applyCreditsError = error.message;
+      controller.isApplyingCredits = false;
     }
   }
-});
+
+  @action
+  printReceipt() {
+    window.print();
+  }
+
+  @action
+  goToList() {
+    this.transitionTo('payment');
+    this.send('reload');
+    this.controller.canShowPrint = false;
+  }
+}
