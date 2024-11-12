@@ -11,7 +11,6 @@ module.exports = function(defaults) {
   });
 
   app.import('node_modules/bootstrap/dist/css/bootstrap.min.css');
-  app.import('node_modules/bootstrap/dist/js/bootstrap.min.js');
   app.import('node_modules/jsbarcode/dist/JsBarcode.all.min.js');
 
   let ifaces = os.networkInterfaces();

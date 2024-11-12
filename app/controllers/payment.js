@@ -18,11 +18,7 @@ export default class PaymentController extends Controller {
   }
 
   @action
-  async reload() {
-    const model = await this.store.ajax('/invoiceslist');
-    this.model = model.invoices;
-    
-    const creditNotesResponse = await this.store.ajax('/creditnoteslist');
-    this.creditnotes = creditNotesResponse.creditnotes;
+  reload() {
+    this.send('refreshAction');
   }
 }

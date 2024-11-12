@@ -342,4 +342,8 @@ export default class PurchaseController extends Controller {
     const salesRate = rate + ((rate * profit) / 100);
     this.newItemModel.rate = salesRate;
   }
+  @action
+  reloadAction() {
+    this.send('reload');
+  }
 }

@@ -98,7 +98,7 @@
           <Input 
             class="form-control" 
             {{autofocus}}
-            {{on "enter" this.addNewItem}} 
+            @enter={{this.addNewItem}} 
           />
           <button 
             type="button"
@@ -139,7 +139,7 @@
     <button 
       type="button"
       class="btn btn-default" 
-      {{on "click" (fn @reload)}}
+      {{on "click" this.reloadAction}}
     >
       New
     </button>

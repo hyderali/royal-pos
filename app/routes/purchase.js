@@ -2,6 +2,7 @@ import { inject as service } from '@ember/service';
 import { isBlank } from '@ember/utils';
 import Route from '@ember/routing/route';
 import EmberObject from '@ember/object';
+import { action } from '@ember/object';
 
 export default class PurchaseRoute extends Route {
   @service store;

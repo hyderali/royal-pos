@@ -1,4 +1,4 @@
-import { helper } from '@ember/helper';
+import { helper } from '@ember/component/helper';
 
 function getIndex([index]) {
   return Number(index) + 1;
