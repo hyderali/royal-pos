@@ -50,7 +50,6 @@
                 @options={{this.customItems}} 
                 @onfocus={{this.handleEPSFocus}} 
                 @onChange={{fn this.selectCustomItem lineItem}} 
-                @autofocus={{lineItem.canFocus}} 
                 as |customItem|
               >
                 {{customItem}}
@@ -101,7 +100,7 @@
             class="form-control" 
             @value={{this.id}} 
             @enter={{this.itemChanged}} 
-            @autofocus={{true}} 
+            {{autofocus}}
           />
         </td>
         <td colspan="6"></td>

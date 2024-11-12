@@ -34,7 +34,7 @@
           <Input 
             @value={{item.qty}}
             class="form-control"
-            @autofocus={{true}}
+            {{autofocus}}
           />
         </td>
       </tr>
@@ -43,7 +43,7 @@
       <td>
         <Input 
           class="form-control"
-          @autofocus={{true}}
+          {{autofocus}}
           @enter={{this.addNewItem}}
         />
       </td>

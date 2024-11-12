@@ -24,8 +24,7 @@
             <Input 
               @type="text" 
               class="form-control" 
-              @value={{invoice.discount}} 
-              @autofocus={{invoice.autofocus}} 
+              @value={{invoice.discount}}
               disabled={{not (difference invoice.balance invoice.credits_applied)}} 
             />
           </td>
