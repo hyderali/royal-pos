@@ -1,28 +1,79 @@
 <div class="btn btn-toolbar hidden-print" style="margin-top:30px">
-  <button class="btn btn-primary" type="button" {{action "print"}}>Print</button>
-  <button class="btn btn-default" type="button" {{action "clear"}}>Clear</button>
-  <button class="btn btn-default" type="button" {{action "addItem"}}>Add Item</button>
+  <button 
+    class="btn btn-primary" 
+    type="button" 
+    {{on "click" this.print}}
+  >
+    Print
+  </button>
+  <button 
+    class="btn btn-default" 
+    type="button" 
+    {{on "click" this.clear}}
+  >
+    Clear
+  </button>
+  <button 
+    class="btn btn-default" 
+    type="button" 
+    {{on "click" this.addItem}}
+  >
+    Add Item
+  </button>
 </div>
+
 <table class="table hidden-print">
   <thead>
     <tr>
-      <th> Size </th>
-      <th> Weight </th>
-      <th> Price </th>
-      <th> Pcs </th>
-      <th> Quantity </th>
+      <th>Size</th>
+      <th>Weight</th>
+      <th>Price</th>
+      <th>Pcs</th>
+      <th>Quantity</th>
     </tr>
   </thead>
   <tbody>
-    {{#each items as |item|}}
+    {{#each this.items as |item|}}
       <tr>
-        <td><Input @value={{item.size}} class="form-control" @autofocus={{true}} @autocomplete="on" /></td>
-        <td><Input @value={{item.weight}} class="form-control" @autocomplete="on" /></td>
-        <td><Input @value={{item.price}} class="form-control" @autocomplete="on" /></td>
-        <td><Input @value={{item.pcs}} class="form-control" @autocomplete="on" /></td>
-        <td><Input @value={{item.qty}} class="form-control" @autocomplete="on" /></td>
+        <td>
+          <Input 
+            @value={{item.size}} 
+            class="form-control" 
+            {{autofocus}}
+            @autocomplete="on" 
+          />
+        </td>
+        <td>
+          <Input 
+            @value={{item.weight}} 
+            class="form-control" 
+            @autocomplete="on" 
+          />
+        </td>
+        <td>
+          <Input 
+            @value={{item.price}} 
+            class="form-control" 
+            @autocomplete="on" 
+          />
+        </td>
+        <td>
+          <Input 
+            @value={{item.pcs}} 
+            class="form-control" 
+            @autocomplete="on" 
+          />
+        </td>
+        <td>
+          <Input 
+            @value={{item.qty}} 
+            class="form-control" 
+            @autocomplete="on" 
+          />
+        </td>
       </tr>
     {{/each}}
   </tbody>
 </table>
-<PackStickerList @items={{printitems}} />
+
+<PackStickerList @items={{this.printitems}} />

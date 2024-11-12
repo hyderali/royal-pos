@@ -1,6 +1,7 @@
 import { helper } from '@ember/component/helper';
-export function difference(params) {
-  return (Number(params[0]) || 0) -  (Number(params[1]) || 0) -  (Number(params[2]) || 0);
+
+function difference([value1, value2, value3]) {
+  return (Number(value1) || 0) - (Number(value2) || 0) - (Number(value3) || 0);
 }
 
 export default helper(difference);

@@ -1,6 +1,13 @@
 <div style="margin:20px" class="hidden-print">
   <div class="btn-toolbar">
-    <button class="btn btn-primary" type="button" {{action "print"}}> Print </button>
+    <button 
+      class="btn btn-primary" 
+      type="button" 
+      {{on "click" this.print}}
+    >
+      Print
+    </button>
   </div>
 </div>
-<BarcodeList @items={{model}} />
+
+<BarcodeList @items={{@model}} />

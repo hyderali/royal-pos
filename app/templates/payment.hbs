@@ -1,20 +1,29 @@
 <div class="row">
   <div class="col-md-4 hidden-print" style="margin-top:20px;border-right: 1px solid #EDEDED">
     <div class="btn-toolbar pull-right">
-      <button class="btn btn-primary" type="button" {{action "reload"}}>Reload</button>
+      <button 
+        class="btn btn-primary" 
+        type="button" 
+        {{on "click" this.reload}}
+      >
+        Reload
+      </button>
     </div>
     <br><br><br>
     <table class="table" style="font-size:23px">
       <tbody>
-        {{#each model as |invoice|}}
+        {{#each @model as |invoice|}}
           <tr style="cursor:pointer">
             <td>
-              <Input @type="checkbox" @checked={{invoice.selected}} />
+              <Input 
+                @type="checkbox"
+                @checked={{invoice.selected}}
+              />
             </td>
-            <td {{action "recordPayment" invoice.invoice_id}}>
+            <td {{on "click" (fn this.recordPayment invoice.invoice_id)}}>
               {{invoice.invoice_number}}
             </td>
-            <td {{action "recordPayment" invoice.invoice_id}}>
+            <td {{on "click" (fn this.recordPayment invoice.invoice_id)}}>
               {{invoice.balance}}
             </td>
           </tr>

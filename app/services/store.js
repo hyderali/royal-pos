@@ -1,30 +1,31 @@
-import { merge } from '@ember/polyfills';
 import Service, { inject as service } from '@ember/service';
-export default Service.extend({
-  session: service(),
-  ajax(requestUrl, options = {}) {
-    let username = this.get('session.user.username');
-    let method = options.method || 'GET';
-    let queryParams = {
-      username
-    };
-    merge(queryParams, (options.params || {}));
-    queryParams = $.param(queryParams);
-    let requestOptions = { method };
+
+export default class StoreService extends Service {
+  @service session;
+
+  async ajax(requestUrl, options = {}) {
+    const username = this.session.user?.username;
+    const method = options.method || 'GET';
+    const queryParams = new URLSearchParams({
+      username,
+      ...(options.params || {})
+    });
+
+    const requestOptions = { method };
     if (options.body) {
       requestOptions.body = JSON.stringify(options.body);
     }
-    let url = `/api${requestUrl}?${queryParams}`;
-    return window.fetch(url, requestOptions).then((response) => {
+
+    const url = `/api${requestUrl}?${queryParams}`;
+    
+    try {
+      const response = await fetch(url, requestOptions);
       if (response.ok) {
-        return response.json().then((json) => {
-          return json;
-        });
+        return await response.json();
       }
-      let errorObj = { message: response.statusText };
-      throw errorObj;
-    }).catch((errorObj) => {
-      throw errorObj;
-    });
+      throw new Error(response.statusText);
+    } catch (error) {
+      throw error;
+    }
   }
-});
+}

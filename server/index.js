@@ -2,10 +2,7 @@
 var bodyParser = require('body-parser');
 var fs = require('fs');
 var request = require('request');
-var Converter = require("csvtojson").Converter;
-var converter = new Converter({
-  checkType: false
-});
+var csv = require("csvtojson");
 var json2CSVConverter = require('json-2-csv');
 var RSVP = require('rsvp');
 var oauth = require('./oauth');
@@ -13,6 +10,8 @@ var oauth = require('./oauth');
 // e.g. `server/mocks/ember-hamsters.js`
 //
 module.exports = async function(app) {
+  console.log('inside app');
+  
   app.use(bodyParser.text());
   fs.readFile('./server/royal.json', 'utf8', async function(err, data) {
     if (err) {
@@ -27,6 +26,7 @@ module.exports = async function(app) {
     }
     app.parsedData = parsedData;
   });
+
   fs.readFile('./items/names.json', 'utf8', function(err, names) {
     if (err) {
       return console.log(err);
@@ -62,7 +62,9 @@ module.exports = async function(app) {
     var parsedSizes = JSON.parse(sizes);
     app.sizes = parsedSizes.sizes;
   });
-  converter.fromFile("./server/item.csv", function(err, result) {
+  csv({checkType: false})
+.fromFile("./server/item.csv")
+.then((result)=>{
     app.itemslist = result;
   });
   function getAccessToken(username) {

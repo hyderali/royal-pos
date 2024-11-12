@@ -1,15 +1,14 @@
-import Component from '@ember/component';
-export default Component.extend({
-  tagName: 'tr',
-  addNewItem: 'addNewItem',
-  saveAndPrint: 'saveAndPrint',
-  actions: {
-    itemChanged(itemName) {
-      if (itemName === 'print') {
-        this.sendAction('saveAndPrint');
-      }
-      this.sendAction('addNewItem', itemName);
-      this.set('id', '');
+import Component from '@glimmer/component';
+import { action } from '@ember/object';
+
+export default class LineItemComponent extends Component {
+  @action
+  itemChanged(itemName) {
+    if (itemName === 'print') {
+      this.args.saveAndPrint();
+      return;
     }
+    this.args.addNewItem(itemName);
+    this.args.id = '';
   }
-});
+}

@@ -1,8 +1,22 @@
 <h3 class="text-center hidden-print">Sales</h3>
-{{#if errorMessage}}
+
+{{#if this.errorMessage}}
   <div class="alert alert-danger hidden-print">
-    {{errorMessage}}
+    {{this.errorMessage}}
   </div>
 {{/if}}
-<SalesTable @model={{model}} />
-<SalesReceipt @model={{model}} />
+
+<SalesTable 
+  @model={{@model}}
+  @addNewItem={{this.addNewItem}}
+  @addTempItem={{this.addTempItem}}
+  @removeLineItem={{this.removeLineItem}}
+  @saveAndPrint={{this.saveAndPrint}}
+  @newSale={{this.newSale}}
+/>
+
+<SalesReceipt 
+  @model={{@model}}
+  @numberLabel="Bill No"
+  @isSales={{true}}
+/>

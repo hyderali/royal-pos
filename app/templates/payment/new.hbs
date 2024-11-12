@@ -1,8 +1,9 @@
-{{#if paymentController.creditnotes}}
+{{#if this.paymentController.creditnotes}}
   <div class="hidden-print alert alert-warning">
-    Credits available. Click <a href="#" {{action "showApplyCredits"}}> here </a> to apply
+    Credits available. Click <button type="button" class="btn btn-link" {{on "click" this.showApplyCredits}}>here</button> to apply
   </div>
 {{/if}}
+
 <form style="margin: 20px" class="hidden-print">
   <table class="table table-bordered" style="font-size:23px">
     <thead>
@@ -15,11 +16,18 @@
       </tr>
     </thead>
     <tbody>
-      {{#each model as |invoice index|}}
+      {{#each @model as |invoice index|}}
         <tr>
           <td>{{get-index index}}</td>
           <td>{{invoice.invoice_number}}</td>
-          <td><Input @type="text" class="form-control" @value={{invoice.discount}} @autofocus={{invoice.autofocus}} @disabled={{not (difference invoice.balance invoice.credits_applied)}} /></td>
+          <td>
+            <Input 
+              @type="text" 
+              class="form-control" 
+              @value={{invoice.discount}}
+              disabled={{not (difference invoice.balance invoice.credits_applied)}} 
+            />
+          </td>
           <td>{{invoice.credits_applied}}</td>
           <td>{{invoice.balance}}</td>
         </tr>
@@ -28,28 +36,49 @@
     <tfoot>
       <tr>
         <td colspan="2" class="text-right">Total</td>
-        <td>{{total}}</td>
+        <td>{{this.total}}</td>
       </tr>
       <tr>
         <td colspan="2" class="text-right">Discount</td>
-        <td>{{discount}}</td>
+        <td>{{this.discount}}</td>
       </tr>
       <tr>
         <td colspan="2" class="text-right">Credits</td>
-        <td>{{credits}}</td>
+        <td>{{this.credits}}</td>
       </tr>
       <tr>
         <td colspan="2" class="text-right">Received</td>
-        <td><Input class="form-control" @value={{received}} /></td>
+        <td>
+          <Input 
+            class="form-control" 
+            @value={{this.received}} 
+          />
+        </td>
       </tr>
       <tr>
         <td colspan="2" class="text-right">Balance</td>
-        <td>{{balance}}</td>
+        <td>{{this.balance}}</td>
       </tr>
     </tfoot>
   </table>
-  <button class="btn btn-default pull-right" {{action "goToList"}} type="button">Cancel</button>
-  <button class="btn btn-primary pull-right" disabled= {{isSaving}} type="submit" {{action "saveAndRecordPayment"}}>Record</button>
+
+  <div class="btn-toolbar">
+    <button 
+      class="btn btn-default" 
+      type="button" 
+      {{on "click" this.goToList}}
+    >
+      Cancel
+    </button>
+    <button 
+      class="btn btn-primary" 
+      type="submit" 
+      disabled={{this.isSaving}} 
+      {{on "click" this.saveAndRecordPayment}}
+    >
+      Record
+    </button>
+  </div>
 </form>
 
 <div class="cash-print">
@@ -60,54 +89,70 @@
           <td style="width:5%">S.No</td>
           <td style="word-wrap: break-word;width: 35%;"><b>Bill no&nbsp;</b></td>
           <td style="word-wrap: break-word;width:20%;" align="right"><b>Amount</b></td>
-          {{#if discount}}
+          {{#if this.discount}}
             <td style="word-wrap: break-word;width:20%;" align="right"><b>Discount</b></td>
           {{/if}}
-          {{#if credits}}
+          {{#if this.credits}}
             <td style="word-wrap: break-word;width:20%;" align="right"><b>Credits</b></td>
           {{/if}}
           <td style="word-wrap: break-word;width:20%;" align="right"><b>Paid</b></td>
         </tr>
       </thead>
-      <tbody  style="font-weight: bold">
-        {{#each model as |invoice index|}}
+      <tbody style="font-weight: bold">
+        {{#each @model as |invoice index|}}
           <tr>
             <td valign="top">{{get-index index}}</td>
             <td valign="top">{{invoice.invoice_number}}</td>
-            <td style="text-align:right;" valign="top">{{invoice.balance}} </td>
-            {{#if discount}}
-              <td style="text-align:right;" valign="top">{{invoice.discount}} </td>
+            <td style="text-align:right;" valign="top">{{invoice.balance}}</td>
+            {{#if this.discount}}
+              <td style="text-align:right;" valign="top">{{invoice.discount}}</td>
             {{/if}}
-            {{#if credits}}
-              <td style="text-align:right;" valign="top">{{invoice.credits_applied}} </td>
+            {{#if this.credits}}
+              <td style="text-align:right;" valign="top">{{invoice.credits_applied}}</td>
             {{/if}}
-            <td style="text-align:right;" valign="top">{{difference invoice.balance invoice.discount invoice.credits_applied}}</td>
+            <td style="text-align:right;" valign="top">
+              {{difference invoice.balance invoice.discount invoice.credits_applied}}
+            </td>
           </tr>
         {{/each}}
       </tbody>
       <tfoot>
         <tr style="height:32px;">
-          <td colspan="2" style="word-wrap: break-word;width: 40%;text-align: center;"><b>Total</b></td>
-          <td style="word-wrap: break-word;width: 20%;" align="right"><b>{{total}}</b></td>
-          {{#if discount}}
-            <td style="word-wrap: break-word;width: 20%;" align="right"><b>{{discount}}</b></td>
+          <td colspan="2" style="word-wrap: break-word;width: 40%;text-align: center;">
+            <b>Total</b>
+          </td>
+          <td style="word-wrap: break-word;width: 20%;" align="right">
+            <b>{{this.total}}</b>
+          </td>
+          {{#if this.discount}}
+            <td style="word-wrap: break-word;width: 20%;" align="right">
+              <b>{{this.discount}}</b>
+            </td>
           {{/if}}
-          {{#if credits}}
-            <td style="word-wrap: break-word;width: 20%;" align="right"><b>{{credits}}</b></td>
+          {{#if this.credits}}
+            <td style="word-wrap: break-word;width: 20%;" align="right">
+              <b>{{this.credits}}</b>
+            </td>
           {{/if}}
-          <td style="word-wrap: break-word;width: 20%;" align="right"><b>{{totalPayable}}</b></td>
+          <td style="word-wrap: break-word;width: 20%;" align="right">
+            <b>{{this.totalPayable}}</b>
+          </td>
         </tr>
       </tfoot>
     </table>
   </div>
 </div>
 
-{{#if isShowingModal}}
-  <ModalDialog @container-class="new-item" @close="closeModal" @translucentOverlay={{true}}>
+{{#if this.isShowingModal}}
+  <ModalDialog 
+    @containerClass="new-item" 
+    @close={{this.closeModal}} 
+    @translucentOverlay={{true}}
+  >
     <div class="hidden-print">
-      {{#if applyCreditsError}}
+      {{#if this.applyCreditsError}}
         <div class="alert alert-danger">
-          {{applyCreditsError}}
+          {{this.applyCreditsError}}
         </div>
       {{/if}}
       <table class="table table-bordered">
@@ -121,36 +166,66 @@
           </tr>
         </thead>
         <tbody>
-          {{#each paymentController.creditnotes as |creditNote|}}
+          {{#each this.paymentController.creditnotes as |creditNote|}}
             <tr>
               <td>{{creditNote.creditnote_number}}</td>
               <td>{{creditNote.date_formatted}}</td>
               <td>{{creditNote.total_formatted}}</td>
               <td>{{creditNote.balance_formatted}}</td>
               <td>
-                <button disabled={{isApplyingCredits}} class="btn btn-primary" type="button" {{action "_applyCredits" creditNote}}>Select</button>
+                <button 
+                  disabled={{this.isApplyingCredits}} 
+                  class="btn btn-primary" 
+                  type="button" 
+                  {{on "click" (fn this._applyCredits creditNote)}}
+                >
+                  Select
+                </button>
               </td>
             </tr>
           {{/each}}
           <tr>
             <td colspan="4">Total</td>
-            <td>{{totalCredits}}</td>
+            <td>{{this.totalCredits}}</td>
           </tr>
         </tbody>
       </table>
-      <div class="btn btn-toolbar">
-        <button class="btn btn-default" type="button" {{action "closeModal"}}>Close</button>
+      <div class="btn-toolbar">
+        <button 
+          class="btn btn-default" 
+          type="button" 
+          {{on "click" this.closeModal}}
+        >
+          Close
+        </button>
       </div>
     </div>
   </ModalDialog>
 {{/if}}
-{{#if isShowingConfirmModal}}
-  <ModalDialog @container-class="new-item" @close="closeConfirmModal" @translucentOverlay={{true}}>
+
+{{#if this.isShowingConfirmModal}}
+  <ModalDialog 
+    @containerClass="new-item" 
+    @close={{this.closeConfirmModal}} 
+    @translucentOverlay={{true}}
+  >
     <div class="hidden-print">
-      Are you sure about applying
-      <div class="btn btn-toolbar">
-        <button class="btn btn-primary" type="button" {{action "applyCredits"}}>Apply</button>
-        <button class="btn btn-default" type="button" {{action "closeConfirmModal"}}>Close</button>
+      <p>Are you sure about applying?</p>
+      <div class="btn-toolbar">
+        <button 
+          class="btn btn-primary" 
+          type="button" 
+          {{on "click" this.applyCredits}}
+        >
+          Apply
+        </button>
+        <button 
+          class="btn btn-default" 
+          type="button" 
+          {{on "click" this.closeConfirmModal}}
+        >
+          Close
+        </button>
       </div>
     </div>
   </ModalDialog>

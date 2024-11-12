@@ -1,35 +1,71 @@
 <div class="btn btn-toolbar hidden-print" style="margin-top:30px">
-  <button class="btn btn-primary" type="button" {{action "print"}}>Print</button>
-  <button class="btn btn-primary" type="button" {{action "addNewItem"}}>Add Item</button>
-  <button class="btn btn-default" type="button" {{action "clear"}}>Clear</button>
+  <button 
+    class="btn btn-primary" 
+    type="button" 
+    {{on "click" this.print}}
+  >
+    Print
+  </button>
+  <button 
+    class="btn btn-primary" 
+    type="button" 
+    {{on "click" this.addNewItem}}
+  >
+    Add Item
+  </button>
+  <button 
+    class="btn btn-default" 
+    type="button" 
+    {{on "click" this.clear}}
+  >
+    Clear
+  </button>
 </div>
+
 <table class="table hidden-print">
   <thead>
     <tr>
-      <th> S.No </th>
-      <th> Item Name </th>
-      <th> Price </th>
-      <th> Quantity </th>
+      <th>S.No</th>
+      <th>Item Name</th>
+      <th>Price</th>
+      <th>Quantity</th>
     </tr>
   </thead>
   <tbody>
-    {{#each items as |item index|}}
+    {{#each this.items as |item index|}}
       <tr>
         <td>{{index}}</td>
-        <td><Input class="form-control" @value={{item.name}} @autofocus={{true}} /></td>
-        <td><Input class="form-control" @value={{item.price}} /></td>
-        <td><Input @value={{item.qty}} class="form-control" @enter="addNewItem" /></td>
+        <td>
+          <Input 
+            class="form-control" 
+            @value={{item.name}} 
+            {{autofocus}}
+          />
+        </td>
+        <td>
+          <Input 
+            class="form-control" 
+            @value={{item.price}} 
+          />
+        </td>
+        <td>
+          <Input 
+            @value={{item.qty}} 
+            class="form-control" 
+            @enter={{this.addNewItem}} 
+          />
+        </td>
       </tr>
     {{/each}}
   </tbody>
 </table>
+
 <div style="display:flex;flex-wrap: wrap;flex-direction: row;width:519px" class="show-print">
-  {{#each printitems as |item|}}
+  {{#each this.printitems as |item|}}
     <div class="item-sticker">
-      <div class="text-center" style="font-size:10px">{{session.org_name}}</div>
+      <div class="text-center" style="font-size:10px">{{this.session.org_name}}</div>
       <div class="text-center" style="">{{item.name}}</div>
       <div class="text-center" style="font-size:63px;font-weight:bold;margin-top:-15px">{{item.price}}</div>
     </div>
   {{/each}}
 </div>
-
