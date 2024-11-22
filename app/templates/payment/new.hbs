@@ -19,7 +19,7 @@
         <tr>
           <td>{{get-index index}}</td>
           <td>{{invoice.invoice_number}}</td>
-          <td><Input @type="text" class="form-control" @value={{invoice.discount}} autofocus={{invoice.autofocus}} disabled={{not (difference invoice.balance invoice.credits_applied)}} /></td>
+          <td><Input @type="text" class="form-control" @value={{invoice.discount}} disabled={{not (difference invoice.balance invoice.credits_applied)}} /></td>
           <td>{{invoice.credits_applied}}</td>
           <td>{{invoice.balance}}</td>
         </tr>

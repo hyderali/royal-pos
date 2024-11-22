@@ -1,5 +1,5 @@
+import { action } from '@ember/object';
 import { inject as service } from '@ember/service';
-import { set, get, action } from '@ember/object';
 import Route from '@ember/routing/route';
 import { schedule } from '@ember/runloop';
 import todayDate from '../../utils/today-date';
@@ -9,6 +9,7 @@ import RouterService from '@ember/routing/router-service';
 
 interface Invoice {
   invoice_id: string;
+  invoice_number: string;
   balance: number;
   discount?: number;
   credits_applied?: number;
@@ -30,13 +31,28 @@ interface PaymentBody {
   }>;
 }
 
+interface PaymentResponse {
+  message: string;
+  error?: string;
+}
+
+interface PaymentController {
+  model: Invoice[];
+  credits: number;
+  isSaving: boolean;
+  canShowPrint: boolean;
+  setProperties: (props: Record<string, any>) => void;
+}
+
 export default class NewRoute extends Route {
   @service declare session: SessionService;
   @service declare store: StoreService;
   @service declare router: RouterService;
 
+  queryParams = ['invoiceids'];
+
   serializeQueryParam(value: any, urlKey: string, defaultValueType: string): string {
-    if (urlKey === 'invoiceids' && value) {
+    if (urlKey === 'invoiceids' && Array.isArray(value)) {
       return value.join(',');
     }
     return super.serializeQueryParam(value, urlKey, defaultValueType);
@@ -54,10 +70,10 @@ export default class NewRoute extends Route {
     let index = 0;
     return parentModel.filter((invoice) => {
       if (params.invoiceids.includes(invoice.invoice_id)) {
-        set(invoice, 'discount', 0);
-        set(invoice, 'credits_applied', 0);
+        invoice.discount = 0;
+        invoice.credits_applied = 0;
         if (index === 0) {
-          set(invoice, 'autofocus', true);
+          invoice.autofocus = true;
         }
         index++;
         return true;
@@ -66,20 +82,15 @@ export default class NewRoute extends Route {
     });
   }
 
-  setupController(controller: any): void {
+  setupController(controller: PaymentController): void {
     super.setupController(...arguments);
-    controller.set('credits', 0);
-  }
-
-  @action
-  queryParamsDidChange(): void {
-    this.refresh();
+    controller.credits = 0;
   }
 
   @action
   async saveAndRecordPayment(): Promise<void> {
-    const controller = this.controllerFor('payment/new');
-    const invoices = controller.model as Invoice[];
+    const controller = this.controllerFor('payment/new') as PaymentController;
+    const invoices = controller.model;
     const credits = controller.credits;
     const customer_id = this.session.customer_id;
     const date = todayDate();
@@ -112,7 +123,7 @@ export default class NewRoute extends Route {
     }
 
     if (credits && !amount) {
-      controller.set('canShowPrint', true);
+      controller.canShowPrint = true;
       schedule('afterRender', this, () => {
         this.send('printReceipt');
         this.send('goToList');
@@ -122,15 +133,18 @@ export default class NewRoute extends Route {
 
     body.invoices = serializedInvoices;
     body.amount = amount;
-    controller.set('isSaving', true);
+    controller.isSaving = true;
 
     const json = await this.store.ajax('/payments', {
       method: 'POST',
       body,
-    });
+    }) as PaymentResponse;
 
     if (json.message === 'success') {
-      controller.setProperties({ isSaving: false, canShowPrint: true });
+      controller.setProperties({ 
+        isSaving: false, 
+        canShowPrint: true 
+      });
       schedule('afterRender', this, () => {
         this.send('printReceipt');
         this.send('goToList');
@@ -147,6 +161,6 @@ export default class NewRoute extends Route {
   goToList(): void {
     this.router.transitionTo('payment');
     this.send('reload');
-    this.controllerFor('payment/new').set('canShowPrint', false);
+    this.controllerFor('payment/new').canShowPrint = false;
   }
 }

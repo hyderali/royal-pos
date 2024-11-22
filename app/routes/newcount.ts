@@ -46,8 +46,8 @@ export default class NewcountRoute extends Route {
     const existingItem = items.find(item => item.sku === itemName);
 
     if (existingItem) {
-      existingItem.set('qty', Number(existingItem.get('qty')) + 1);
-      controller.set('id', '');
+      existingItem.qty = Number(existingItem.qty) + 1;
+      controller.id = '';
       return;
     }
 
@@ -65,7 +65,7 @@ export default class NewcountRoute extends Route {
       items.pushObject(newLineItem);
     }
 
-    controller.set('id', '');
+    controller.id = '';
   }
 
   @action

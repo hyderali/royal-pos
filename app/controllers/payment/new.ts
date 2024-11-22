@@ -17,7 +17,6 @@ interface Invoice {
   balance: number;
   discount?: number;
   credits_applied?: number;
-  autofocus?: boolean;
 }
 
 export default class NewController extends Controller {
@@ -32,19 +31,18 @@ export default class NewController extends Controller {
   declare credits: number;
   declare received: number;
   declare isSaving: boolean;
+  declare canShowPrint: boolean;
 
   queryParams = ['invoiceids'];
 
   @computed('model.@each.balance')
   get total(): number {
-    const model = this.model;
-    return model.reduce((sum, item) => sum + Number(item.balance), 0);
+    return this.model.reduce((sum, item) => sum + Number(item.balance), 0);
   }
 
   @computed('model.@each.discount')
   get discount(): number {
-    const model = this.model;
-    return model.reduce((sum, item) => sum + Number(item.discount || 0), 0);
+    return this.model.reduce((sum, item) => sum + Number(item.discount || 0), 0);
   }
 
   @computed('total', 'discount', 'credits')
@@ -66,16 +64,18 @@ export default class NewController extends Controller {
 
   @action
   showApplyCredits(): void {
-    this.set('isShowingModal', true);
+    this.isShowingModal = true;
   }
 
   @action
-  goToListC(): void {
+  goToListC(event: Event): void {
+    event.preventDefault();
     this.send('goToList');
   }
 
   @action
-  saveAndRecordPaymentC(): void {
+  saveAndRecordPaymentC(event: Event): void {
+    event.preventDefault();
     this.send('saveAndRecordPayment');
   }
 
@@ -86,24 +86,20 @@ export default class NewController extends Controller {
 
   @action
   closeModal(): void {
-    this.set('isShowingModal', false);
+    this.isShowingModal = false;
   }
 
   @action
   closeConfirmModal(): void {
-    this.setProperties({
-      isShowingConfirmModal: false,
-      selectedCreditNote: null,
-    });
+    this.isShowingConfirmModal = false;
+    this.selectedCreditNote = null;
   }
 
   @action
   _applyCredits(creditNote: CreditNote): void {
-    this.setProperties({
-      isShowingConfirmModal: true,
-      selectedCreditNote: creditNote,
-      isApplyingCredits: false,
-      applyCreditsError: '',
-    });
+    this.isShowingConfirmModal = true;
+    this.selectedCreditNote = creditNote;
+    this.isApplyingCredits = false;
+    this.applyCreditsError = '';
   }
 }

@@ -14,50 +14,33 @@ export default class Invoice extends EmberObject {
   declare invoice_id?: string;
   declare salesperson?: Salesperson;
   declare phone_number?: string;
+  declare discount: number;
 
   @computed('line_items.@each.total')
   get subtotal(): number {
-    const lineItems = this.line_items;
-    const subtotal = lineItems.reduce((sum, item) => {
-      return sum + Number(item.get('total'));
-    }, 0);
-    return subtotal;
+    return this.line_items.reduce((sum, item) => sum + Number(item.total), 0);
   }
 
   @computed('line_items.@each.{discount,total}')
-  get discount(): number {
-    const lineItems = this.line_items;
-    let lineItemDiscount;
-    const discount = lineItems.reduce((discount, item) => {
-      lineItemDiscount = item.discount_amount;
-      return discount + lineItemDiscount;
-    }, 0);
-    return Math.round(discount);
+  get discount_total(): number {
+    return Math.round(this.line_items.reduce((sum, item) => sum + item.discount_amount, 0));
   }
 
   @computed('line_items.@each.quantity')
   get qtyTotal(): number {
-    const lineItems = this.line_items;
-    const qtyTotal = lineItems.reduce((sum, item) => {
-      return sum + Number(item.get('quantity'));
-    }, 0);
-    return qtyTotal;
+    return this.line_items.reduce((sum, item) => sum + Number(item.quantity), 0);
   }
 
-  @computed('subtotal', 'discount')
+  @computed('subtotal', 'discount_total')
   get total(): number {
-    const subtotal = this.subtotal;
-    const discount = this.discount;
-    return subtotal - discount;
+    return this.subtotal - this.discount_total;
   }
 
-  @computed
   get date(): string {
     const date = new Date();
     return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
   }
 
-  @computed
   get time(): string {
     const date = new Date();
     let hours = date.getHours();
@@ -67,7 +50,7 @@ export default class Invoice extends EmberObject {
       hours -= 12;
     }
     
-    let minutes = date.getMinutes();
+    const minutes = date.getMinutes();
     const minutesStr = minutes < 10 ? `0${minutes}` : `${minutes}`;
     
     return `${hours}:${minutesStr} ${meridian}`;

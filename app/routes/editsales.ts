@@ -67,8 +67,8 @@ export default class EditsalesRoute extends SalesRoute {
           line_items: [],
         });
 
-        model.set('salesperson', salesperson);
-        model.set('phone_number', phoneNumber);
+        model.salesperson = salesperson;
+        model.phone_number = phoneNumber;
 
         json.invoice.line_items.forEach(lineItem => {
           if (!lineItem.item_id) {
@@ -77,13 +77,13 @@ export default class EditsalesRoute extends SalesRoute {
           }
 
           const newLineItem = LineItem.create(lineItem);
-          const discountObj = newLineItem.get('item_custom_fields')?.find(cf => cf.label === 'Discount');
+          const discountObj = newLineItem.item_custom_fields?.find(cf => cf.label === 'Discount');
           
           if (discountObj) {
-            newLineItem.set('discount', discountObj.value);
+            newLineItem.discount = discountObj.value;
           }
           
-          model.get('line_items').pushObject(newLineItem);
+          model.line_items.pushObject(newLineItem);
         });
 
         controller.setProperties({

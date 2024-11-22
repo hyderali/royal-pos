@@ -1,5 +1,6 @@
 import { action } from '@ember/object';
 import { inject as service } from '@ember/service';
+import type { Registry as ControllerRegistry } from '@ember/controller';
 import Route from '@ember/routing/route';
 import { schedule } from '@ember/runloop';
 import todayDate from '../utils/today-date';
@@ -37,9 +38,12 @@ interface InvoiceResponse {
   error?: string;
 }
 
+type SalesController = ControllerRegistry['sales'];
 export default class SalesRoute extends Route {
   @service declare session: SessionService;
   @service declare store: StoreService;
+
+  controller!: SalesController;
 
   postUrl = '/invoices';
 
@@ -61,49 +65,46 @@ export default class SalesRoute extends Route {
     return Invoice.create({ line_items: [] });
   }
 
-  setupController(controller: any): void {
-    super.setupController(...arguments);
-    controller.set('errorMessage', '');
+  setupController(controller: SalesController, model: Invoice, transition: any): void {
+    super.setupController(controller, model, transition);
+    controller.errorMessage = '';
   }
 
   processedBody(): InvoiceBody {
-    const model = this.controllerFor('sales').model as Invoice;
+    const model = this.controller.model as Invoice;
     const customer_id = this.session.customer_id;
     const date = todayDate();
     
     const body: InvoiceBody = {
       customer_id: `${customer_id}`,
       date,
-      discount: `${model.get('discount')}`,
+      discount: `${model.discount}`,
       discount_type: 'entity_level',
       is_discount_before_tax: false,
       custom_fields: [
-        { label: 'Phone Number', value: model.get('phone_number') },
+        { label: 'Phone Number', value: model.phone_number },
       ],
       line_items: [],
     };
 
-    if (model.get('salesperson')) {
-      body.salesperson_id = model.get('salesperson.salesperson_id');
+    if (model.salesperson) {
+      body.salesperson_id = model.salesperson.salesperson_id;
     }
 
-    const lineItems = model.get('line_items');
-    body.line_items = lineItems.map((item: LineItem) => {
-      return {
-        item_id: item.get('item_id'),
-        rate: item.get('rate'),
-        quantity: item.get('quantity'),
-        item_custom_fields: [{ label: 'Discount', value: item.discount }],
-        description: item.get('description'),
-      };
-    });
+    body.line_items = model.line_items.map((item: LineItem) => ({
+      item_id: item.item_id!,
+      rate: item.rate,
+      quantity: item.quantity,
+      item_custom_fields: [{ label: 'Discount', value: item.discount }],
+      description: item.description!,
+    }));
 
-    model.set('isSaving', true);
+    model.isSaving = true;
     return body;
   }
 
   postResponse(json: InvoiceResponse, skipPrint: boolean): void {
-    const model = this.controllerFor('sales').model as Invoice;
+    const model = this.controller.model as Invoice;
     
     if (json.message === 'success') {
       if (skipPrint) {
@@ -111,30 +112,28 @@ export default class SalesRoute extends Route {
         return;
       }
       
-      model.setProperties({
-        entity_number: json.entity_number,
-        canShowPrint: true,
-        isSaving: false,
-      });
+      model.entity_number = json.entity_number;
+      model.canShowPrint = true;
+      model.isSaving = false;
       
       schedule('afterRender', this, () => {
         this.send('printReceipt');
         this.send('newSale');
       });
     } else {
-      this.controllerFor('sales').set('errorMessage', json.error);
-      model.set('isSaving', false);
+      this.controller.errorMessage = json.error || 'Unknown error';
+      model.isSaving = false;
     }
   }
 
   @action
   addNewItem(itemName: string): void {
-    const lineItems = this.controllerFor('sales').model.get('line_items');
-    const existingLineItem = lineItems.findBy('sku', itemName);
+    const lineItems = this.controller.model.line_items;
+    const existingLineItem = lineItems.find(item => item.sku === itemName);
     const itemslist = this.session.itemslist;
 
     if (existingLineItem) {
-      existingLineItem.set('quantity', existingLineItem.get('quantity') + 1);
+      existingLineItem.quantity = existingLineItem.quantity + 1;
       return;
     }
 
@@ -155,7 +154,7 @@ export default class SalesRoute extends Route {
 
   @action
   addTempItem(): void {
-    const lineItems = this.controllerFor('sales').model.get('line_items');
+    const lineItems = this.controller.model.line_items;
     const newLineItem = LineItem.create({
       description: 'Others',
       isCustom: true,
@@ -169,13 +168,13 @@ export default class SalesRoute extends Route {
 
   @action
   removeLineItem(lineItem: LineItem): void {
-    const lineItems = this.controllerFor('sales').model.get('line_items');
+    const lineItems = this.controller.model.line_items;
     lineItems.removeObject(lineItem);
   }
 
   @action
   async saveAndPrint(skipPrint: boolean): Promise<void> {
-    this.controllerFor('sales').set('errorMessage', '');
+    this.controller.errorMessage = '';
     const body = this.processedBody();
     const json = await this.store.ajax(this.postUrl, { method: 'POST', body }) as InvoiceResponse;
     this.postResponse(json, skipPrint);

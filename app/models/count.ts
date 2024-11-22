@@ -8,28 +8,16 @@ export default class Count extends EmberObject {
 
   @computed('items.@each.qty')
   get totalQty(): number {
-    const lineItems = this.items;
-    const total = lineItems.reduce((sum, item) => {
-      return sum + Number(item.get('qty'));
-    }, 0);
-    return total;
+    return this.items.reduce((sum, item) => sum + Number(item.qty), 0);
   }
 
   @computed('items.@each.cost_value')
   get totalCV(): number {
-    const lineItems = this.items;
-    const total = lineItems.reduce((sum, item) => {
-      return sum + Number(item.get('cost_value'));
-    }, 0);
-    return total;
+    return this.items.reduce((sum, item) => sum + Number(item.cost_value), 0);
   }
 
   @computed('items.@each.sales_value')
   get totalSV(): number {
-    const lineItems = this.items;
-    const total = lineItems.reduce((sum, item) => {
-      return sum + Number(item.get('sales_value'));
-    }, 0);
-    return total;
+    return this.items.reduce((sum, item) => sum + Number(item.sales_value), 0);
   }
 }

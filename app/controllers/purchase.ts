@@ -1,6 +1,6 @@
+import { action, computed } from '@ember/object';
 import { inject as service } from '@ember/service';
 import { isBlank } from '@ember/utils';
-import { set, get, setProperties, action, computed } from '@ember/object';
 import Controller from '@ember/controller';
 import { next, schedule } from '@ember/runloop';
 import getItemName from '../utils/get-item-name';
@@ -24,6 +24,7 @@ interface LineItem {
   item_id?: string;
   printRate?: number;
   sticker?: number;
+  rate?: number;
 }
 
 interface NewItemModel {
@@ -43,9 +44,16 @@ interface NewItemModel {
 
 interface PurchaseModel {
   line_items: LineItem[];
-  vendor?: any;
+  vendor?: {
+    contact_id: string;
+  };
   bill_number?: string;
   isSaving?: boolean;
+}
+
+interface SaveResponse {
+  message: string;
+  error?: string;
 }
 
 export default class PurchaseController extends Controller {
@@ -61,7 +69,7 @@ export default class PurchaseController extends Controller {
 
   @computed('model.line_items.@each.{PurchaseRate,quantity}')
   get purchaseTotal(): number {
-    const lineItems = this.get('model.line_items') || [];
+    const lineItems = this.model.line_items || [];
     let total = 0;
     lineItems.forEach((item) => {
       total += Number(item.PurchaseRate.split(' ')[1]) * (item.quantity || 1);
@@ -71,7 +79,7 @@ export default class PurchaseController extends Controller {
 
   @computed('model.line_items.@each.Rate')
   get salesTotal(): number {
-    const lineItems = this.get('model.line_items') || [];
+    const lineItems = this.model.line_items || [];
     let total = 0;
     lineItems.forEach((item) => {
       total += Number(item.Rate.split(' ')[1]);
@@ -81,7 +89,7 @@ export default class PurchaseController extends Controller {
 
   @computed('model.line_items.@each.quantity')
   get qtyTotal(): number {
-    const lineItems = this.get('model.line_items') || [];
+    const lineItems = this.model.line_items || [];
     let total = 0;
     lineItems.forEach((item) => {
       total += Number(item.quantity) || 0;
@@ -91,7 +99,7 @@ export default class PurchaseController extends Controller {
 
   @computed('model.line_items.@each.sticker')
   get stickerTotal(): number {
-    const lineItems = this.get('model.line_items') || [];
+    const lineItems = this.model.line_items || [];
     let total = 0;
     lineItems.forEach((item) => {
       total += Number(item.sticker) || 0;
@@ -101,13 +109,13 @@ export default class PurchaseController extends Controller {
 
   @action
   selectVendor(vendor: any): void {
-    this.set('model.vendor', vendor);
+    this.model.vendor = vendor;
   }
 
   @action
   selectName(name: string): void {
     if (this.newItemModel) {
-      this.set('newItemModel.description', name);
+      this.newItemModel.description = name;
     }
   }
 
@@ -120,58 +128,59 @@ export default class PurchaseController extends Controller {
       !select.highlighted &&
       !isBlank(searchText)
     ) {
-      const selected = this.get('newItemModel.description') || '';
+      const selected = this.newItemModel?.description || '';
       if (!selected.includes(searchText)) {
         const body = { searchText, attribute: 'names' };
         this.store.ajax('/newattribute', { method: 'POST', body });
-        this.get('session.groups').pushObject(searchText);
+        this.session.groups.pushObject(searchText);
         select.actions.choose(searchText);
       }
     }
   }
 
-  // ... Similar pattern for other select and create methods ...
-
   @action
   addNewItem(itemName: string): void {
-    const lineItems = this.get('model.line_items');
-    const existingLineItem = lineItems.findBy('SKU', getItemName(itemName));
-    const itemslist = this.get('session.itemslist');
+    const lineItems = this.model.line_items;
+    const existingLineItem = lineItems.find(item => item.SKU === getItemName(itemName));
+    const itemslist = this.session.itemslist;
     
     if (existingLineItem) {
-      set(existingLineItem, 'quantity', Number(existingLineItem.quantity) + 1);
+      existingLineItem.quantity = (existingLineItem.quantity || 0) + 1;
       return;
     }
     
-    const newItem = itemslist?.findBy('SKU', getItemName(itemName));
+    const newItem = itemslist?.find(item => item.SKU === getItemName(itemName));
     if (newItem) {
       const rate = Number(newItem.Rate.split(' ')[1]);
-      newItem.rate = rate;
-      newItem.printRate = rate;
-      newItem.quantity = 1;
-      newItem.item_id = newItem['Item ID'];
-      newItem.PurchaseRate = newItem['Purchase Rate'];
-      lineItems.pushObject(newItem);
+      const lineItem: LineItem = {
+        ...newItem,
+        rate,
+        printRate: rate,
+        quantity: 1,
+        item_id: newItem['Item ID'],
+        PurchaseRate: newItem['Purchase Rate'],
+        SKU: newItem.SKU,
+        Description: newItem.Description
+      };
+      lineItems.pushObject(lineItem);
     }
   }
 
   @action
-  save(): void {
+  async save(): Promise<void> {
     const model = this.model;
     const body: any = {};
-    const lineItems = model.get('line_items');
+    const lineItems = model.line_items;
     
-    body.vendor_id = model.get('vendor.contact_id');
-    body.bill_number = model.get('bill_number');
-    body.line_items = lineItems.map((lineItem) => {
-      return {
-        item_id: lineItem.item_id,
-        quantity: lineItem.quantity,
-        name: lineItem['Item Name'],
-        description: lineItem.Description,
-        account_id: this.get('session.inventory_account_id'),
-      };
-    });
+    body.vendor_id = model.vendor?.contact_id;
+    body.bill_number = model.bill_number;
+    body.line_items = lineItems.map((lineItem) => ({
+      item_id: lineItem.item_id,
+      quantity: lineItem.quantity,
+      name: lineItem['Item Name'],
+      description: lineItem.Description,
+      account_id: this.session.inventory_account_id,
+    }));
 
     const printItems: LineItem[] = [];
     lineItems.forEach((lineItem) => {
@@ -180,12 +189,17 @@ export default class PurchaseController extends Controller {
       }
     });
 
-    model.set('isSaving', true);
-    this.set('errorMessage', '');
+    model.isSaving = true;
+    this.errorMessage = '';
 
-    this.store.ajax('/newbill', { method: 'POST', body }).then((json) => {
+    try {
+      const json = await this.store.ajax('/newbill', { 
+        method: 'POST', 
+        body 
+      }) as SaveResponse;
+
       if (json.message === 'success') {
-        this.set('printItems', printItems);
+        this.printItems = printItems;
         next(this, () => {
           schedule('afterRender', this, () => {
             window.print();
@@ -193,29 +207,30 @@ export default class PurchaseController extends Controller {
           });
         });
       } else if (json.message === 'failure') {
-        this.set('errorMessage', json.error);
+        this.errorMessage = json.error || 'Unknown error';
       }
-      model.set('isSaving', false);
-    });
+    } finally {
+      model.isSaving = false;
+    }
   }
 
   @action
   closeModal(): void {
-    this.set('isShowingModal', false);
+    this.isShowingModal = false;
   }
 
   @action
   removeLineItem(lineItem: LineItem): void {
-    this.get('model.line_items').removeObject(lineItem);
+    this.model.line_items.removeObject(lineItem);
   }
 
   @action
   purchaseRateChanged(): void {
     if (this.newItemModel) {
       const rate = Number(this.newItemModel.purchase_rate);
-      const profit = Number(this.get('newItemModel.profit')) || 1;
+      const profit = Number(this.newItemModel.profit) || 1;
       const salesRate = rate + (rate * profit) / 100;
-      this.set('newItemModel.rate', salesRate.toString());
+      this.newItemModel.rate = salesRate.toString();
     }
   }
 
@@ -223,9 +238,9 @@ export default class PurchaseController extends Controller {
   profitChanged(): void {
     if (this.newItemModel) {
       const profit = Number(this.newItemModel.profit);
-      const rate = Number(this.get('newItemModel.purchase_rate')) || 1;
+      const rate = Number(this.newItemModel.purchase_rate) || 1;
       const salesRate = rate + (rate * profit) / 100;
-      this.set('newItemModel.rate', salesRate.toString());
+      this.newItemModel.rate = salesRate.toString();
     }
   }
 

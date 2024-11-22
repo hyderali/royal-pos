@@ -60,7 +60,7 @@ export default class NewRoute extends Route {
     let controller = this.controller;
     let invoices = controller.model;
     let credits = controller.credits;
-    let customer_id = this.get('session.customer_id');
+    let customer_id = this.session.customer_id;
     let date = todayDate();
     let body = {
       customer_id: `${customer_id}`,

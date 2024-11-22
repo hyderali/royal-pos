@@ -4,6 +4,7 @@ import { equal } from '@ember/object/computed';
 interface User {
   is_admin: boolean;
   is_sale: boolean;
+  username: string;
 }
 
 export default class SessionService extends Service {
@@ -19,6 +20,7 @@ export default class SessionService extends Service {
   cogs_id: string | null = null;
   vendors: any[] = [];
   itemCF: any = null;
+  salespersons: any[] = [];
 
   @equal('user.is_admin', true) isAdmin!: boolean;
   @equal('user.is_sale', true) isSale!: boolean;

@@ -36,3 +36,9 @@ export default class SalesController extends Controller {
     this.send('newSale');
   }
 }
+
+declare module '@ember/controller' {
+  interface Registry {
+    'sales': SalesController;
+  }
+}

@@ -8,6 +8,7 @@ interface CustomField {
   label: string;
   value: string;
   data_type: string;
+  customfield_id: string;
 }
 
 interface SearchParams {
@@ -16,8 +17,28 @@ interface SearchParams {
 }
 
 interface SearchResponse {
+  message: string;
   items: any[];
   has_more_page: boolean;
+}
+
+interface StockDetailsController {
+  searchModel: {
+    group?: string;
+    size?: string;
+    design?: string;
+    brand?: string;
+  };
+  results: any[];
+  groupCFID: string;
+  sizeCFID: string;
+  designCFID: string;
+  brandCFID: string;
+  isLoading: boolean;
+  hasMore: boolean;
+  page: number;
+  setProperties: (props: Record<string, any>) => void;
+  set: (key: string, value: any) => void;
 }
 
 export default class StockdetailsRoute extends Route {
@@ -38,13 +59,10 @@ export default class StockdetailsRoute extends Route {
 
   @action
   async searchItems(page = 1): Promise<void> {
-    const controller = this.controller;
+    const controller = this.controller as StockDetailsController;
     const cfParams: Record<string, string> = {};
-    const group = controller.get('searchModel.group');
-    const size = controller.get('searchModel.size');
-    const design = controller.get('searchModel.design');
-    const brand = controller.get('searchModel.brand');
-    const results = controller.results;
+    const { group, size, design, brand } = controller.searchModel;
+    let results = controller.results || [];
 
     if (group) {
       cfParams[`custom_field_${controller.groupCFID}`] = group;
@@ -59,30 +77,32 @@ export default class StockdetailsRoute extends Route {
       cfParams[`custom_field_${controller.brandCFID}`] = brand;
     }
 
-    controller.set('isLoading', true);
+    controller.isLoading = true;
 
     try {
       const json = await this.store.ajax('/items', { 
         params: { cf_params: cfParams, page } 
       }) as SearchResponse;
 
-      let items = json.items;
-      items = items.filter(item => item.stock_on_hand);
+      if (json.message === 'success') {
+        let items = json.items;
+        items = items.filter(item => item.stock_on_hand);
 
-      if (page === 1) {
-        results = items;
-      } else {
-        results = results.concat(items);
+        if (page === 1) {
+          results = items;
+        } else {
+          results = results.concat(items);
+        }
+
+        controller.setProperties({
+          results,
+          hasMore: json.has_more_page,
+          isLoading: false,
+          page,
+        });
       }
-
-      controller.setProperties({
-        results,
-        hasMore: json.has_more_page,
-        isLoading: false,
-        page,
-      });
     } catch (error) {
-      controller.set('isLoading', false);
+      controller.isLoading = false;
       // Handle error
     }
   }

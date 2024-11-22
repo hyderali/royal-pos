@@ -2,7 +2,7 @@ import EmberObject, { computed } from '@ember/object';
 
 interface CustomField {
   label: string;
-  value: string;
+  value: string | number;
 }
 
 export default class LineItem extends EmberObject {
@@ -19,15 +19,11 @@ export default class LineItem extends EmberObject {
 
   @computed('quantity', 'rate')
   get total(): number {
-    const quantity = Number(this.quantity);
-    const rate = Number(this.rate);
-    return rate * quantity;
+    return Number(this.rate) * Number(this.quantity);
   }
 
   @computed('total', 'discount')
   get discount_amount(): number {
-    const total = Number(this.total);
-    const discount = Number(this.discount);
-    return Math.round(Number(total) * Number(discount / 100));
+    return Math.round(Number(this.total) * Number(this.discount / 100));
   }
 }

@@ -8,8 +8,18 @@ interface Invoice {
   selected?: boolean;
 }
 
+interface CreditNote {
+  creditnote_id: string;
+  creditnote_number: string;
+  date_formatted: string;
+  total_formatted: string;
+  balance_formatted: string;
+  balance: number;
+}
+
 export default class PaymentController extends Controller {
   declare model: Invoice[];
+  declare creditnotes: CreditNote[];
 
   @observes('model.@each.selected')
   invoiceChecked(): void {
