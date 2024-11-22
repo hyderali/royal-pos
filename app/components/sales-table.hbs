@@ -3,7 +3,15 @@
     <div class="form-group">
       <div class="col-md-3">Sales Person</div>
       <div class="col-md-9">
-        <PowerSelect @searchEnabled={{true}} @selected={{@model.salesperson}} @options={{this.session.salespersons}} @onChange={{this.selectSP}} @searchField="salesperson_name" as |salesperson|>
+        <PowerSelect 
+          @searchEnabled={{true}} 
+          @selected={{@model.salesperson}} 
+          @options={{this.session.salespersons}} 
+          @onChange={{this.selectSP}} 
+          @searchField="salesperson_name" 
+          data-test-salesperson-select
+          as |salesperson|
+        >
           {{salesperson.salesperson_name}}
         </PowerSelect>
       </div>
@@ -11,14 +19,13 @@
     <div class="form-group">
       <div class="col-md-3">Phone Number</div>
       <div class="col-md-9">
-        <Input class="form-control" @value={{@model.phone_number}} />
+        <Input class="form-control" @value={{@model.phone_number}} data-test-phone-number />
       </div>
     </div><br><br>
   {{/if}}
   <table class="table table-bordered">
     <thead>
       <tr>
-        {{!-- template-lint-disable no-inline-styles --}}
         <th style="width:5%">S.No</th>
         <th style="width:15%">SKU</th>
         <th style="width:15%">Name</th>
@@ -29,43 +36,68 @@
         <th style="width:9%"></th>
       </tr>
     </thead>
-    <tbody>
+    <tbody data-test-line-items>
       {{#each @model.line_items as |lineItem index|}}
         <tr>
           <td>{{get-index index}}</td>
-          <td>{{lineItem.sku}}</td>
-          <td>
+          <td data-test-item-sku>{{lineItem.sku}}</td>
+          <td data-test-item-description>
             {{#if lineItem.isCustom}}
-              <PowerSelect @searchEnabled={{true}} @selected={{lineItem.description}} @options={{this.customItems}} @onChange={{fn this.selectCustomItem lineItem}} @autofocus={{lineItem.canFocus}} as |customItem|>
+              <PowerSelect 
+                @searchEnabled={{true}} 
+                @selected={{lineItem.description}} 
+                @options={{this.customItems}} 
+                @onChange={{fn this.selectCustomItem lineItem}} 
+                @autofocus={{lineItem.canFocus}}
+                data-test-custom-item-select 
+                as |customItem|
+              >
                 {{customItem}}
               </PowerSelect>
             {{else}}
               {{lineItem.name}}
             {{/if}}
           </td>
-          <td><Input class="form-control" @value={{lineItem.quantity}} disabled={{@model.isSaving}} /></td>
+          <td><Input class="form-control" @value={{lineItem.quantity}} disabled={{@model.isSaving}} data-test-item-quantity /></td>
           <td>
             {{#if lineItem.isCustom}}
-              <td><Input class="form-control" @value={{lineItem.rate}} disabled={{@model.isSaving}} /></td>
+              <Input class="form-control" @value={{lineItem.rate}} disabled={{@model.isSaving}} data-test-item-rate />
             {{else}}
               {{lineItem.rate}}
             {{/if}}
           </td>
           <td>
-            <PowerSelect @searchEnabled={{true}} @selected={{lineItem.discount}} @options={{this.discounts}} @onChange={{fn this.discountChanged lineItem}} as |discount|>
+            <PowerSelect 
+              @searchEnabled={{true}} 
+              @selected={{lineItem.discount}} 
+              @options={{this.discounts}} 
+              @onChange={{fn this.discountChanged lineItem}}
+              data-test-discount-select 
+              as |discount|
+            >
               {{discount}}
             </PowerSelect>
             {{#if lineItem.discount}}
               {{lineItem.discount_amount}}
             {{/if}}
           </td>
-          <td>{{lineItem.total}}</td>
-          <td {{on "click" (fn this.removeLineItem lineItem)}}><button type="button" class="btn btn-danger pull-right">Delete</button></td>
+          <td data-test-item-total>{{lineItem.total}}</td>
+          <td>
+            <button type="button" class="btn btn-danger pull-right" {{on "click" (fn this.removeLineItem lineItem)}} data-test-delete-item>Delete</button>
+          </td>
         </tr>
       {{/each}}
       <tr>
         <td></td>
-        <td><Input class="form-control" @value={{this.id}} @enter={{this.itemChanged}} {{autofocus}} /></td>
+        <td>
+          <Input 
+            class="form-control" 
+            @value={{this.id}} 
+            @enter={{this.itemChanged}} 
+            {{autofocus}} 
+            data-test-item-input 
+          />
+        </td>
         <td></td>
         <td></td>
         <td></td>
@@ -76,29 +108,54 @@
     <tfoot>
       <tr>
         <td colspan="3" class="text-right">Subtotal</td>
-        <td colspan="3">{{@model.qtyTotal}}</td>
-        <td>{{@model.subtotal}}</td>
+        <td colspan="3" data-test-qty-total>{{@model.qtyTotal}}</td>
+        <td data-test-subtotal>{{@model.subtotal}}</td>
         <td></td>
       </tr>
       <tr>
         <td colspan="6" class="text-right">Discount</td>
-        <td>{{@model.discount}}</td>
+        <td data-test-discount>{{@model.discount}}</td>
         <td></td>
       </tr>
       <tr>
         <td colspan="6" class="text-right">Total</td>
-        <td>{{@model.total}}</td>
+        <td data-test-total>{{@model.total}}</td>
         <td></td>
       </tr>
     </tfoot>
   </table>
   <div class="btn-toolbar pull-right">
     <div class="btn-group">
-      <button type="button" disabled= {{@model.isSaving}} {{on "click" (fn this.saveAndPrint true)}} class="btn btn-default">Save & New</button>
+      <button 
+        type="button" 
+        disabled={{@model.isSaving}} 
+        {{on "click" (fn this.saveAndPrint true)}} 
+        class="btn btn-default"
+        data-test-save-new
+      >
+        Save & New
+      </button>
     </div>
     <div class="btn-group">
-      <button type="button" disabled= {{@model.isSaving}} {{on "click" (fn this.saveAndPrint false)}} class="btn btn-primary">Save & Print</button>
+      <button 
+        type="button" 
+        disabled={{@model.isSaving}} 
+        {{on "click" (fn this.saveAndPrint false)}} 
+        class="btn btn-primary"
+        data-test-save-print
+      >
+        Save & Print
+      </button>
     </div>
-    <div class="btn-group"><button type="button" {{on "click" this.newSale}} class="btn btn-default">New Sale</button></div>
+    <div class="btn-group">
+      <button 
+        type="button" 
+        {{on "click" this.newSale}} 
+        class="btn btn-default"
+        data-test-new-sale
+      >
+        New Sale
+      </button>
+    </div>
   </div>
 </div>

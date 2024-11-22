@@ -24,7 +24,8 @@
     "start": "npm run fetchItems && ember server",
     "test": "concurrently \"npm:lint\" \"npm:test:*\" --names \"lint,test:\"",
     "test:ember": "ember test",
-    "fetchItems": "node lib/fetch-items.js"
+    "fetchItems": "node lib/fetch-items.js",
+    "getAdminToken": "node lib/getAdminToken.js"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
@@ -33,6 +34,7 @@
     "@ember/optional-features": "^2.1.0",
     "@ember/string": "^4.0.0",
     "@ember/test-helpers": "^3.3.1",
+    "@faker-js/faker": "^8.4.1",
     "@glimmer/component": "^1.1.2",
     "@glimmer/tracking": "^1.1.2",
     "@types/ember": "^4.0.10",
@@ -70,6 +72,7 @@
     "ember-cli-dependency-checker": "^3.3.2",
     "ember-cli-htmlbars": "^6.3.0",
     "ember-cli-inject-live-reload": "^2.1.0",
+    "ember-cli-mirage": "^3.0.3",
     "ember-cli-sass": "^11.0.1",
     "ember-cli-sri": "^2.1.1",
     "ember-cli-terser": "^4.0.2",
@@ -86,6 +89,7 @@
     "ember-resolver": "^12.0.1",
     "ember-source": "~5.12.0",
     "ember-template-lint": "^6.0.0",
+    "ember-test-selectors": "^6.0.0",
     "eslint": "^8.57.1",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-ember": "^12.2.1",
@@ -93,6 +97,7 @@
     "eslint-plugin-prettier": "^5.2.1",
     "eslint-plugin-qunit": "^8.1.2",
     "loader.js": "^4.7.0",
+    "miragejs": "^0.1.48",
     "prettier": "^3.3.3",
     "qunit": "^2.22.0",
     "qunit-dom": "^3.2.1",

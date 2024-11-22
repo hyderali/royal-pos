@@ -1,5 +1,5 @@
 {{#if @model.canShowPrint}}
-  <div class="receipt-print">
+  <div class="receipt-print" data-test-receipt>
     <div style="border: 1px solid #333;">
       <div style="border-bottom: 1px solid #333;">
         {{#if this.isSales}}
@@ -15,7 +15,7 @@
         <tbody>
           <tr style="border-bottom: 1px solid #333;font-size: 18px;">
             <td>{{this.numberLabel}}:</td>
-            <td style="border-left: 1px solid #333;padding-left:5px">{{@model.entity_number}}</td>
+            <td style="border-left: 1px solid #333;padding-left:5px" data-test-invoice-number>{{@model.entity_number}}</td>
           </tr>
           <tr style="font-size: 18px;">
             <td>Date: </td>
@@ -36,7 +36,7 @@
             <td style="word-wrap: break-word;width: 25%;" align="right">Amount</td>
           </tr>
         </thead>
-        <tbody style="font-weight: bold">
+        <tbody style="font-weight: bold" data-test-receipt-items>
           {{#each @model.line_items as |lineItem index|}}
             <tr>
               <td valign="top">{{get-index index}}</td>
