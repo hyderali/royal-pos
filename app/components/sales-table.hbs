@@ -11,7 +11,7 @@
     <div class="form-group">
       <div class="col-md-3">Phone Number</div>
       <div class="col-md-9">
-        <Input class="form-control" @value={{@model.phone_number}} />
+        <Input class="form-control" @value={{@model.phone_number}} data-test-phone-number />
       </div>
     </div><br><br>
   {{/if}}
@@ -31,7 +31,7 @@
     </thead>
     <tbody>
       {{#each @model.line_items as |lineItem index|}}
-        <tr>
+        <tr data-test-line-item>
           <td>{{get-index index}}</td>
           <td>{{lineItem.sku}}</td>
           <td>
@@ -40,15 +40,15 @@
                 {{customItem}}
               </PowerSelect>
             {{else}}
-              {{lineItem.name}}
+              <span data-test-item-name>{{lineItem.name}}</span>
             {{/if}}
           </td>
-          <td><Input class="form-control" @value={{lineItem.quantity}} disabled={{@model.isSaving}} /></td>
+          <td><Input class="form-control" @value={{lineItem.quantity}} disabled={{@model.isSaving}} data-test-item-quantity /></td>
           <td>
             {{#if lineItem.isCustom}}
-              <td><Input class="form-control" @value={{lineItem.rate}} disabled={{@model.isSaving}} /></td>
+              <Input class="form-control" @value={{lineItem.rate}} disabled={{@model.isSaving}} data-test-item-rate />
             {{else}}
-              {{lineItem.rate}}
+              <span data-test-item-rate>{{lineItem.rate}}</span>
             {{/if}}
           </td>
           <td>
@@ -60,14 +60,14 @@
             {{/if}}
           </td>
           <td>{{lineItem.total}}</td>
-          <td {{on "click" (fn this.removeLineItem lineItem)}}><button type="button" class="btn btn-danger pull-right">Delete</button></td>
+          <td><button type="button" class="btn btn-danger pull-right" data-test-remove-item {{on "click" (fn this.removeLineItem lineItem)}}>Delete</button></td>
         </tr>
       {{/each}}
       <tr>
         <td></td>
-        <td><Input class="form-control" @value={{this.id}} @enter={{this.itemChanged}} {{autofocus}} /></td>
-        <td></td>
-        <td></td>
+        <td><Input class="form-control" @value={{this.id}} @enter={{this.itemChanged}} data-test-barcode-input {{autofocus}} /></td>
+        <td><button type="button" class="btn btn-primary" data-test-add-item-button {{on "click" this.itemChanged}}>Add Item</button></td>
+        <td><button type="button" class="btn btn-default" data-test-add-temp-item {{on "click" this.addTempItem}}>Add Temp Item</button></td>
         <td></td>
         <td></td>
         <td></td>
@@ -94,11 +94,13 @@
   </table>
   <div class="btn-toolbar pull-right">
     <div class="btn-group">
-      <button type="button" disabled= {{@model.isSaving}} {{on "click" (fn this.saveAndPrint true)}} class="btn btn-default">Save & New</button>
+      <button type="button" disabled={{@model.isSaving}} class="btn btn-default" data-test-save-button {{on "click" (fn this.saveAndPrint true)}}>Save & New</button>
     </div>
     <div class="btn-group">
-      <button type="button" disabled= {{@model.isSaving}} {{on "click" (fn this.saveAndPrint false)}} class="btn btn-primary">Save & Print</button>
+      <button type="button" disabled={{@model.isSaving}} class="btn btn-primary" {{on "click" (fn this.saveAndPrint false)}}>Save & Print</button>
     </div>
-    <div class="btn-group"><button type="button" {{on "click" this.newSale}} class="btn btn-default">New Sale</button></div>
+    <div class="btn-group">
+      <button type="button" class="btn btn-default" {{on "click" this.newSale}}>New Sale</button>
+    </div>
   </div>
 </div>
