@@ -1,10 +1,6 @@
 /* eslint-disable */
 const bodyParser = require('body-parser');
 const fs = require('fs');
-const Converter = require("csvtojson").Converter;
-const converter = new Converter({
-  checkType: false
-});
 const json2CSVConverter = require('json-2-csv');
 const RSVP = require('rsvp');
 const chalk = require('chalk');
@@ -67,8 +63,12 @@ module.exports = async function(app) {
     const parsedSizes = JSON.parse(sizes);
     app.sizes = parsedSizes.sizes;
   });
-  converter.fromFile("./server/item.csv", function(err, result) {
-    app.itemslist = result;
+  fs.readFile('./server/item.json', 'utf8', function(err, items) {
+    if (err) {
+      return console.log(err);
+    }
+    const parsedItems = JSON.parse(items);
+    app.itemslist = parsedItems;
   });
   function getAccessToken(username) {
     const users = app.parsedData.users;
@@ -455,7 +455,7 @@ module.exports = async function(app) {
             message: 'failure',
             error: {
               message: message,
-              sku: item.SKU
+              sku: item.sku
             }
           });
         }

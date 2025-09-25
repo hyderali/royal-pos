@@ -56,9 +56,9 @@ export default class BarcodeController extends Controller {
   addNewItem(itemName) {
     let itemslist = this.get('session.itemslist');
     let items = this.items;
-    let newItem = itemslist.findBy('SKU', getItemName(itemName));
+    let newItem = itemslist.findBy('sku', getItemName(itemName));
     if (newItem) {
-      newItem.printRate = Number(newItem.Rate.split(' ')[1]);
+      newItem.printRate = Number(newItem.rate);
       items.pushObject(newItem);
     }
   }

@@ -33,21 +33,21 @@ export default class AddstockRoute extends Route {
       return;
     }
     let itemslist = this.get('session.itemslist');
-    let newItem = itemslist.findBy('SKU', itemName);
+    let newItem = itemslist.findBy('sku', itemName);
     //Item Name,SKU,Description,Rate,Product Type,Status,Purchase Rate,Purchase Account,Inventory Account,Initial Stock,Initial Stock Rate,Item Type,Design,Size,Brand,Colour,Group,Discount
     if (newItem) {
       let newLineItem = {
-        'Item Name': newItem['Item Name'],
-        SKU: newItem.SKU,
-        Description: newItem.Description,
-        Rate: newItem.Rate,
+        'Item Name': newItem['item_name'],
+        SKU: newItem.sku,
+        Description: newItem.description,
+        Rate: newItem.rate,
         'Product Type': 'goods',
         Status: 'Active',
-        'Purchase Rate': newItem['Purchase Rate'],
+        'Purchase Rate': newItem['purchase_rate'],
         'Purchase Account': 'Cost of Goods Sold',
         'Inventory Account': 'Inventory Asset',
         'Initial Stock': 1,
-        'Initial Stock Rate': newItem['Purchase Rate'],
+        'Initial Stock Rate': newItem['purchase_rate'],
         'Item Type': 'Inventory',
         Design: newItem.CF.Design || '',
         Size: newItem.CF.Size || '',

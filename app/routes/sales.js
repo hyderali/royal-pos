@@ -24,7 +24,7 @@ export default class SalesRoute extends Route {
     }
     if (!this.get('session.itemslist')) {
       return this.store.ajax('/itemslist').then((json) => {
-        this.set('session.itemslist', json.items.filterBy('Status', 'Active'));
+        this.set('session.itemslist', json.items);
         this.set('session.customer_id', json.customer_id);
         this.set('session.organization_id', json.organization_id);
       });
@@ -101,16 +101,16 @@ export default class SalesRoute extends Route {
       existingLineItem.set('quantity', existingLineItem.get('quantity') + 1);
       return;
     }
-    let newItem = itemslist.findBy('SKU', itemName);
+    let newItem = itemslist.findBy('sku', itemName);
     if (newItem) {
       let newLineItem = LineItem.create({
         discount: 0,
-        rate: Number(newItem.Rate.split(' ')[1]),
+        rate: Number(newItem.rate),
         quantity: 1,
-        name: newItem['Item Name'],
-        sku: newItem.SKU,
-        item_id: newItem['Item ID'],
-        description: newItem.Description,
+        name: newItem['item_name'],
+        sku: newItem.sku,
+        item_id: newItem['item_id'],
+        description: newItem.description,
       });
       lineItems.pushObject(newLineItem);
     }

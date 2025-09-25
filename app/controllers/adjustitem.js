@@ -62,7 +62,7 @@ export default class AdjustitemController extends Controller {
     itemName = getItemName(itemName);
     let itemslist = this.get('session.itemslist');
     let items = this.items;
-    let newItem = itemslist.findBy('SKU', itemName);
+    let newItem = itemslist.findBy('sku', itemName);
     if (newItem) {
       items.pushObject(newItem);
     }
