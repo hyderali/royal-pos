@@ -41,7 +41,7 @@ export default Controller.extend({
     addNewItem(itemName) {
       let itemslist = this.get('session.itemslist');
       let items = this.items;
-      let newItem = itemslist.findBy('SKU', itemName);
+      let newItem = itemslist.findBy('sku', itemName);
       if (newItem) {
         items.pushObject(newItem);
       }

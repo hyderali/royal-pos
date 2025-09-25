@@ -11,7 +11,7 @@ export default Route.extend({
   afterModel() {
     if (!this.get('session.itemslist')) {
       return this.store.ajax('/itemslist').then((json) => {
-        this.set('session.itemslist', json.items.filterBy('Status', 'Active'));
+        this.set('session.itemslist', json.items);
       });
     }
   }

@@ -15,9 +15,9 @@
   <tbody>
     {{#each items as |item|}}
       <tr>
-        <td>{{item.SKU}}</td>
-        <td>{{item.Description}}</td>
-        <td>{{item.Rate}}</td>
+        <td>{{item.sku}}</td>
+        <td>{{item.description}}</td>
+        <td>{{item.rate}}</td>
         <td><Input @value={{item.printRate}} class="form-control" @autofocus={{true}} /></td>
         <td><Input @value={{item.qty}} class="form-control" /></td>
         <td {{action "removeLineItem" item}}><button type="button" class="btn btn-danger pull-right">Delete</button></td>

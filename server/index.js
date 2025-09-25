@@ -2,10 +2,6 @@
 var bodyParser = require('body-parser');
 var fs = require('fs');
 var request = require('request');
-var Converter = require("csvtojson").Converter;
-var converter = new Converter({
-  checkType: false
-});
 var json2CSVConverter = require('json-2-csv');
 var RSVP = require('rsvp');
 var oauth = require('./oauth');
@@ -62,8 +58,12 @@ module.exports = async function(app) {
     var parsedSizes = JSON.parse(sizes);
     app.sizes = parsedSizes.sizes;
   });
-  converter.fromFile("./server/item.csv", function(err, result) {
-    app.itemslist = result;
+  fs.readFile('./server/item.json', 'utf8', function(err, items) {
+    if (err) {
+      return console.log(err);
+    }
+    const parsedItems = JSON.parse(items);
+    app.itemslist = parsedItems;
   });
   function getAccessToken(username) {
     var users = app.parsedData.users;
@@ -485,7 +485,7 @@ module.exports = async function(app) {
             message: 'failure',
             error: {
               message: message,
-              sku: item.SKU
+              sku: item.sku
             }
           });
         });

@@ -17,7 +17,7 @@ export default Controller.extend({
     let lineItems = this.get('model.line_items') || [];
     let total = 0;
     lineItems.forEach((item) => {
-      total += (Number(item.PurchaseRate.split(' ')[1]) * (item.quantity || 1));
+      total += (Number(item.purchase_rate) * (item.quantity || 1));
     });
     return total;
   }),
@@ -25,7 +25,7 @@ export default Controller.extend({
     let lineItems = this.get('model.line_items') || [];
     let total = 0;
     lineItems.forEach((item) => {
-      total += Number(item.Rate.split(' ')[1]);
+      total += Number(item.rate);
     });
     return total;
   }),
@@ -49,10 +49,10 @@ export default Controller.extend({
     newItemModel.sku = nextNumber;
         if(lineItem) {
           setProperties(newItemModel, {
-            description: (get(lineItem, 'Item Name') || '').split(' -')[0],
+            description: (get(lineItem, 'item_name') || '').split(' -')[0],
             group: get(lineItem, 'CF.Group'),
-            purchase_rate: (get(lineItem, 'PurchaseRate') || '').split(' ')[1],
-            rate: (get(lineItem, 'Rate') || '').split(' ')[1],
+            purchase_rate: lineItem.purchase_rate,
+            rate: lineItem.rate,
             discount: get(lineItem, 'CF.Discount'),
             size: get(lineItem, 'CF.Size'),
             design: get(lineItem, 'CF.Design'),
@@ -152,20 +152,16 @@ export default Controller.extend({
     },
     addNewItem(itemName) {
       let lineItems = this.get('model.line_items');
-      let existingLineItem = lineItems.findBy('SKU', getItemName(itemName));
+      let existingLineItem = lineItems.findBy('sku', getItemName(itemName));
       let itemslist = this.get('session.itemslist');
       if (existingLineItem) {
         set(existingLineItem, 'quantity', Number(get(existingLineItem, 'quantity')) + 1);
         return;
       }
-      let newItem = itemslist.findBy('SKU', getItemName(itemName));
+      let newItem = itemslist.findBy('sku', getItemName(itemName));
       if (newItem) {
-        let rate = Number(newItem.Rate.split(' ')[1]);
-        newItem.rate = rate;
-        newItem.printRate = rate,
+        newItem.printRate = newItem.rate,
         newItem.quantity = 1;
-        newItem.item_id = newItem['Item ID'];
-        newItem.PurchaseRate = newItem['Purchase Rate'];
         lineItems.pushObject(newItem);
       }
     },
@@ -207,12 +203,12 @@ export default Controller.extend({
         if (json.message === 'success') {
           this.set('newItemModel', null);
           let newLineItem = {
-            'Item Name': json.item.name,
+            item_name: json.item.name,
             item_id: json.item.item_id,
-            SKU: sku,
-            Description: description,
-            PurchaseRate: `INR ${purchase_rate}`,
-            Rate: `INR ${rate}`,
+            sku: sku,
+            description: description,
+            purchase_rate: purchase_rate,
+            rate: rate,
             printRate: rate,
             CF: {
               Group: group,
@@ -240,8 +236,8 @@ export default Controller.extend({
         return {
           item_id: lineItem.item_id,
           quantity: lineItem.quantity,
-          name: lineItem['Item Name'],
-          description: lineItem.Description,
+          name: lineItem.item_name,
+          description: lineItem.description,
           account_id: this.get('session.inventory_account_id')
         };
       });

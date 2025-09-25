@@ -39,10 +39,10 @@
       {{#each model.line_items as |lineItem index|}}
         <tr>
           <td> {{get-index index}} </td>
-          <td> {{lineItem.SKU}} </td>
-          <td> {{lineItem.Description}} </td>
-          <td> {{lineItem.PurchaseRate}} </td>
-          <td> {{lineItem.Rate}} </td>
+          <td> {{lineItem.sku}} </td>
+          <td> {{lineItem.description}} </td>
+          <td> {{lineItem.purchase_rate}} </td>
+          <td> {{lineItem.rate}} </td>
           <td> {{lineItem.CF.Discount}} </td>
           <td> {{lineItem.CF.Brand}} </td>
           <td> {{lineItem.CF.Design}} </td>

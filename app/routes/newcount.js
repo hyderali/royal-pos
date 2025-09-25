@@ -33,14 +33,14 @@ export default Route.extend({
         return;
       }
       let itemslist = this.get("session.itemslist");
-      let newItem = itemslist.findBy("SKU", itemName);
+      let newItem = itemslist.findBy("sku", itemName);
       if (newItem) {
         let newLineItem = CountItem.create({
           qty: 1,
-          sku: newItem.SKU,
-          cost_price: Number(newItem["Purchase Rate"].split(" ")[1]),
-          sales_price: Number(newItem.Rate.split(" ")[1]),
-          description: newItem.Description,
+          sku: newItem.sku,
+          cost_price: Number(newItem["purchase_rate"]),
+          sales_price: Number(newItem.rate),
+          description: newItem.description,
         });
         items.pushObject(newLineItem);
       }

@@ -1,9 +1,9 @@
 <div class="text-center" style="font-size:10px">{{session.org_name}}</div>
-<div class="text-center"><BarCode @sku={{item.SKU}} /></div>
+<div class="text-center"><BarCode @sku={{item.sku}} /></div>
 <div style="font-size:10px;margin-top:-5px">{{item.CF.Design}}</div>
 <div style="font-size:10px;margin-top:-2px;display:flex;flex-direction: row;">
   <div style="flex:auto">{{item.CF.Brand}}</div>
   <div style="flex:auto">{{item.CF.Size}}</div>
-  <div style="flex:auto">{{item.Description}}</div>
+  <div style="flex:auto">{{item.description}}</div>
 </div>
 <div style="font-size:24px;font-weight:bold;margin-top:-5px">{{#if item.printRate}} Rs. {{item.printRate}}{{/if}}</div>

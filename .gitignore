@@ -20,6 +20,7 @@
 pdf/
 server/royal.json
 server/item.csv
+server/item.json
 /yarn-error.log
 
 # ember-try
