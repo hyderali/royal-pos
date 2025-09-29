@@ -20,15 +20,15 @@ module.exports = {
     );
     return new RSVP.Promise(async (resolve, reject) => {
       try {
-        if (user.access_token) {
-          console.log(
-            chalk.green(
-              `\nReturning already generated token for user - ${user.username}\n\n`
-            )
-          );
-          resolve(user);
-          return;
-        }
+        // if (user.access_token) {
+        //   console.log(
+        //     chalk.green(
+        //       `\nReturning already generated token for user - ${user.username}\n\n`
+        //     )
+        //   );
+        //   resolve(user);
+        //   return;
+        // }
         const url = `https://accounts.zoho.com/oauth/v2/token?refresh_token=${user.refresh_token}&client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}&redirect_uri=${REDIRECT_URI}&grant_type=refresh_token`;
         const response = await fetch(url, { method: 'POST' });
         const parsedResponse = await response.json();
