@@ -48,6 +48,18 @@
       </tr>
     </tfoot>
   </table>
+  <div class="form-group">
+    <label class="radio-inline">
+      <RadioButton @selection={{selectedPaymentMode}} @name="payment_mode" @disabled={{isSaving}} @value="Cash" @on-change={{action "selectPaymentMode" "Cash"}} /> Cash
+    </label>
+    <label class="radio-inline">
+      <RadioButton @selection={{selectedPaymentMode}} @name="payment_mode" @disabled={{isSaving}} @value="Credit Card" @on-change={{action "selectPaymentMode" "Credit Card"}} /> Credit Card
+    </label>
+    <label class="radio-inline">
+      <RadioButton @selection={{selectedPaymentMode}} @name="payment_mode" @disabled={{isSaving}} @value="UPI" @on-change={{action "selectPaymentMode" "UPI"}} /> UPI
+    </label>    
+    <Input class="form-control" @value={{phoneNumber}} />
+  </div>
   <button class="btn btn-default pull-right" {{action "goToList"}} type="button">Cancel</button>
   <button class="btn btn-primary pull-right" disabled= {{isSaving}} type="submit" {{action "saveAndRecordPayment"}}>Record</button>
 </form>

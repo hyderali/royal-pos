@@ -39,6 +39,7 @@ export default Route.extend({
   setupController(controller) {
     this._super(...arguments);
     controller.set('credits', 0);
+    controller.set('selectedPaymentMode', 'Cash');
   },
   actions: {
     queryParamsDidChange() {
@@ -81,6 +82,8 @@ export default Route.extend({
       }
       body.invoices = serializedInvoices;
       body.amount = amount;
+      body.payment_mode = controller.selectedPaymentMode;
+      body.description = controller.phoneNumber;
       this.set('controller.isSaving', true);
       this.store.ajax('/payments', {
         method: 'POST',

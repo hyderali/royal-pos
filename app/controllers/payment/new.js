@@ -30,6 +30,12 @@ export default Controller.extend({
     let credits = Number(this.credits || 0);
     return (received + discount + credits - total).toFixed(2);
   }),
+  paymentModes: computed('session.payment_modes', function() {
+    let paymentModes = this.get('session.payment_modes');
+    paymentModes = paymentModes.filter(mode => (mode.name == 'Cash' || mode.name == 'Credit Card' || mode.name == 'UPI'));
+    return paymentModes;
+  }),
+  selectedPaymentMode: 'Cash',
   actions: {
     showApplyCredits() {
       this.set('isShowingModal', true);
@@ -42,6 +48,9 @@ export default Controller.extend({
     },
     _applyCredits(creditNote) {
       this.setProperties({ isShowingConfirmModal: true, selectedCreditNote: creditNote, isApplyingCredits: false, applyCreditsError: '' });
+    },
+    selectPaymentMode(paymentMode) {
+      this.set('selectedPaymentMode', paymentMode);
     }
   }
 });
