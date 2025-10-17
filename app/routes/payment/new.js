@@ -40,6 +40,7 @@ export default Route.extend({
     this._super(...arguments);
     controller.set('credits', 0);
     controller.set('selectedPaymentMode', 'Cash');
+    controller.set('phoneNumber', '');
   },
   actions: {
     queryParamsDidChange() {
