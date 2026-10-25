@@ -42,7 +42,7 @@
               {{lineItem.name}}
             {{/if}}
           </td>
-          <td><Input class="form-control" @value={{lineItem.quantity}} @disabled={{model.isSaving}} /></td>
+          <td><Input class="form-control" @value={{lineItem.quantity}} @disabled={{model.isSaving}} autocomplete="off"/></td>
           <td>
             {{#if lineItem.isCustom}}
               <td><Input class="form-control" @value={{lineItem.rate}} @disabled={{model.isSaving}} /></td>
